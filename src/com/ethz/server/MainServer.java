@@ -3,8 +3,12 @@ package com.ethz.server;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -32,9 +36,13 @@ public class MainServer extends HttpServlet {
 	public byte[] publicKey;
 	private byte[] privateKey;
 	
+	private Map<String, byte[]> sharedSecretMap;
+	
 	public MainServer() throws IOException {
 		super();
-
+		
+		this.sharedSecretMap = new HashMap<>();
+		
 		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundClient\\codes.bin"));
 		String str = "";
 		this.codes = new HashSet<>();
@@ -90,8 +98,17 @@ public class MainServer extends HttpServlet {
 			this.sharedSecret = Curve25519.getInstance("best").calculateAgreement(Base64.getUrlDecoder().decode(otherPublicKey), this.privateKey);
 			response.getWriter().append(Base64.getUrlEncoder().encodeToString(this.publicKey));
 			
+			byte[] sharedSecretHash = null;
+			try {
+				sharedSecretHash = MessageDigest.getInstance("sha-256").digest(sharedSecret);
+			}
+			catch (NoSuchAlgorithmException e) {
+
+			}
 			
-			System.out.println(Base64.getUrlEncoder().encodeToString(sharedSecret));
+			this.sharedSecretMap.put(sessionCode, sharedSecretHash);
+			
+			System.out.println(Base64.getUrlEncoder().encodeToString(sharedSecretHash));
 		}
 	}
 
