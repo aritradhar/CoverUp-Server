@@ -3,6 +3,7 @@ package com.ethz.server;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,7 +54,8 @@ public class MainServer extends HttpServlet {
 	private void keyGeneration()
 	{
 		Curve25519KeyPair keypair = Curve25519.getInstance("best").generateKeyPair();
-		
+		this.publicKey = keypair.getPublicKey();
+		this.privateKey = keypair.getPrivateKey();
 	}
 	
 	
@@ -72,18 +74,24 @@ public class MainServer extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		String flag = request.getParameter("flag");
-		String code = "";
 
 		if(flag.equals("init"))
 		{
-			code = request.getParameter("code");
+			String code = request.getParameter("code");
 			if(this.codes.contains(code))
-				response.getWriter().append("code authenticated ").append(request.getContextPath());
+				response.getWriter().append("code authenticated ");
 		}
 		
 		else if(flag.equals("ke"))
 		{
+			String otherPublicKey = request.getParameter("pk");
+			String sessionCode = request.getParameter("code");
 			
+			this.sharedSecret = Curve25519.getInstance("best").calculateAgreement(Base64.getUrlDecoder().decode(otherPublicKey), this.privateKey);
+			response.getWriter().append(Base64.getUrlEncoder().encodeToString(this.publicKey));
+			
+			
+			System.out.println(Base64.getUrlEncoder().encodeToString(sharedSecret));
 		}
 	}
 
