@@ -82,6 +82,9 @@ public class MainServer extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		String flag = request.getParameter("flag");
+		
+		Stats.TOTAL_CONNECTIONS++;
+		Stats.LIVE_CONNECTIONS++;
 
 		if(flag.equals("init"))
 		{
@@ -109,6 +112,11 @@ public class MainServer extends HttpServlet {
 			this.sharedSecretMap.put(sessionCode, sharedSecretHash);
 			
 			System.out.println(Base64.getUrlEncoder().encodeToString(sharedSecretHash));
+		}
+		
+		else if(flag.equals("end"))
+		{
+			Stats.LIVE_CONNECTIONS--;
 		}
 	}
 
