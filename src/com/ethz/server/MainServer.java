@@ -82,12 +82,17 @@ public class MainServer extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		String flag = request.getParameter("flag");
+	
 		
-		Stats.TOTAL_CONNECTIONS++;
-		Stats.LIVE_CONNECTIONS++;
+		System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
+		System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 
 		if(flag.equals("init"))
 		{
+			
+			Stats.TOTAL_CONNECTIONS++;
+			Stats.LIVE_CONNECTIONS++;
+			
 			String code = request.getParameter("code");
 			if(this.codes.contains(code))
 				response.getWriter().append("code authenticated ");
@@ -95,6 +100,9 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("ke"))
 		{
+			Stats.TOTAL_CONNECTIONS++;
+			Stats.LIVE_CONNECTIONS++;
+			
 			String otherPublicKey = request.getParameter("pk");
 			String sessionCode = request.getParameter("code");
 			
@@ -114,9 +122,19 @@ public class MainServer extends HttpServlet {
 			System.out.println(Base64.getUrlEncoder().encodeToString(sharedSecretHash));
 		}
 		
+		else if(flag.equals("admin"))
+		{
+			String responseStr = "Total connection : " + Stats.TOTAL_CONNECTIONS + "\n live connections : " + Stats.LIVE_CONNECTIONS;
+			response.getWriter().append(responseStr);
+			response.flushBuffer();
+		}
+		
 		else if(flag.equals("end"))
 		{
 			Stats.LIVE_CONNECTIONS--;
+			
+			response.getWriter().append("Connection terminated");
+			response.flushBuffer();
 		}
 	}
 
