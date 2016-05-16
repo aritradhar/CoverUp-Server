@@ -74,7 +74,7 @@ public class MainServer extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.getWriter().append("Get request to this server is not supported");
 	}
 
 	/**
@@ -84,12 +84,16 @@ public class MainServer extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		String flag = request.getParameter("flag");
-	
 		
 		System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
 		System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
+		
+		if(flag == null)
+		{
+			response.getWriter().append("No valid parameter");
+		}
 
-		if(flag.equals("init"))
+		else if(flag.equals("init"))
 		{
 			
 			Stats.TOTAL_CONNECTIONS++;
