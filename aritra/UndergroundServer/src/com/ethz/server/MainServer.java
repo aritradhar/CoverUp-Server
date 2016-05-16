@@ -3,8 +3,10 @@ package com.ethz.server;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -127,6 +129,22 @@ public class MainServer extends HttpServlet {
 			String responseStr = "Total connection : " + Stats.TOTAL_CONNECTIONS + "\n live connections : " + Stats.LIVE_CONNECTIONS;
 			response.getWriter().append(responseStr);
 			response.flushBuffer();
+		}
+		
+		else if(flag.equals("rand"))
+		{
+			Stats.TOTAL_CONNECTIONS++;
+			Stats.LIVE_CONNECTIONS++;
+			
+			int responseSize = 256;
+			SecureRandom rand = new SecureRandom();
+			byte[] toSent = new byte[responseSize];
+			rand.nextBytes(toSent);
+			
+			OutputStream output = response.getOutputStream();
+		    output.write(toSent);
+		    output.flush();
+		    response.flushBuffer();
 		}
 		
 		else if(flag.equals("end"))
