@@ -1,6 +1,7 @@
 package com.ethz.server;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,6 +40,8 @@ public class MainServer extends HttpServlet {
 	private byte[] privateKey;
 	
 	private Map<String, byte[]> sharedSecretMap;
+	public String broadCastMessage;
+	
 	
 	public MainServer() throws IOException {
 		super();
@@ -54,11 +57,26 @@ public class MainServer extends HttpServlet {
 
 		br.close();
 		keyGeneration();
+		this.broadCastMessage = this.readBroadcastFile();
 		
 		System.out.println("Started...");
 
 
 		// TODO Auto-generated constructor stub
+	}
+	
+	private String readBroadcastFile() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt"));
+		String s = "";
+		
+		while((s = br.readLine()) != null)
+		{
+			s = s.concat(s);
+		}
+		
+		br.close();
+		return s;
 	}
 
 	private void keyGeneration()
@@ -74,8 +92,8 @@ public class MainServer extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doPost(request,response);
-		//response.getWriter().append("Get request to this server is not supported");
+		//doPost(request,response);
+		response.getWriter().append("Get request to this server is not supported");
 		
 	}
 
@@ -167,6 +185,13 @@ public class MainServer extends HttpServlet {
 			String responseStr = Base64.getUrlEncoder().encodeToString(toSent);
 			
 			response.getWriter().append(responseStr);
+			response.flushBuffer();
+		}
+		
+		else if(flag.equals("broadCast"))
+		{
+
+			response.getWriter().append(this.broadCastMessage);
 			response.flushBuffer();
 		}
 		
