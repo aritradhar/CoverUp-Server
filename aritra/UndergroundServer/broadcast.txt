@@ -1,0 +1,49 @@
+
+Configuring Supported Ciphers for Tomcat HTTPS Connections
+Overview
+
+Due to a security vulnerability (Logjam), cipher suites that use weak Diffie-Hellman key exchange algorithms are disabled in the Tomcat server.xml file installed with the Casper Suite v9.73 and later. The list of ciphers is not automatically modified when upgrading the Casper Suite from v9.72 or earlier. It is recommended that you manually replace the list of ciphers to remediate this known vulnerability.
+
+This article provides step-by-step instructions for replacing the existing ciphers in the server.xml file with a list of recommended ciphers.
+
+In addition, users who want to modify the list of ciphers in the server.xml file for a different reason, such as customizing their environment, can also follow these instructions to specify a list of ciphers for HTTPS connections.
+Products Affected
+
+Casper Suite v9.72 or earlier
+Procedure
+
+    Upgrade to the JSS v9.73 or later.
+    Open the server.xml file in a text editor.
+    The server.xml file is located in:
+        - Mac: /Library/JSS/Tomcat/conf/server.xml
+        - Linux: /usr/local/jss/tomcat/conf/server.xml
+        - Windows: C:\Program Files\JSS\Tomcat\conf\server.xml 
+    Note: It is recommended that you create a backup of the server.xml file before replacing the existing ciphers.
+    Search for the ciphers attribute in the Connector element for port="8443".
+    Replace the existing ciphers with the ciphers listed below. If the ciphers attribute is not present, add it to the Connector element.
+    ciphers="TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+    TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384,
+    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+    TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+    TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384,
+    TLS_ECDH_RSA_WITH_AES_256_CBC_SHA,TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA,
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+    TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,
+    TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA"
+
+In addition, if you are running Java 1.6 or a JDS instance in your environment, you must also include the following cipher:
+TLS_RSA_WITH_AES_128_CBC_SHA
+
+Note: These recommendations come from The Open Web Application Security Project (OWASP). For additional recommendations on securing Tomcat, see the following documentation from OWASP:
+https://www.owasp.org/index.php/Securing_tomcat#Encryption
+
+5. Save and close the server.xml file.
+6. Restart Tomcat.
+For instructions, see Starting and Stopping Tomcat.
+Additional Information
+
+For more information about Apache Tomcat HTTP Connectors, go to:
+http://tomcat.apache.org/tomcat-7.0-doc/config/http.html#SSL_Support

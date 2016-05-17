@@ -59,6 +59,8 @@ public class MainServer extends HttpServlet {
 		keyGeneration();
 		this.broadCastMessage = this.readBroadcastFile();
 		
+		System.out.println(this.broadCastMessage);
+		
 		System.out.println("Started...");
 
 
@@ -69,14 +71,14 @@ public class MainServer extends HttpServlet {
 	{
 		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt"));
 		String s = "";
-		
+		StringBuffer sb = new StringBuffer("");
 		while((s = br.readLine()) != null)
 		{
-			s = s.concat(s);
+			sb.append(s).append("\n");
 		}
 		
 		br.close();
-		return s;
+		return sb.toString();
 	}
 
 	private void keyGeneration()
