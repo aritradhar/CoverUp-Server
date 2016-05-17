@@ -74,7 +74,9 @@ public class MainServer extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Get request to this server is not supported");
+		doPost(request,response);
+		//response.getWriter().append("Get request to this server is not supported");
+		
 	}
 
 	/**
@@ -100,7 +102,9 @@ public class MainServer extends HttpServlet {
 			Stats.LIVE_CONNECTIONS++;
 			
 			String code = request.getParameter("code");
-			if(this.codes.contains(code))
+			if(code == null)
+				response.getWriter().append("No valid code ");
+			else if(this.codes.contains(code))
 				response.getWriter().append("code authenticated ");
 		}
 		
@@ -149,6 +153,21 @@ public class MainServer extends HttpServlet {
 		    output.write(toSent);
 		    output.flush();
 		    response.flushBuffer();
+		}
+		
+		else if(flag.equals("randB"))
+		{
+			Stats.TOTAL_CONNECTIONS++;
+			Stats.LIVE_CONNECTIONS++;
+			
+			int responseSize = 256;
+			SecureRandom rand = new SecureRandom();
+			byte[] toSent = new byte[responseSize];
+			rand.nextBytes(toSent);
+			String responseStr = Base64.getUrlEncoder().encodeToString(toSent);
+			
+			response.getWriter().append(responseStr);
+			response.flushBuffer();
 		}
 		
 		else if(flag.equals("end"))
