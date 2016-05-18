@@ -220,7 +220,15 @@ public class MainServer extends HttpServlet {
 		{
 			JSONObject jObject = new JSONObject();
 			byte[] messageBytes = this.broadCastMessage.getBytes();
-			byte[] signature = Curve25519.getInstance("best").calculateSignature(this.privateKey, messageBytes);
+			byte[] messageHash = null;
+			try {
+				messageHash = MessageDigest.getInstance("sha-256").digest(messageBytes);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(messageBytes.length);
+			byte[] signature = Curve25519.getInstance("best").calculateSignature(this.privateKey, messageHash);
 			String signatureBase64 = Base64.getUrlEncoder().encodeToString(signature);
 			jObject.append("version", ENV.VERSION_NO);
 			jObject.append("message", this.broadCastMessage);
