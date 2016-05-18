@@ -1,7 +1,7 @@
 package com.ethz.server;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,7 +48,15 @@ public class MainServer extends HttpServlet {
 		
 		this.sharedSecretMap = new HashMap<>();
 		
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundClient\\codes.bin"));
+		String os = System.getProperty("os.name");
+		System.out.println(os);
+		
+		BufferedReader br = null;
+		
+		if(os.contains("Windows"))
+			br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundClient\\codes.bin"));
+		else
+			br = new BufferedReader(new FileReader("/home/dhara/codes.bin"));
 		String str = "";
 		this.codes = new HashSet<>();
 
@@ -59,7 +67,7 @@ public class MainServer extends HttpServlet {
 		keyGeneration();
 		this.broadCastMessage = this.readBroadcastFile();
 		
-		System.out.println(this.broadCastMessage);
+		//System.out.println(this.broadCastMessage);
 		
 		System.out.println("Started...");
 
@@ -69,7 +77,15 @@ public class MainServer extends HttpServlet {
 	
 	private String readBroadcastFile() throws IOException
 	{
-		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt"));
+		String os = System.getProperty("os.name");
+		
+		
+		BufferedReader br = null;
+		if(os.contains("Windows"))
+			br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt"));
+		else
+			br = new BufferedReader(new FileReader("/home/dhara/broadcast.txt"));
+		
 		String s = "";
 		StringBuffer sb = new StringBuffer("");
 		while((s = br.readLine()) != null)
@@ -94,8 +110,8 @@ public class MainServer extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//doPost(request,response);
-		response.getWriter().append("Get request to this server is not supported");
+		doPost(request,response);
+		//response.getWriter().append("Get request to this server is not supported");
 		
 	}
 
@@ -192,7 +208,9 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("broadCast"))
 		{
-
+			Stats.TOTAL_CONNECTIONS++;
+			Stats.LIVE_CONNECTIONS++;
+			
 			response.getWriter().append(this.broadCastMessage);
 			response.flushBuffer();
 		}
