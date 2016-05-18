@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
@@ -212,6 +213,20 @@ public class MainServer extends HttpServlet {
 			Stats.LIVE_CONNECTIONS++;
 			
 			response.getWriter().append(this.broadCastMessage);
+			response.flushBuffer();
+		}
+		
+		else if(flag.equals("broadCastjson"))
+		{
+			JSONObject jObject = new JSONObject();
+			byte[] messageBytes = this.broadCastMessage.getBytes();
+			byte[] signature = Curve25519.getInstance("best").calculateSignature(this.privateKey, messageBytes);
+			String signatureBase64 = Base64.getUrlEncoder().encodeToString(signature);
+			jObject.append("version", ENV.VERSION_NO);
+			jObject.append("message", this.broadCastMessage);
+			jObject.append("signature", signatureBase64);
+			
+			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 		}
 		

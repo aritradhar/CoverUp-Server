@@ -5,6 +5,9 @@
         <dependent-module archiveName="curve25519.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/lib/curve25519.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="json.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/lib/json.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="UndergroundServer"/>
         <property name="java-output-path" value="/UndergroundServer/build/classes"/>
     </wb-module>
