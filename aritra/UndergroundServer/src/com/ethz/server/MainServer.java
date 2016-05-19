@@ -65,7 +65,11 @@ public class MainServer extends HttpServlet {
 			codes.add(str);
 
 		br.close();
-		keyGeneration();
+		if(!Stats.keygen_done)
+		{
+			System.out.println("No keys. Generating...");
+			keyGeneration();
+		}
 		this.broadCastMessage = this.readBroadcastFile();
 		
 		//System.out.println(this.broadCastMessage);
@@ -100,6 +104,8 @@ public class MainServer extends HttpServlet {
 
 	private void keyGeneration()
 	{
+		Stats.keygen_done = true;
+		
 		Curve25519KeyPair keypair = Curve25519.getInstance("best").generateKeyPair();
 		this.publicKey = keypair.getPublicKey();
 		this.privateKey = keypair.getPrivateKey();
@@ -218,17 +224,30 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("broadCastjson"))
 		{
+			Stats.TOTAL_CONNECTIONS++;
+			Stats.LIVE_CONNECTIONS++;
+			
+			
 			JSONObject jObject = new JSONObject();
 			byte[] messageBytes = this.broadCastMessage.getBytes();
 			byte[] messageHash = null;
 			try {
-				messageHash = MessageDigest.getInstance("sha-256").digest(messageBytes);
+				messageHash = MessageDigest.getInstance("sha-512").digest(messageBytes);
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(messageBytes.length);
+			
+			//System.out.println(messageBytes.length);
 			byte[] signature = Curve25519.getInstance("best").calculateSignature(this.privateKey, messageHash);
+			//test
+			//System.out.println("Hash : " + Base64.getUrlEncoder().encodeToString(messageHash));
+			//System.out.println("pk : " + Base64.getUrlEncoder().encodeToString(this.privateKey));
+			//System.out.println("sk : " + Base64.getUrlEncoder().encodeToString(this.publicKey));
+			//System.out.println("signature : " + Base64.getUrlEncoder().encodeToString(signature));
+			
+			
+			System.out.println("Signature verification : " + Curve25519.getInstance("best").verifySignature(this.publicKey, messageHash, signature));
 			String signatureBase64 = Base64.getUrlEncoder().encodeToString(signature);
 			jObject.append("version", ENV.VERSION_NO);
 			jObject.append("message", this.broadCastMessage);
