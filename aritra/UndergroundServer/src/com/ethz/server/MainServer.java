@@ -133,6 +133,8 @@ public class MainServer extends HttpServlet {
 		System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
 		System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 		
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		
 		if(flag == null)
 		{
 			response.getWriter().append("No valid parameter");
@@ -242,16 +244,16 @@ public class MainServer extends HttpServlet {
 			byte[] signature = Curve25519.getInstance("best").calculateSignature(this.privateKey, messageHash);
 			//test
 			//System.out.println("Hash : " + Base64.getUrlEncoder().encodeToString(messageHash));
-			//System.out.println("pk : " + Base64.getUrlEncoder().encodeToString(this.privateKey));
-			//System.out.println("sk : " + Base64.getUrlEncoder().encodeToString(this.publicKey));
-			//System.out.println("signature : " + Base64.getUrlEncoder().encodeToString(signature));
+			//System.out.println("sk : " + Base64.getUrlEncoder().encodeToString(this.privateKey));
+			System.out.println("pk : " + Base64.getUrlEncoder().encodeToString(this.publicKey));
+			System.out.println("signature : " + Base64.getUrlEncoder().encodeToString(signature));
 			
 			
 			System.out.println("Signature verification : " + Curve25519.getInstance("best").verifySignature(this.publicKey, messageHash, signature));
 			String signatureBase64 = Base64.getUrlEncoder().encodeToString(signature);
-			jObject.append("version", ENV.VERSION_NO);
-			jObject.append("message", this.broadCastMessage);
-			jObject.append("signature", signatureBase64);
+			jObject.put("version", ENV.VERSION_NO);
+			jObject.put("message", this.broadCastMessage);
+			jObject.put("signature", signatureBase64);
 			
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
