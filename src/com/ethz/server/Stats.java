@@ -4,5 +4,7 @@ public class Stats {
 	
 	public static long TOTAL_CONNECTIONS = 0;
 	public static long LIVE_CONNECTIONS = 0;
+	
+	public static boolean keygen_done = false;
 
 }
