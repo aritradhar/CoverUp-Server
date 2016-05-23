@@ -182,8 +182,8 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("admin"))
 		{
-			StringBuffer responseStr = new StringBuffer("Total connection : " + Stats.TOTAL_CONNECTIONS + "\n live connections : " + Stats.LIVE_CONNECTIONS + "\n");
-			responseStr.append("Unique IP addresses");
+			StringBuffer responseStr = new StringBuffer("Total connection : " + Stats.TOTAL_CONNECTIONS + "\nlive connections : " + Stats.LIVE_CONNECTIONS + "\n");
+			responseStr.append("Unique IP addresses\n");
 			
 			for(String address : Stats.UNIQUE_IP_ADDRESSES)
 				responseStr.append(address + "\n");
