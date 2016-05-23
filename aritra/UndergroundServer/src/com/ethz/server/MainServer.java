@@ -130,6 +130,9 @@ public class MainServer extends HttpServlet {
 
 		String flag = request.getParameter("flag");
 		
+		String remoteAddress = request.getRemoteAddr();
+		Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
+		
 		System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
 		System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 		
@@ -179,8 +182,14 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("admin"))
 		{
-			String responseStr = "Total connection : " + Stats.TOTAL_CONNECTIONS + "\n live connections : " + Stats.LIVE_CONNECTIONS;
-			response.getWriter().append(responseStr);
+			StringBuffer responseStr = new StringBuffer("Total connection : " + Stats.TOTAL_CONNECTIONS + "\n live connections : " + Stats.LIVE_CONNECTIONS + "\n");
+			responseStr.append("Unique IP addresses");
+			
+			for(String address : Stats.UNIQUE_IP_ADDRESSES)
+				responseStr.append(address + "\n");
+			
+			
+			response.getWriter().append(responseStr.toString());
 			response.flushBuffer();
 		}
 		
