@@ -24,6 +24,8 @@ import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
+import com.ethz.dataStructures.SiteMap;
+
 /**
  * Servlet implementation class MainServer
  */
@@ -74,6 +76,9 @@ public class MainServer extends HttpServlet {
 		
 		//System.out.println(this.broadCastMessage);
 		
+		//initialize site map
+		SiteMap.randomInitialization(100);
+		
 		System.out.println("Started...");
 
 
@@ -111,22 +116,19 @@ public class MainServer extends HttpServlet {
 		this.privateKey = keypair.getPrivateKey();
 	}
 	
-	
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Right now we are supporting both GET and POST message. Later we have to stop supporting any GET call to this server
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
 		doPost(request,response);
 		//response.getWriter().append("Get request to this server is not supported");
 		
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
 
 		String flag = request.getParameter("flag");
 		
@@ -238,34 +240,22 @@ public class MainServer extends HttpServlet {
 			Stats.TOTAL_CONNECTIONS++;
 			Stats.LIVE_CONNECTIONS++;
 			
+			String requestBody = ServerUtil.GetBody(request);
 			
-			JSONObject jObject = new JSONObject();
-			byte[] messageBytes = this.broadCastMessage.getBytes();
-			byte[] messageHash = null;
-			try {
-				messageHash = MessageDigest.getInstance("sha-512").digest(messageBytes);
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			System.out.println("Body " + requestBody);
 			
-			//System.out.println(messageBytes.length);
-			byte[] signature = Curve25519.getInstance("best").calculateSignature(this.privateKey, messageHash);
-			//test
-			//System.out.println("Hash : " + Base64.getUrlEncoder().encodeToString(messageHash));
-			//System.out.println("sk : " + Base64.getUrlEncoder().encodeToString(this.privateKey));
-			System.out.println("pk : " + Base64.getUrlEncoder().encodeToString(this.publicKey));
-			System.out.println("signature : " + Base64.getUrlEncoder().encodeToString(signature));
+			JSONObject jObject = null;
+			if(requestBody.length() == 0)
+				jObject = ServerUtil.broadcastJson(this.broadCastMessage, this.publicKey, this.privateKey);
 			
-			
-			System.out.println("Signature verification : " + Curve25519.getInstance("best").verifySignature(this.publicKey, messageHash, signature));
-			String signatureBase64 = Base64.getUrlEncoder().encodeToString(signature);
-			jObject.put("version", ENV.VERSION_NO);
-			jObject.put("message", this.broadCastMessage);
-			jObject.put("signature", signatureBase64);
-			
+				
+	
+			else if(requestBody.equals("tableRequest"))
+				jObject = new JSONObject(SiteMap.SITE_MAP);
+	
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
+			
 		}
 		
 		else if(flag.equals("end"))
