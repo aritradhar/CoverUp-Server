@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,7 +78,7 @@ public class MainServer extends HttpServlet {
 		//System.out.println(this.broadCastMessage);
 		
 		//initialize site map
-		SiteMap.randomInitialization(100);
+		SiteMap.randomInitialization(20);
 		
 		System.out.println("Started...");
 
@@ -252,7 +253,21 @@ public class MainServer extends HttpServlet {
 	
 			else if(requestBody.equals("tableRequest"))
 				jObject = new JSONObject(SiteMap.SITE_MAP);
-	
+			
+			//test
+			/*JSONObject tmp = new JSONObject(jObject.toString());
+			Iterator<String> keys = tmp.keys();
+			while(keys.hasNext())
+			{
+				String key = keys.next();
+				String value = tmp.getString(key);
+				
+				System.out.println("key : " + key + " | value : " + value);
+			}
+			*/
+			
+			System.out.println(jObject.toString());
+			
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 			
