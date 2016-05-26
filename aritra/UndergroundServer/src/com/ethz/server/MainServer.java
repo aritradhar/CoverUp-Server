@@ -1,18 +1,23 @@
 package com.ethz.server;
 
-import java.io.BufferedReader;
+import static net.fec.openrq.parameters.ParameterChecker.minDataLength;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -21,11 +26,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
 import com.ethz.dataStructures.SiteMap;
+
+import net.fec.openrq.ArrayDataEncoder;
+import net.fec.openrq.EncodingPacket;
+import net.fec.openrq.OpenRQ;
+import net.fec.openrq.encoder.SourceBlockEncoder;
+import net.fec.openrq.parameters.FECParameters;
 
 /**
  * Servlet implementation class MainServer
@@ -78,6 +90,7 @@ public class MainServer extends HttpServlet {
 		//System.out.println(this.broadCastMessage);
 		
 		//initialize site map
+		//random initialization for testing
 		SiteMap.randomInitialization(20);
 		
 		System.out.println("Started...");
@@ -236,6 +249,7 @@ public class MainServer extends HttpServlet {
 			response.flushBuffer();
 		}
 		
+		//request for sending broadcast json
 		else if(flag.equals("broadCastjson"))
 		{
 			Stats.TOTAL_CONNECTIONS++;
@@ -266,11 +280,56 @@ public class MainServer extends HttpServlet {
 			}
 			*/
 			
-			System.out.println(jObject.toString());
+			//System.out.println(jObject.toString());
 			
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 			
+		}
+		
+		//request for the sitemap table
+		else if(flag.equals("tableRequest"))
+		{
+			JSONObject jObject = new JSONObject(SiteMap.SITE_MAP);
+			//System.out.println(jObject.toString(2));
+			response.getWriter().append(jObject.toString(2));
+			response.flushBuffer();
+		}
+		
+		else if(flag.equals("getFountain"))
+		{
+			JSONObject jObject = new JSONObject();
+			
+			byte[] data = new byte[1024];
+			Arrays.fill(data, (byte)0x01);
+			
+			int dataLen = data.length;
+			if (dataLen < minDataLength())
+	            throw new IllegalArgumentException("data length is too small");
+	        if (dataLen > ENV.MAX_DATA_LEN)
+	            throw new IllegalArgumentException("data length is too large");
+	        
+			FECParameters param = FECParameters.deriveParameters(dataLen, ENV.PAY_LEN, ENV.MAX_DEC_MEM);
+			
+			byte[] paramByte = param.asArray();
+			String parambase64 = Base64.getUrlEncoder().encodeToString(paramByte);
+			jObject.put("param", parambase64);
+			
+			JSONArray jArray = new JSONArray();
+			
+			ArrayDataEncoder enc = OpenRQ.newEncoder(data, param); 
+			
+			for (SourceBlockEncoder sbEnc : enc.sourceBlockIterable()) 
+			{
+				//send individual packet to the client
+				 for (EncodingPacket pac : sbEnc.sourcePacketsIterable()) 			 
+					 jArray.put(Base64.getUrlEncoder().encodeToString(pac.asArray()));
+
+			}
+			jObject.put("packet", jArray);
+			
+			response.getWriter().append(jObject.toString(2));
+			response.flushBuffer();
 		}
 		
 		else if(flag.equals("end"))
