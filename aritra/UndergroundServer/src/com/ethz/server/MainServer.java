@@ -4,7 +4,9 @@ import static net.fec.openrq.parameters.ParameterChecker.minDataLength;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
@@ -121,13 +123,40 @@ public class MainServer extends HttpServlet {
 		return sb.toString();
 	}
 
-	private void keyGeneration()
+	private void keyGeneration() throws IOException
 	{
 		Stats.keygen_done = true;
 		
-		Curve25519KeyPair keypair = Curve25519.getInstance("best").generateKeyPair();
-		this.publicKey = keypair.getPublicKey();
-		this.privateKey = keypair.getPrivateKey();
+		if(new File("pk.key").exists() && new File("pk.key").length() > 0 && new File("sk.key").exists() && new File("sk.key").length() > 0 )
+		{
+			System.err.println("Key file exists");
+			
+			BufferedReader pkBr = new BufferedReader(new FileReader("pk.key")); 
+			this.publicKey = Base64.getUrlDecoder().decode(pkBr.readLine());
+			pkBr.close();
+			
+			BufferedReader skBr = new BufferedReader(new FileReader("sk.key")); 
+			this.privateKey = Base64.getUrlDecoder().decode(skBr.readLine());
+			skBr.close();
+			
+			return;
+		}
+		else
+		{
+			System.err.println("Key file not found. Regenerating keyfile");
+			
+			FileWriter pkFw = new FileWriter("pk.key");
+			FileWriter skFw = new FileWriter("sk.key");
+		
+			Curve25519KeyPair keypair = Curve25519.getInstance("best").generateKeyPair();
+			this.publicKey = keypair.getPublicKey();
+			pkFw.write(Base64.getUrlEncoder().encodeToString(this.publicKey));
+			this.privateKey = keypair.getPrivateKey();
+			skFw.write(Base64.getUrlEncoder().encodeToString(this.privateKey));
+			
+			pkFw.close();
+			skFw.close();
+		}
 	}
 	
 	/**
@@ -264,7 +293,6 @@ public class MainServer extends HttpServlet {
 				jObject = ServerUtil.broadcastJson(this.broadCastMessage, this.publicKey, this.privateKey);
 			
 				
-	
 			else if(requestBody.equals("tableRequest"))
 				jObject = new JSONObject(SiteMap.SITE_MAP);
 			
