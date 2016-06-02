@@ -83,6 +83,6 @@ public class FountainTableRow
 		jObject.put("len", this.datalenBeforPadding);
 		jObject.put("dropletLoc", this.dropletLoc);
 		
-		return jObject.toString();
+		return jObject.toString(2);
 	}
 }
