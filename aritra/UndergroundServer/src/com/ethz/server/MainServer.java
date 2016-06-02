@@ -286,7 +286,7 @@ public class MainServer extends HttpServlet {
 			
 			String requestBody = ServerUtil.GetBody(request);
 			
-			System.out.println("Body " + requestBody);
+			//System.out.println("Body " + requestBody);
 			
 			JSONObject jObject = null;
 			if(requestBody.length() == 0)
