@@ -98,6 +98,14 @@ public class SiteMap {
 		
 		TABLE_MAP = new HashMap<>();
 		
+		File file = new File(ENV.SITE_TABLE_LOC);
+		if(!file.exists())
+		{
+			System.out.println("Site table not found. Regenerating");
+			file.createNewFile();
+			updated = false;
+			return;
+		}
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
 		String st = null;
 		StringBuffer stb = new StringBuffer();
