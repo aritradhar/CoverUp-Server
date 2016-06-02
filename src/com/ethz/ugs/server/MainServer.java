@@ -357,8 +357,37 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Request contains no url id");
 				response.flushBuffer();
 			}
+			
+			String dropletStr = SiteMap.getRandomDroplet(url);
+			
+			JSONObject jObject = new JSONObject();
+			
+			byte[] dropletByte = dropletStr.getBytes(StandardCharsets.UTF_8);
+			byte[] signatureBytes = null;
+			String signatureBase64 = null;
+			
+			try 
+			{
+				
+				MessageDigest md = MessageDigest.getInstance("SHA-256");
+				byte[] hashtableBytes = md.digest(dropletByte);
+				signatureBytes = Curve25519.getInstance("best").calculateSignature(this.privateKey, hashtableBytes);
+				signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
+			} 
+			
+			catch (NoSuchAlgorithmException e) 
+			{
+				e.printStackTrace();
+				response.getWriter().append("Exception happed in crypto part!!");
+				response.flushBuffer();
+			}
+			
+			
+			jObject.put("url", url);
+			jObject.put("droplet", dropletStr);
+			jObject.put("signature", signatureBase64);	
 					
-			response.getWriter().append("");
+			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 		}
 		
