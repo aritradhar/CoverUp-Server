@@ -30,6 +30,7 @@ import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
 import com.ethz.ugs.dataStructures.SiteMap;
+import com.ethz.ugs.test.Test;
 
 
 /**
@@ -52,7 +53,7 @@ public class MainServer extends HttpServlet {
 	public String broadCastMessage;
 	
 	
-	public MainServer() throws IOException {
+	public MainServer() throws IOException, InterruptedException {
 		super();
 		
 		this.sharedSecretMap = new HashMap<>();
@@ -85,6 +86,10 @@ public class MainServer extends HttpServlet {
 		//initialize site map
 		//random initialization for testing
 		//SiteMap.randomInitialization(20);
+		//TODO test
+		//dummy initialization
+		Test.main(null);
+		
 		
 		System.out.println("Started...");
 	}
@@ -305,9 +310,9 @@ public class MainServer extends HttpServlet {
 		
 		
 		//request for the sitemap table
-		else if(flag.equals("tableRequest"))
+		else if(flag.equals("tablePlease"))
 		{
-			JSONObject jObject = new JSONObject(SiteMap.SITE_MAP);
+			JSONObject jObject = new JSONObject();
 
 			String theTable = SiteMap.getTable();
 			
@@ -319,7 +324,7 @@ public class MainServer extends HttpServlet {
 			try 
 			{
 				
-				MessageDigest md = MessageDigest.getInstance("sha-256");
+				MessageDigest md = MessageDigest.getInstance("SHA-256");
 				byte[] hashtableBytes = md.digest(theTableBytes);
 				signatureBytes = Curve25519.getInstance("best").calculateSignature(this.privateKey, hashtableBytes);
 				signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
@@ -328,10 +333,6 @@ public class MainServer extends HttpServlet {
 			catch (NoSuchAlgorithmException e) 
 			{
 				e.printStackTrace();
-			}
-			
-			finally
-			{
 				response.getWriter().append("Exception happed in crypto part!!");
 				response.flushBuffer();
 			}
@@ -339,8 +340,7 @@ public class MainServer extends HttpServlet {
 			jObject.put("table", theTable);
 			jObject.put("signature", signatureBase64);
 			
-			
-			
+				
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 		}

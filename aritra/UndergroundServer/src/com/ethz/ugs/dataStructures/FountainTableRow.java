@@ -28,7 +28,7 @@ public class FountainTableRow
 		File file = new File(this.url);
 		this.data = Files.readAllBytes(file.toPath());
 
-		System.out.println("Size : " + data.length);
+		//System.out.println("Size : " + data.length);
 		
 		this.seed = new byte[32];
 		new Random().nextBytes(seed);
