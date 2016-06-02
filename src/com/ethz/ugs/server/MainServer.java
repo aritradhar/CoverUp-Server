@@ -1,25 +1,22 @@
 package com.ethz.ugs.server;
 
-import static net.fec.openrq.parameters.ParameterChecker.minDataLength;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
+
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -28,18 +25,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
 import com.ethz.ugs.dataStructures.SiteMap;
 
-import net.fec.openrq.ArrayDataEncoder;
-import net.fec.openrq.EncodingPacket;
-import net.fec.openrq.OpenRQ;
-import net.fec.openrq.encoder.SourceBlockEncoder;
-import net.fec.openrq.parameters.FECParameters;
 
 /**
  * Servlet implementation class MainServer
@@ -96,9 +87,6 @@ public class MainServer extends HttpServlet {
 		//SiteMap.randomInitialization(20);
 		
 		System.out.println("Started...");
-
-
-		// TODO Auto-generated constructor stub
 	}
 	
 	private String readBroadcastFile() throws IOException
@@ -315,14 +303,50 @@ public class MainServer extends HttpServlet {
 			
 		}
 		
+		
 		//request for the sitemap table
 		else if(flag.equals("tableRequest"))
 		{
 			JSONObject jObject = new JSONObject(SiteMap.SITE_MAP);
 
+			String theTable = SiteMap.getTable();
+			
+			
+			byte[] theTableBytes = theTable.getBytes(StandardCharsets.UTF_8);
+			byte[] signatureBytes = null;
+			String signatureBase64 = null;
+			
+			try 
+			{
+				
+				MessageDigest md = MessageDigest.getInstance("sha-256");
+				byte[] hashtableBytes = md.digest(theTableBytes);
+				signatureBytes = Curve25519.getInstance("best").calculateSignature(this.privateKey, hashtableBytes);
+				signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
+			} 
+			
+			catch (NoSuchAlgorithmException e) 
+			{
+				e.printStackTrace();
+			}
+			
+			finally
+			{
+				response.getWriter().append("Exception happed in crypto part!!");
+				response.flushBuffer();
+			}
+			
+			jObject.put("table", theTable);
+			jObject.put("signature", signatureBase64);
+			
+			
+			
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 		}
+		
+		
+		//TODO complete this after table request response is done 
 		
 		else if(flag.equals("dropletPlease"))
 		{
@@ -333,9 +357,7 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Request contains no url id");
 				response.flushBuffer();
 			}
-			
-			
-			
+					
 			response.getWriter().append("");
 			response.flushBuffer();
 		}

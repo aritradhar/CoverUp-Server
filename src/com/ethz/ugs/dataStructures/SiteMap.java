@@ -42,6 +42,8 @@ public class SiteMap {
 			return TABLE_STRING;
 		else
 		{
+			saveTable();
+			
 			BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
 			String st = null;
 			StringBuffer stb = new StringBuffer();
@@ -112,6 +114,12 @@ public class SiteMap {
 		br.close();
 	}
 	
+	/**
+	 * Here is your nice random droplet. Enjoy!
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
 	public static String getRandomDroplet(String url) throws IOException
 	{		
 		FountainTableRow row = SiteMap.TABLE_MAP.get(url);
