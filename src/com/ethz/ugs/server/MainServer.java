@@ -324,37 +324,10 @@ public class MainServer extends HttpServlet {
 			response.flushBuffer();
 		}
 		
+		//TODO
 		else if(flag.equals("getFountain"))
 		{
 			JSONObject jObject = new JSONObject();
-			
-			byte[] data = new byte[1024];
-			Arrays.fill(data, (byte)0x01);
-			
-			int dataLen = data.length;
-			if (dataLen < minDataLength())
-	            throw new IllegalArgumentException("data length is too small");
-	        if (dataLen > ENV.MAX_DATA_LEN)
-	            throw new IllegalArgumentException("data length is too large");
-	        
-			FECParameters param = FECParameters.deriveParameters(dataLen, ENV.PAY_LEN, ENV.MAX_DEC_MEM);
-			
-			byte[] paramByte = param.asArray();
-			String parambase64 = Base64.getUrlEncoder().encodeToString(paramByte);
-			jObject.put("param", parambase64);
-			
-			JSONArray jArray = new JSONArray();
-			
-			ArrayDataEncoder enc = OpenRQ.newEncoder(data, param); 
-			
-			for (SourceBlockEncoder sbEnc : enc.sourceBlockIterable()) 
-			{
-				//send individual packet to the client
-				 for (EncodingPacket pac : sbEnc.sourcePacketsIterable()) 			 
-					 jArray.put(Base64.getUrlEncoder().encodeToString(pac.asArray()));
-
-			}
-			jObject.put("packet", jArray);
 			
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
