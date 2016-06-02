@@ -1,4 +1,4 @@
-package com.ethz.server;
+package com.ethz.ugs.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
