@@ -45,7 +45,7 @@ public class SiteMap {
 			saveTable();
 			
 			BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
-			String st = null;
+			String st;
 			StringBuffer stb = new StringBuffer();
 			
 			while((st = br.readLine()) != null)
@@ -65,6 +65,7 @@ public class SiteMap {
 		updated = false;
 		
 		FileWriter fw = new FileWriter(ENV.SITE_TABLE_LOC);
+		System.out.println(new File(ENV.SITE_TABLE_LOC).getAbsolutePath());
 		JSONObject jObject = new JSONObject();
 		
 		JSONArray jArray = new JSONArray();

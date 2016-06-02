@@ -5,6 +5,15 @@ import java.io.IOException;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 
+class DummyInit
+{
+	public static void init() throws IOException
+	{
+		Test.main(null);
+	}
+}
+
+
 public class Test 
 {
 	
@@ -21,13 +30,13 @@ public class Test
 		
 		SiteMap.insertRowToTable("C:\\4k wallpapers\\Space\\wallhaven-4578.png", row1);
 		SiteMap.insertRowToTable("C:\\4k wallpapers\\Space\\wallhaven-26542.jpg", row2);
+		
+		
 		SiteMap.saveTable();
 		
 		SiteMap.loadTable();
 		
-		System.out.println("done");
-	}
-
-	
+		System.out.println("---------------------done----------------------");
+	}	
 	
 }
