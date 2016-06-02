@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
-import com.ethz.dataStructures.SiteMap;
+import com.ethz.ugs.dataStructures.SiteMap;
 
 import net.fec.openrq.ArrayDataEncoder;
 import net.fec.openrq.EncodingPacket;
