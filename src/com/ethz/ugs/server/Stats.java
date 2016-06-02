@@ -1,4 +1,4 @@
-package com.ethz.server;
+package com.ethz.ugs.server;
 
 import java.util.HashSet;
 import java.util.Set;

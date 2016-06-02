@@ -1,4 +1,4 @@
-package com.ethz.server;
+package com.ethz.ugs.server;
 
 import static net.fec.openrq.parameters.ParameterChecker.maxAllowedDataLength;
 
