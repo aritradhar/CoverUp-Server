@@ -49,7 +49,7 @@ public class SiteMap {
 		}
 		jObject.put("table", jArray);
 		
-		fw.write(jObject.toString(2));
+		fw.write(jObject.toString());
 		fw.close();
 	}
 	

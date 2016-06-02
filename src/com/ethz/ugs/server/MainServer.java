@@ -93,7 +93,7 @@ public class MainServer extends HttpServlet {
 		
 		//initialize site map
 		//random initialization for testing
-		SiteMap.randomInitialization(20);
+		//SiteMap.randomInitialization(20);
 		
 		System.out.println("Started...");
 
