@@ -1,4 +1,4 @@
-package com.ethz.dataStructures;
+package com.ethz.ugs.dataStructures;
 
 import java.util.Base64;
 import java.util.HashMap;
