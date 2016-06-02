@@ -18,11 +18,5 @@
 			<attribute name="javadoc_location" value="http://stleary.github.io/JSON-java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/lib/Raptor/openrq-3.3.2.jar" sourcepath="C:/lib/Raptor/OpenRQ-3.3.2.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://openrq-team.github.io/openrq/docs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/lib/fountain2_0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

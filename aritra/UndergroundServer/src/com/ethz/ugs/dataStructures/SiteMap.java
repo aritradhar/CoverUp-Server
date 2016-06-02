@@ -12,6 +12,7 @@ import java.util.Random;
  */
 public class SiteMap {
 
+	
 	//title -> link
 	public static Map<String, String> SITE_MAP = new HashMap<>();
 	
