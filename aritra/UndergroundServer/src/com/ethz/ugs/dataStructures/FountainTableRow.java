@@ -42,8 +42,10 @@ public class FountainTableRow
 		f.mkdir();
 	}
 	
-	public FountainTableRow(JSONObject jObject) throws IOException
+	public FountainTableRow(String jsonString) throws IOException
 	{
+		JSONObject jObject = new JSONObject(jsonString);
+		
 		this.url = jObject.getString("url");
 		this.num_chunks = jObject.getInt("num_chunks");
 		this.chunk_size = jObject.getInt("chunk_size");

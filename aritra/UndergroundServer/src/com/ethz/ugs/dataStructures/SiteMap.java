@@ -65,6 +65,7 @@ public class SiteMap {
 			stb.append(st);
 		
 		System.out.println(stb);
+		
 		JSONObject jObject = new JSONObject(stb.toString());
 		
 		JSONArray jarray = jObject.getJSONArray("table");
@@ -73,9 +74,11 @@ public class SiteMap {
 		{
 			JSONObject inObj = jarray.getJSONObject(i);
 			String url = inObj.getString("key");
-			inObj.get("value");
+			String tabRowStr = inObj.getString("value");
+			FountainTableRow deserializedTableRow = new FountainTableRow(tabRowStr);
+			
+			TABLE_MAP.put(url, deserializedTableRow);
 		}
-		//jObject.ge
 		
 		br.close();
 	}
