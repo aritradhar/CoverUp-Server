@@ -31,9 +31,18 @@ public class SiteMap {
 	
 	public static void insertRowToTable(String url, FountainTableRow tableRow) throws IOException
 	{
+		if(SiteMap.TABLE_MAP.containsKey(url))
+		{
+			System.out.println("Row added with url : " + tableRow.url + " already exists");
+			return;
+		}
+		
+		
 		SiteMap.TABLE_MAP.put(url, tableRow);
 		saveTable();
 		updated = false;
+		
+		System.out.println("Row added with url : " + tableRow.url);
 	}
 	
 	public static String getTable() throws IOException
@@ -65,7 +74,7 @@ public class SiteMap {
 		updated = false;
 		
 		FileWriter fw = new FileWriter(ENV.SITE_TABLE_LOC);
-		System.out.println(new File(ENV.SITE_TABLE_LOC).getAbsolutePath());
+		//System.out.println(new File(ENV.SITE_TABLE_LOC).getAbsolutePath());
 		JSONObject jObject = new JSONObject();
 		
 		JSONArray jArray = new JSONArray();
