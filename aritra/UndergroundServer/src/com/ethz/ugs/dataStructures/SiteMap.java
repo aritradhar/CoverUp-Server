@@ -1,7 +1,7 @@
 package com.ethz.ugs.dataStructures;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,15 +26,42 @@ public class SiteMap {
 	public static Map<String, FountainTableRow> TABLE_MAP = new HashMap<>();
 	//title -> link
 	public static Map<String, String> SITE_MAP = new HashMap<>();
+	public static boolean updated = false;
+	public static volatile String TABLE_STRING;
 	
-	
-	public static void insertRowToTable(String url, FountainTableRow tableRow)
+	public static void insertRowToTable(String url, FountainTableRow tableRow) throws IOException
 	{
 		SiteMap.TABLE_MAP.put(url, tableRow);
+		saveTable();
+		updated = false;
+	}
+	
+	public static String getTable() throws IOException
+	{
+		if(updated)
+			return TABLE_STRING;
+		else
+		{
+			BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
+			String st = null;
+			StringBuffer stb = new StringBuffer();
+			
+			while((st = br.readLine()) != null)
+				stb.append(st);
+			
+			br.close();
+			
+			TABLE_STRING = stb.toString();
+			updated = true;
+			
+			return TABLE_STRING;
+		}
 	}
 	
 	public static void saveTable() throws IOException
 	{
+		updated = false;
+		
 		FileWriter fw = new FileWriter(ENV.SITE_TABLE_LOC);
 		JSONObject jObject = new JSONObject();
 		
@@ -55,6 +82,8 @@ public class SiteMap {
 	
 	public static void loadTable() throws IOException
 	{
+		updated = false;
+		
 		TABLE_MAP = new HashMap<>();
 		
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
@@ -83,7 +112,33 @@ public class SiteMap {
 		br.close();
 	}
 	
+	public static String getRandomDroplet(String url) throws IOException
+	{		
+		FountainTableRow row = SiteMap.TABLE_MAP.get(url);
+		String dropletLocation = row.dropletLoc;
+		
+		File dropletDir = new File(dropletLocation);
+		if(!dropletDir.isDirectory())
+			throw new RuntimeException("Error in droplet dir!");
+		
+		//get a random droplet file
+		File randDropletFile = dropletDir.listFiles()[new Random().nextInt(dropletDir.listFiles().length)];
+		
+		BufferedReader br = new BufferedReader(new FileReader(randDropletFile));
+		
+		String st = null;
+		StringBuffer stb = new StringBuffer();
+		
+		while((st = br.readLine()) != null)
+			stb.append(st);
+		
+		br.close();
+		
+		return stb.toString();
+	}
 	
+	//old test code
+	/////////////////////////////////////////////////////////
 	public static void inserToSiteMap(String title, String link)
 	{
 		SiteMap.SITE_MAP.put(title, link);

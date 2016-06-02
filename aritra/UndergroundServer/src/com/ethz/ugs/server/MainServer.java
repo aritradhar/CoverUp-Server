@@ -319,17 +319,24 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("tableRequest"))
 		{
 			JSONObject jObject = new JSONObject(SiteMap.SITE_MAP);
-			//System.out.println(jObject.toString(2));
+
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
 		}
 		
-		//TODO
-		else if(flag.equals("getFountain"))
+		else if(flag.equals("dropletPlease"))
 		{
-			JSONObject jObject = new JSONObject();
+			String url = request.getParameter("url");
 			
-			response.getWriter().append(jObject.toString(2));
+			if(url == null)
+			{
+				response.getWriter().append("Request contains no url id");
+				response.flushBuffer();
+			}
+			
+			
+			
+			response.getWriter().append("");
 			response.flushBuffer();
 		}
 		
