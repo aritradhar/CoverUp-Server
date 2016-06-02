@@ -25,7 +25,7 @@ public class FountainTableRow
 		this.url = url;
 		this.chunk_size = chunk_size;
 		this.droplet_count = droplet_count;
-		File file = new File(url);
+		File file = new File(this.url);
 		this.data = Files.readAllBytes(file.toPath());
 
 		System.out.println("Size : " + data.length);
@@ -33,7 +33,7 @@ public class FountainTableRow
 		this.seed = new byte[32];
 		new Random().nextBytes(seed);
 
-		this.fountain = new Fountain(data, chunk_size, seed);
+		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
 		this.num_chunks = fountain.chunk_size;
 		this.datalenBeforPadding = fountain.dataLenBeforPadding;
 
@@ -42,7 +42,7 @@ public class FountainTableRow
 		f.mkdir();
 	}
 	
-	public FountainTableRow(JSONObject jObject)
+	public FountainTableRow(JSONObject jObject) throws IOException
 	{
 		this.url = jObject.getString("url");
 		this.num_chunks = jObject.getInt("num_chunks");
@@ -50,6 +50,11 @@ public class FountainTableRow
 		this.seed = Base64.getUrlDecoder().decode(jObject.getString("seed"));
 		this.datalenBeforPadding = jObject.getInt("len");
 		this.dropletLoc = jObject.getString("dropletLoc");
+		
+		File file = new File(this.url);
+		this.data = Files.readAllBytes(file.toPath());
+		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
+		
 	}
 	
 	public void makeDroplets() throws IOException
