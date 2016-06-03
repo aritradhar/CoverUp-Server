@@ -362,6 +362,10 @@ public class MainServer extends HttpServlet {
 			
 			JSONObject jObject = new JSONObject();
 			
+			//sign droplet|url
+			
+			dropletStr = dropletStr.concat(url);
+			
 			byte[] dropletByte = dropletStr.getBytes(StandardCharsets.UTF_8);
 			byte[] signatureBytes = null;
 			String signatureBase64 = null;
