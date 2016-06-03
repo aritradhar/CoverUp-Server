@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,7 +94,7 @@ public class SiteMap {
 		fw.close();
 	}
 	
-	public static void loadTable() throws IOException
+	public static void loadTable() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
 		updated = false;
 		

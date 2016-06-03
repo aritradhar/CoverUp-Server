@@ -1,0 +1,1 @@
+{"table":[{"value":"{\n  \"chunk_size\": 10000,\n  \"dropletLoc\": \"251505798\",\n  \"seed\": \"XPwqDwWeNslCpqStrJfnG2y8_QIcg02hM_28P0ghklE=\",\n  \"len\": 71918,\n  \"num_chunks\": 10000,\n  \"url\": \"C:\\\\1.txt\"\n}","key":"C:\\1.txt"}]}
