@@ -165,7 +165,9 @@ public class MainServer extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
-
+		
+		System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
+		
 		String flag = request.getParameter("flag");
 		
 		String remoteAddress = request.getRemoteAddr();
@@ -364,17 +366,22 @@ public class MainServer extends HttpServlet {
 			
 			//sign droplet|url
 			
-			dropletStr = dropletStr.concat(url);
+			String dropletStrMod = dropletStr.concat(url);
 			
-			byte[] dropletByte = dropletStr.getBytes(StandardCharsets.UTF_8);
+			byte[] dropletByte = dropletStrMod.getBytes(StandardCharsets.UTF_8);
 			byte[] signatureBytes = null;
 			String signatureBase64 = null;
 			
+			
+			System.out.println("Droplet " + dropletByte.length);
 			try 
 			{
 				
 				MessageDigest md = MessageDigest.getInstance("SHA-256");
 				byte[] hashtableBytes = md.digest(dropletByte);
+				
+				System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
+				
 				signatureBytes = Curve25519.getInstance("best").calculateSignature(this.privateKey, hashtableBytes);
 				signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
 			} 
