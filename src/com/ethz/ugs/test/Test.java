@@ -26,7 +26,7 @@ public class Test
 		
 		if(System.getProperty("os.name").contains("Windows"))
 		{
-			FountainTableRow row1 = new FountainTableRow("C:\\1.txt", 10000, 1000);
+			FountainTableRow row1 = new FountainTableRow("C:\\1.txt", 10000, 50);
 			row1.makeDroplets();
 		
 		//System.out.println(row1.toString());
