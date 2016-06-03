@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class MainServer extends HttpServlet {
 	public String broadCastMessage;
 	
 	
-	public MainServer() throws IOException, InterruptedException {
+	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 		
 		this.sharedSecretMap = new HashMap<>();
@@ -138,9 +139,10 @@ public class MainServer extends HttpServlet {
 		{
 			System.err.println("Key file not found. Regenerating keyfile");
 			
+			
 			FileWriter pkFw = new FileWriter("pk.key");
 			FileWriter skFw = new FileWriter("sk.key");
-		
+			
 			Curve25519KeyPair keypair = Curve25519.getInstance("best").generateKeyPair();
 			this.publicKey = keypair.getPublicKey();
 			pkFw.write(Base64.getUrlEncoder().encodeToString(this.publicKey));

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Base64;
 import java.util.Random;
 
@@ -20,7 +22,7 @@ public class FountainTableRow
 	String dropletLoc;
 	byte[] seed;
 	
-	public FountainTableRow(String url, int chunk_size, int droplet_count) throws IOException 
+	public FountainTableRow(String url, int chunk_size, int droplet_count) throws IOException, NoSuchAlgorithmException, NoSuchProviderException 
 	{
 		this.url = url;
 		this.chunk_size = chunk_size;
@@ -42,7 +44,7 @@ public class FountainTableRow
 		f.mkdir();
 	}
 	
-	public FountainTableRow(String jsonString) throws IOException
+	public FountainTableRow(String jsonString) throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
 		JSONObject jObject = new JSONObject(jsonString);
 		
@@ -59,7 +61,7 @@ public class FountainTableRow
 		
 	}
 	
-	public void makeDroplets() throws IOException
+	public void makeDroplets() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
 		String delm = (System.getProperty("os.name").contains("Windows")) ? "\\" : "/";
 
