@@ -10,4 +10,6 @@ public class ENV {
 	public static final boolean ENABLE_COMPRESS = false;
 	
 	public static final int COMPRESSION_PRESET = 7;
+	
+	public static final int FIXED_PACKET_SIZE = 15000;
 }
