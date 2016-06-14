@@ -19,6 +19,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -359,10 +360,15 @@ public class MainServer extends HttpServlet {
 			jObject.put("table", theTable);
 			jObject.put("signature", signatureBase64);
 			
+			String responseString = jObject.toString();
+			int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
+			String randomPadding = ServerUtil.randomString(padLen);
+			jObject.put("pad", randomPadding);
+			
 			
 			if(ENV.ENABLE_COMPRESS)
 			{
-				byte[] bytes = jObject.toString(2).getBytes();
+				byte[] bytes = jObject.toString().getBytes();
 				
 				OutputStream output = response.getOutputStream();
 			    output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
@@ -371,7 +377,7 @@ public class MainServer extends HttpServlet {
 			}
 			
 			else
-				response.getWriter().append(jObject.toString(2));
+				response.getWriter().append(jObject.toString());
 			
 			response.flushBuffer();
 		}
@@ -418,7 +424,7 @@ public class MainServer extends HttpServlet {
 			catch (NoSuchAlgorithmException e) 
 			{
 				e.printStackTrace();
-				response.getWriter().append("Exception happed in crypto part!!");
+				response.getWriter().append("Exception in signature calculation!");
 				response.flushBuffer();
 			}
 			
@@ -426,11 +432,15 @@ public class MainServer extends HttpServlet {
 			jObject.put("url", url);
 			jObject.put("droplet", dropletStr);
 			jObject.put("signature", signatureBase64);	
-				
+			
+			String responseString = jObject.toString();
+			int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
+			String randomPadding = ServerUtil.randomString(padLen);
+			jObject.put("pad", randomPadding);
 			
 			if(ENV.ENABLE_COMPRESS)
 			{
-				byte[] bytes = jObject.toString(2).getBytes();
+				byte[] bytes = jObject.toString().getBytes();
 				
 				OutputStream output = response.getOutputStream();
 			    output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
@@ -438,7 +448,7 @@ public class MainServer extends HttpServlet {
 			    output.close();
 			}
 			else
-				response.getWriter().append(jObject.toString(2));
+				response.getWriter().append(jObject.toString());
 			
 			response.flushBuffer();
 		}
