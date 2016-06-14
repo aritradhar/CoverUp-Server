@@ -33,6 +33,7 @@ import org.tukaani.xz.XZOutputStream;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
+import com.ethz.ugs.compressUtil.CompressUtil;
 import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.test.Test;
 
@@ -313,27 +314,17 @@ public class MainServer extends HttpServlet {
 			if(ENV.ENABLE_COMPRESS)
 			{
 				byte[] bytes = jObject.toString(2).getBytes();
-				InputStream byteIpStream = new ByteArrayInputStream(bytes);
 				
-				OutputStream outStream = new ByteArrayOutputStream();
-					
-				LZMA2Options options = new LZMA2Options();
-				options.setPreset(7);
-				XZOutputStream out = new XZOutputStream(outStream, options);
-				byte[] buf = new byte[8192];
-				int size;
-				while ((size = byteIpStream.read(buf)) != -1)
-				   out.write(buf, 0, size);
-
-				out.finish();
-				
-				
-				//response.getOutputStream().w
+				OutputStream output = response.getOutputStream();
+			    output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
+			    output.flush();
+			    output.close();
 			}
 			
-			response.getWriter().append(jObject.toString(2));
-			response.flushBuffer();
+			else
+				response.getWriter().append(jObject.toString(2));
 			
+			response.flushBuffer();
 		}
 		
 		
@@ -368,8 +359,20 @@ public class MainServer extends HttpServlet {
 			jObject.put("table", theTable);
 			jObject.put("signature", signatureBase64);
 			
+			
+			if(ENV.ENABLE_COMPRESS)
+			{
+				byte[] bytes = jObject.toString(2).getBytes();
 				
-			response.getWriter().append(jObject.toString(2));
+				OutputStream output = response.getOutputStream();
+			    output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
+			    output.flush();
+			    output.close();
+			}
+			
+			else
+				response.getWriter().append(jObject.toString(2));
+			
 			response.flushBuffer();
 		}
 		
@@ -423,8 +426,20 @@ public class MainServer extends HttpServlet {
 			jObject.put("url", url);
 			jObject.put("droplet", dropletStr);
 			jObject.put("signature", signatureBase64);	
-					
-			response.getWriter().append(jObject.toString(2));
+				
+			
+			if(ENV.ENABLE_COMPRESS)
+			{
+				byte[] bytes = jObject.toString(2).getBytes();
+				
+				OutputStream output = response.getOutputStream();
+			    output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
+			    output.flush();
+			    output.close();
+			}
+			else
+				response.getWriter().append(jObject.toString(2));
+			
 			response.flushBuffer();
 		}
 		
