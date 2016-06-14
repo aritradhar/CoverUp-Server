@@ -7,4 +7,6 @@ public class ENV {
 	
 	public static final String SITE_TABLE_LOC = "SITE_TABLE.txt";
 	
+	public static final boolean ENABLE_COMPRESS = false;
+	
 }

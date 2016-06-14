@@ -18,5 +18,10 @@
 			<attribute name="javadoc_location" value="http://stleary.github.io/JSON-java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/lib/LZMA/xz-1.5.jar" sourcepath="C:/lib/LZMA/xz-1.5-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/lib/LZMA/xz-1.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

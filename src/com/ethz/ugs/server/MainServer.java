@@ -2,11 +2,13 @@ package com.ethz.ugs.server;
 
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -17,7 +19,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZOutputStream;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
@@ -306,6 +309,27 @@ public class MainServer extends HttpServlet {
 			*/
 			
 			//System.out.println(jObject.toString());
+			
+			if(ENV.ENABLE_COMPRESS)
+			{
+				byte[] bytes = jObject.toString(2).getBytes();
+				InputStream byteIpStream = new ByteArrayInputStream(bytes);
+				
+				OutputStream outStream = new ByteArrayOutputStream();
+					
+				LZMA2Options options = new LZMA2Options();
+				options.setPreset(7);
+				XZOutputStream out = new XZOutputStream(outStream, options);
+				byte[] buf = new byte[8192];
+				int size;
+				while ((size = byteIpStream.read(buf)) != -1)
+				   out.write(buf, 0, size);
+
+				out.finish();
+				
+				
+				//response.getOutputStream().w
+			}
 			
 			response.getWriter().append(jObject.toString(2));
 			response.flushBuffer();
