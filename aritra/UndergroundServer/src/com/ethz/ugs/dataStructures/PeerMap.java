@@ -50,18 +50,15 @@ public class PeerMap {
 				{				
 					lock = true;
 
-					int counter = 0;
-					for(String key : PEER_MAP.keySet())
-					{
-						if(System.currentTimeMillis() - PEER_MAP.get(key) > ENV.PEER_TIMEOUT)
-						{
+					//int counter = 0;
+					for(String key : PEER_MAP.keySet())				
+						if(System.currentTimeMillis() - PEER_MAP.get(key) > ENV.PEER_TIMEOUT)						
 							PEER_MAP.remove(key);
-							counter++;
-						}
-					}
+							//counter++;
+											
 					lock = false;
 					
-					System.out.println("done..." + counter);
+					//System.out.println("done..." + counter);
 				}
 			}
 		};
