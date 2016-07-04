@@ -20,40 +20,51 @@ class DummyInit
 
 public class Test 
 {
-	
+
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
-		
-		SiteMap.loadTable();
-		
+
+		boolean exists = SiteMap.loadTable();
+
 		if(System.getProperty("os.name").contains("Windows"))
 		{
-			FountainTableRow row1 = new FountainTableRow(ENV.SOURCE_DOCUMENT_LOCATION, 10000, 50);
-			row1.makeDroplets();
-		
-		//System.out.println(row1.toString());
-		
-			SiteMap.insertRowToTable("C:\\1.txt", row1);
+			if(!exists)
+			{
+				FountainTableRow row1 = new FountainTableRow(ENV.SOURCE_DOCUMENT_LOCATION, 10000, 50);
+				row1.makeDroplets();
+			
+			//System.out.println(row1.toString());
+
+				SiteMap.insertRowToTable("C:\\1.txt", row1);
+			}
+			else
+				System.out.println("Already exists in table. Skipped...");
+			
 		}
 		else
 		{
 			File[] files = new File(ENV.SOURCE_DOCUMENT_LOCATION).listFiles();
-			
+
 			for(File file : files)
 			{
-				FountainTableRow row = new FountainTableRow(file.getAbsolutePath(), 10000, 50);
-				row.makeDroplets();
-				
-				SiteMap.insertRowToTable(file.getAbsolutePath(), row);
+				if(!exists)
+				{
+					FountainTableRow row = new FountainTableRow(file.getAbsolutePath(), 10000, 50);
+					row.makeDroplets();
+
+					SiteMap.insertRowToTable(file.getAbsolutePath(), row);
+				}
+				else
+					System.out.println("Already exists in table. Skipped...");
 			}
-			
+
 		}
-		
-		
+
+
 		SiteMap.saveTable();
-		
+
 		//SiteMap.loadTable();
-		
+
 		System.out.println("---------------------done----------------------");
 	}	
-	
+
 }

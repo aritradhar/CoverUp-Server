@@ -94,7 +94,14 @@ public class SiteMap {
 		fw.close();
 	}
 	
-	public static void loadTable() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
+	/**
+	 * Validation check is due
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException
+	 */
+	public static boolean loadTable() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
 		updated = false;
 		
@@ -106,7 +113,7 @@ public class SiteMap {
 			System.out.println("Site table not found. Regenerating");
 			file.createNewFile();
 			updated = false;
-			return;
+			return false;
 		}
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
 		String st = null;
@@ -132,6 +139,8 @@ public class SiteMap {
 		}
 		
 		br.close();
+		
+		return true;
 	}
 	
 	/**
