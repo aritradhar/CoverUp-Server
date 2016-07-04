@@ -96,7 +96,6 @@ public class MainServer extends HttpServlet {
 		//dummy initialization
 		Test.main(null);
 		
-		
 		System.out.println("Started...");
 	}
 	

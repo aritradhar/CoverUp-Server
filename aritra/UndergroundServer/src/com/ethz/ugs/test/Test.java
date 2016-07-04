@@ -7,6 +7,7 @@ import java.security.NoSuchProviderException;
 
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
+import com.ethz.ugs.server.ENV;
 
 class DummyInit
 {
@@ -26,7 +27,7 @@ public class Test
 		
 		if(System.getProperty("os.name").contains("Windows"))
 		{
-			FountainTableRow row1 = new FountainTableRow("C:\\1.txt", 10000, 50);
+			FountainTableRow row1 = new FountainTableRow(ENV.SOURCE_DOCUMENT_LOCATION, 10000, 50);
 			row1.makeDroplets();
 		
 		//System.out.println(row1.toString());
@@ -35,7 +36,7 @@ public class Test
 		}
 		else
 		{
-			File[] files = new File("/home/dhara/contents/4k wallpapers/Space").listFiles();
+			File[] files = new File(ENV.SOURCE_DOCUMENT_LOCATION).listFiles();
 			
 			for(File file : files)
 			{
