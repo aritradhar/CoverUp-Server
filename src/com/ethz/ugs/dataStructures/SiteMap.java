@@ -113,7 +113,7 @@ public class SiteMap {
 			System.out.println("Site table not found. Regenerating");
 			file.createNewFile();
 			updated = false;
-			return false;
+			return true;
 		}
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
 		String st = null;
@@ -140,7 +140,7 @@ public class SiteMap {
 		
 		br.close();
 		
-		return true;
+		return false;
 	}
 	
 	/**
