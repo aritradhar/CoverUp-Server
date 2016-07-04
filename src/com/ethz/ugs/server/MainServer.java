@@ -82,7 +82,7 @@ public class MainServer extends HttpServlet {
 		br.close();
 		if(!Stats.keygen_done)
 		{
-			System.out.println("No keys. Generating...");
+			//System.out.println("No keys. Generating...");
 			keyGeneration();
 		}
 		this.broadCastMessage = this.readBroadcastFile();
