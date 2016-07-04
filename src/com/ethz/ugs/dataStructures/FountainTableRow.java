@@ -12,6 +12,7 @@ import java.util.Random;
 import org.json.JSONObject;
 
 import com.ethz.fountain.Fountain;
+import com.ethz.ugs.server.ENV;
 
 public class FountainTableRow 
 {
@@ -63,11 +64,11 @@ public class FountainTableRow
 	
 	public void makeDroplets() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
-		String delm = (System.getProperty("os.name").contains("Windows")) ? "\\" : "/";
+		//String delm = (System.getProperty("os.name").contains("Windows")) ? "\\" : "/";
 
 		for(int i = 0; i < this.droplet_count; i++)
 		{
-			FileWriter fw = new FileWriter(this.dropletLoc + delm + i  + ".json");
+			FileWriter fw = new FileWriter(this.dropletLoc + ENV.DELIM + i  + ".json");
 			fw.write(this.fountain.droplet().toString());
 			fw.close();
 		}

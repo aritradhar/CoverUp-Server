@@ -16,4 +16,16 @@ public class ENV {
 	public static final long PEER_TIMEOUT = 5500;
 	
 	public static final int PEER_CHECK_SCHEDULE = 1000;
+	
+	public static  String SOURCE_DOCUMENT_LOCATION = null;
+	
+	public static String DELIM = "";
+	
+	static
+	{
+		String OS = System.getProperty("os.name");
+		
+		SOURCE_DOCUMENT_LOCATION = (OS.contains("windows")) ? "C:\\1.txt" : "/home/dhara/contents/4k wallpapers/Space";
+		DELIM = (OS.contains("windows")) ? "\\" : "/"; 
+	}
 }
