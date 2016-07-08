@@ -25,7 +25,7 @@ public class ENV {
 	{
 		String OS = System.getProperty("os.name");
 		
-		SOURCE_DOCUMENT_LOCATION = (OS.contains("Windows")) ? "C:\\1.txt" : "/home/dhara/contents/4k wallpapers/Space";
+		SOURCE_DOCUMENT_LOCATION = (OS.contains("Windows")) ? "C:\\Source" : "/home/dhara/contents/4k wallpapers/Space";
 		DELIM = (OS.contains("windows")) ? "\\" : "/"; 
 	}
 }

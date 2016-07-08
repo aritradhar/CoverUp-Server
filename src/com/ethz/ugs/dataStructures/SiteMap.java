@@ -90,7 +90,7 @@ public class SiteMap {
 		}
 		jObject.put("table", jArray);
 		
-		fw.write(jObject.toString());
+		fw.write(jObject.toString(2));
 		fw.close();
 	}
 	
@@ -115,6 +115,7 @@ public class SiteMap {
 			updated = false;
 			return true;
 		}
+		
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SITE_TABLE_LOC));
 		String st = null;
 		StringBuffer stb = new StringBuffer();
