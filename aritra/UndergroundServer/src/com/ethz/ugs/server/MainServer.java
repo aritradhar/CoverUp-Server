@@ -394,6 +394,8 @@ public class MainServer extends HttpServlet {
 				response.flushBuffer();
 			}
 			
+			System.err.println("Request droplet url : " + url);
+			
 			String dropletStr = SiteMap.getRandomDroplet(url);
 			
 			JSONObject jObject = new JSONObject();
