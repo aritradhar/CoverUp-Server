@@ -21,6 +21,8 @@ public class ENV {
 	
 	public static String DELIM = "";
 	
+	public static final boolean PADDING_ENABLE = true;
+	
 	static
 	{
 		String OS = System.getProperty("os.name");

@@ -40,10 +40,13 @@ public class ResponseUtil
 		jObject.put("table", theTable);
 		jObject.put("signature", signatureBase64);
 		
-		String responseString = jObject.toString();
-		int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
-		String randomPadding = ServerUtil.randomString(padLen);
-		jObject.put("pad", randomPadding);
+		if(ENV.PADDING_ENABLE)
+		{
+			String responseString = jObject.toString();
+			int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
+			String randomPadding = ServerUtil.randomString(padLen);
+			jObject.put("pad", randomPadding);
+		}
 		
 		return jObject;
 	}
@@ -87,10 +90,13 @@ public class ResponseUtil
 		jObject.put("droplet", dropletStr);
 		jObject.put("signature", signatureBase64);	
 		
-		String responseString = jObject.toString();
-		int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
-		String randomPadding = ServerUtil.randomString(padLen);
-		jObject.put("pad", randomPadding);
+		if(ENV.PADDING_ENABLE)
+		{
+			String responseString = jObject.toString();
+			int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
+			String randomPadding = ServerUtil.randomString(padLen);
+			jObject.put("pad", randomPadding);
+		}
 		
 		return jObject;
 	}
