@@ -20,14 +20,17 @@ public class ENV {
 	public static  String SOURCE_DOCUMENT_LOCATION = null;
 	
 	public static String DELIM = "";
+	public static String BROADCAST_LOCATION = null;
 	
 	public static final boolean PADDING_ENABLE = true;
 	
 	static
 	{
 		String OS = System.getProperty("os.name");
+		boolean OS_B = (OS.contains("Windows"));
 		
-		SOURCE_DOCUMENT_LOCATION = (OS.contains("Windows")) ? "C:\\Source" : "/home/dhara/contents/4k wallpapers/Space";
-		DELIM = (OS.contains("windows")) ? "\\" : "/"; 
+		SOURCE_DOCUMENT_LOCATION = OS_B ? "C:\\Source" : "/home/dhara/contents/4k wallpapers/Space";
+		DELIM = OS_B ? "\\" : "/";
+		BROADCAST_LOCATION = OS_B ? "C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt" : "/home/dhara/broadcast.txt";
 	}
 }
