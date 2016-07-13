@@ -150,9 +150,27 @@ public class SiteMap {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String getRandomDroplet(String url) throws IOException
+	public static String[] getRandomDroplet(String url) throws IOException
 	{		
-		FountainTableRow row = SiteMap.TABLE_MAP.get(url);
+		FountainTableRow row = null;
+		if(url == null)
+		{
+			int index = new Random().nextInt(SiteMap.TABLE_MAP.size());
+			int i = 0;
+			for(String urlInternal : SiteMap.TABLE_MAP.keySet())
+			{
+				if(i == index)
+				{
+					row = SiteMap.TABLE_MAP.get(urlInternal);
+					url = urlInternal;
+					break;
+				}
+				i++;
+			}
+		}
+		else
+			row = SiteMap.TABLE_MAP.get(url);
+		
 		String dropletLocation = row.dropletLoc;
 		
 		File dropletDir = new File(dropletLocation);
@@ -172,7 +190,7 @@ public class SiteMap {
 		
 		br.close();
 		
-		return stb.toString();
+		return new String[]{stb.toString(), url};
 	}
 	
 	//old test code

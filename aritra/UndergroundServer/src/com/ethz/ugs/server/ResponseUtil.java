@@ -53,13 +53,13 @@ public class ResponseUtil
 	
 	public static JSONObject dropletPlease(byte[] privateKey, String url) throws IOException
 	{
-		String dropletStr = SiteMap.getRandomDroplet(url);
+		String[] dropletStr = SiteMap.getRandomDroplet(url);
 		
 		JSONObject jObject = new JSONObject();
 		
 		//sign droplet|url
 		
-		String dropletStrMod = dropletStr.concat(url);
+		String dropletStrMod = dropletStr[0].concat(url);
 		
 		byte[] dropletByte = dropletStrMod.getBytes(StandardCharsets.UTF_8);
 		byte[] signatureBytes = null;

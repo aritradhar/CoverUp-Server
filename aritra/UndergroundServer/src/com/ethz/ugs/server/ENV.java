@@ -19,6 +19,8 @@ public class ENV {
 	
 	public static  String SOURCE_DOCUMENT_LOCATION = null;
 	
+	public static final int FOUNTAIN_CHUNK_SIZE = 10000;
+	
 	public static String DELIM = "";
 	public static String BROADCAST_LOCATION = null;
 	
