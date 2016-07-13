@@ -161,6 +161,8 @@ public class MainServer extends HttpServlet {
 
 		System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 
+		System.out.println(request.getHeader("x-test"));
+		
 		String flag = request.getParameter("flag");
 
 		String remoteAddress = request.getRemoteAddr();
@@ -378,22 +380,29 @@ public class MainServer extends HttpServlet {
 		{
 			String url = request.getParameter("url");
 
+			String[] dropletStr = new String[2];
 			if(url == null)
 			{
-				response.getWriter().append("Request contains no url id");
-				response.flushBuffer();
-				return;
+				//response.getWriter().append("Request contains no url id");
+				//response.flushBuffer();
+				//return;
+				dropletStr = SiteMap.getRandomDroplet(null);
+				url = dropletStr[1];
+			}	
+			else
+			{
+				System.err.println("Request droplet url : " + url);
+
+				dropletStr = SiteMap.getRandomDroplet(url);
+				
+				System.out.println(dropletStr[0]);
 			}
-
-			System.err.println("Request droplet url : " + url);
-
-			String dropletStr = SiteMap.getRandomDroplet(url);
-
+			
 			JSONObject jObject = new JSONObject();
 
 			//sign droplet|url
 
-			String dropletStrMod = dropletStr.concat(url);
+			String dropletStrMod = dropletStr[0].concat(url);
 
 			byte[] dropletByte = dropletStrMod.getBytes(StandardCharsets.UTF_8);
 			byte[] signatureBytes = null;
@@ -422,7 +431,7 @@ public class MainServer extends HttpServlet {
 
 
 			jObject.put("url", url);
-			jObject.put("droplet", dropletStr);
+			jObject.put("droplet", dropletStr[0]);
 			jObject.put("signature", signatureBase64);	
 
 			if(ENV.PADDING_ENABLE)

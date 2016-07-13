@@ -29,7 +29,7 @@ public class Test
 
 		for(File file : files)
 		{
-			FountainTableRow row = new FountainTableRow(file.getAbsolutePath(), 10000, 50);
+			FountainTableRow row = new FountainTableRow(file.getAbsolutePath(), ENV.FOUNTAIN_CHUNK_SIZE, 50);
 			row.makeDroplets();
 			SiteMap.insertRowToTable(file.getAbsolutePath(), row);
 		}
