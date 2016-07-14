@@ -42,7 +42,7 @@ public class FountainTableRow
 		new Random().nextBytes(seed);
 
 		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
-		this.num_chunks = fountain.chunk_size;
+		this.num_chunks = fountain.num_chunks;
 		this.datalenBeforPadding = fountain.dataLenBeforPadding;
 
 		this.dropletLoc = new Integer(new Random().nextInt(Integer.MAX_VALUE)).toString();
