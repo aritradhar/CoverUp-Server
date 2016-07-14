@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 
 import com.ethz.ugs.compressUtil.CompressUtil;
+import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 
 public class ResponseUtil 
@@ -179,7 +180,18 @@ public class ResponseUtil
 		Set<String> fountainSet = new HashSet<>();
 		
 		for(int i = 1; i < fountains.length; i++)
-			fountainSet.add(fountains[i]);
+		{
+			try
+			{
+				int fountainId = Integer.parseInt(fountains[i]);
+				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
+				fountainSet.add(url);
+			}
+			catch(Exception ex)
+			{
+				fountainSet.add(fountains[i]);
+			}
+		}
 		
 		String[] dropletStr = SiteMap.getRandomDroplet(null);
 		String url = dropletStr[1];
@@ -213,7 +225,7 @@ public class ResponseUtil
 
 		jObject.put("url", url);
 		
-		if(!fountainSet.contains(url))
+		if(fountainSet.contains(url))
 		{
 			JSONObject oldDroplet = new JSONObject(dropletStr[0]);
 			
@@ -240,7 +252,7 @@ public class ResponseUtil
 		}
 		
 		
-		response.setHeader("x-flag", "2");
+		response.addHeader("x-flag", "2");
 		response.getWriter().append(jObject.toString());
 		response.flushBuffer();
 	}

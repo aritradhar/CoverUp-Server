@@ -243,7 +243,10 @@ public class MainServer extends HttpServlet {
 		{
 			String xFlag = request.getHeader("x-flag");
 			
-			if(xFlag.compareToIgnoreCase("0") == 0)
+			if(xFlag == null)
+				ResponseUtil.dropletPlease(request, response, this.privateKey);
+			
+			else if(xFlag.compareToIgnoreCase("0") == 0)
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
 			else if(xFlag.compareToIgnoreCase("1") == 0)
