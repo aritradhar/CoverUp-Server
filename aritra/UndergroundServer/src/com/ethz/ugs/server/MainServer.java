@@ -88,8 +88,16 @@ public class MainServer extends HttpServlet {
 		//SiteMap.randomInitialization(20);
 		//TODO test
 		//dummy initialization
-		Test.main(null);
-
+		try
+		{
+			Test.init();
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			System.err.println("Fatal error..");
+			System.exit(1);
+		}
 		System.out.println("Started...");
 	}
 
