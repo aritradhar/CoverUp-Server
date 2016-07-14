@@ -170,11 +170,9 @@ public class ResponseUtil
 		response.flushBuffer();
 	}
 	
-	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
+	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
 		//0/1,id_x,id_1,...,id_n:padding
-		
-		String requestBody = ServerUtil.GetBody(request);
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
 		
@@ -190,10 +188,13 @@ public class ResponseUtil
 			{
 				int fountainId = Integer.parseInt(fountains[i]);
 				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
+				
+				//System.out.println("added" + url);
 				fountainSet.add(url);
 			}
 			catch(Exception ex)
 			{
+				//System.out.println("added" + fountains[i]);
 				fountainSet.add(fountains[i]);
 			}
 		}
@@ -230,6 +231,7 @@ public class ResponseUtil
 
 		jObject.put("url", url);
 		
+		//System.out.println("url : " + url);
 		if(fountainSet.contains(url))
 		{
 			JSONObject oldDroplet = new JSONObject(dropletStr[0]);
@@ -256,8 +258,6 @@ public class ResponseUtil
 			jObject.put("pad", randomPadding);
 		}
 		
-		
-		response.addHeader("x-flag", "2");
 		response.getWriter().append(jObject.toString());
 		response.flushBuffer();
 	}

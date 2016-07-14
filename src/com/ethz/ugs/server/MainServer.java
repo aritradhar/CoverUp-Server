@@ -243,6 +243,8 @@ public class MainServer extends HttpServlet {
 		{
 			String xFlag = ServerUtil.GetBody(request);
 			
+			System.out.println("BODY : " + xFlag);
+			
 			if(xFlag == null || xFlag.length() == 0)
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
@@ -251,7 +253,7 @@ public class MainServer extends HttpServlet {
 			
 			else if(xFlag.startsWith("1"))
 			{
-				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey);
+				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey,xFlag);
 			}
 			else
 			{
