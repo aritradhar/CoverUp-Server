@@ -9,19 +9,38 @@ import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.server.ENV;
 
-class DummyInit
-{
-	public static void init() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
-	{
-		Test.main(null);
-	}
-}
-
 
 public class Test 
 {
+	
+	public static void init() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
+	{
+		SiteMap.loadTable();
 
-	public static void main(String[] args) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+		File[] files = new File(ENV.SOURCE_DOCUMENT_LOCATION).listFiles();
+
+		for(File file : files)
+		{
+			if(SiteMap.TABLE_MAP.containsKey(file.getAbsolutePath()))
+			{
+				System.out.println(file + "  skipped ..");
+				continue;
+			}
+			
+			FountainTableRow row = new FountainTableRow(file.getAbsolutePath(), ENV.FOUNTAIN_CHUNK_SIZE, 50);
+			row.makeDroplets();
+			SiteMap.insertRowToTable(file.getAbsolutePath(), row);
+		}
+
+		SiteMap.saveTable();
+
+		//SiteMap.loadTable();
+
+		System.out.println("---------------------done----------------------");
+	}
+
+/*	
+ * public static void main(String[] args) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 
 		SiteMap.loadTable();
 
@@ -29,6 +48,12 @@ public class Test
 
 		for(File file : files)
 		{
+			if(SiteMap.SITE_MAP.containsKey(file.getAbsolutePath()))
+			{
+				System.out.println(file + "  skipped ..");
+				continue;
+			}
+			
 			FountainTableRow row = new FountainTableRow(file.getAbsolutePath(), ENV.FOUNTAIN_CHUNK_SIZE, 50);
 			row.makeDroplets();
 			SiteMap.insertRowToTable(file.getAbsolutePath(), row);
@@ -40,5 +65,6 @@ public class Test
 
 		System.out.println("---------------------done----------------------");
 	}	
+	*/
 
 }
