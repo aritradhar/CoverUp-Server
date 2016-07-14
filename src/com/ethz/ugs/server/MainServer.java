@@ -241,7 +241,20 @@ public class MainServer extends HttpServlet {
 
 		else if(flag.equals("dropletPlease"))
 		{
-			ResponseUtil.dropletPlease(request, response, this.privateKey);
+			String xFlag = request.getHeader("x-flag");
+			
+			if(xFlag.compareToIgnoreCase("0") == 0)
+				ResponseUtil.dropletPlease(request, response, this.privateKey);
+			
+			else if(xFlag.compareToIgnoreCase("1") == 0)
+			{
+				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey);
+			}
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
 		}
 
 		else if(flag.equals("end"))
