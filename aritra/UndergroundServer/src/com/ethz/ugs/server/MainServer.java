@@ -6,12 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,12 +20,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
-import com.ethz.ugs.compressUtil.CompressUtil;
-import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.test.Test;
 
 
@@ -201,26 +194,7 @@ public class MainServer extends HttpServlet {
 
 		else if(flag.equals("ke"))
 		{
-			Stats.TOTAL_CONNECTIONS++;
-			Stats.LIVE_CONNECTIONS++;
-
-			String otherPublicKey = request.getParameter("pk");
-			String sessionCode = request.getParameter("code");
-
-			this.sharedSecret = Curve25519.getInstance("best").calculateAgreement(Base64.getUrlDecoder().decode(otherPublicKey), this.privateKey);
-			response.getWriter().append(Base64.getUrlEncoder().encodeToString(this.publicKey));
-
-			byte[] sharedSecretHash = null;
-			try {
-				sharedSecretHash = MessageDigest.getInstance("sha-256").digest(sharedSecret);
-			}
-			catch (NoSuchAlgorithmException e) {
-
-			}
-
-			this.sharedSecretMap.put(sessionCode, sharedSecretHash);
-
-			System.out.println(Base64.getUrlEncoder().encodeToString(sharedSecretHash));
+			ResponseUtil.ke(request, response, this.publicKey, this.privateKey, this.sharedSecret, this.sharedSecretMap);		
 		}
 
 		else if(flag.equals("admin"))
@@ -238,232 +212,36 @@ public class MainServer extends HttpServlet {
 
 		else if(flag.equals("rand"))
 		{
-			Stats.TOTAL_CONNECTIONS++;
-			Stats.LIVE_CONNECTIONS++;
-
-			int responseSize = 256;
-			SecureRandom rand = new SecureRandom();
-			byte[] toSent = new byte[responseSize];
-			rand.nextBytes(toSent);
-
-			OutputStream output = response.getOutputStream();
-			output.write(toSent);
-			output.flush();
-			response.flushBuffer();
+			ResponseUtil.rand(request, response);
 		}
 
 		else if(flag.equals("randB"))
 		{
-			Stats.TOTAL_CONNECTIONS++;
-			Stats.LIVE_CONNECTIONS++;
-
-			int responseSize = 256;
-			SecureRandom rand = new SecureRandom();
-			byte[] toSent = new byte[responseSize];
-			rand.nextBytes(toSent);
-			String responseStr = Base64.getUrlEncoder().encodeToString(toSent);
-
-			response.getWriter().append(responseStr);
-			response.flushBuffer();
+			ResponseUtil.randB(request, response);
 		}
 
 		else if(flag.equals("broadCast"))
 		{
-			Stats.TOTAL_CONNECTIONS++;
-			Stats.LIVE_CONNECTIONS++;
-
-			response.getWriter().append(this.broadCastMessage);
-			response.flushBuffer();
+			ResponseUtil.broadCast(request, response, this.broadCastMessage);
 		}
 
 		//request for sending broadcast json
 		else if(flag.equals("broadCastjson"))
 		{
-			Stats.TOTAL_CONNECTIONS++;
-			Stats.LIVE_CONNECTIONS++;
-
-			String requestBody = ServerUtil.GetBody(request);
-
-			//System.out.println("Body " + requestBody);
-
-			JSONObject jObject = null;
-			if(requestBody.length() == 0)
-				jObject = ServerUtil.broadcastJson(this.broadCastMessage, this.publicKey, this.privateKey);
-
-
-			else if(requestBody.equals("tableRequest"))
-				jObject = new JSONObject(SiteMap.SITE_MAP);
-
-			//test
-			/*JSONObject tmp = new JSONObject(jObject.toString());
-			Iterator<String> keys = tmp.keys();
-			while(keys.hasNext())
-			{
-				String key = keys.next();
-				String value = tmp.getString(key);
-
-				System.out.println("key : " + key + " | value : " + value);
-			}
-			 */
-
-			//System.out.println(jObject.toString());
-
-			if(ENV.ENABLE_COMPRESS)
-			{
-				byte[] bytes = jObject.toString(2).getBytes();
-
-				OutputStream output = response.getOutputStream();
-				output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
-				output.flush();
-				output.close();
-			}
-
-			else
-				response.getWriter().append(jObject.toString(2));
-
-			response.flushBuffer();
+			ResponseUtil.broadCastjson(request, response, this.broadCastMessage, this.publicKey, this.privateKey);
 		}
 
 
 		//request for the sitemap table
 		else if(flag.equals("tablePlease"))
 		{
-			JSONObject jObject = new JSONObject();
-
-			String theTable = SiteMap.getTable();
-
-
-			byte[] theTableBytes = theTable.getBytes(StandardCharsets.UTF_8);
-			byte[] signatureBytes = null;
-			String signatureBase64 = null;
-
-			try 
-			{
-
-				MessageDigest md = MessageDigest.getInstance("SHA-256");
-				byte[] hashtableBytes = md.digest(theTableBytes);
-				signatureBytes = Curve25519.getInstance("best").calculateSignature(this.privateKey, hashtableBytes);
-				signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
-			} 
-
-			catch (NoSuchAlgorithmException e) 
-			{
-				e.printStackTrace();
-				response.getWriter().append("Exception happed in crypto part!!");
-				response.flushBuffer();
-			}
-
-			jObject.put("table", theTable);
-			jObject.put("signature", signatureBase64);
-
-			String responseString = jObject.toString();
-
-			if(ENV.PADDING_ENABLE)
-			{
-				int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
-				String randomPadding = ServerUtil.randomString(padLen);
-				jObject.put("pad", randomPadding);
-			}
-
-			if(ENV.ENABLE_COMPRESS)
-			{
-				byte[] bytes = jObject.toString().getBytes();
-
-				OutputStream output = response.getOutputStream();
-				output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
-				output.flush();
-				output.close();
-			}
-
-			else
-				response.getWriter().append(jObject.toString());
-
-			response.flushBuffer();
+			ResponseUtil.dropletPlease(request, response, this.privateKey);
 		}
 
 
-		//TODO complete this after table request response is done 
-
 		else if(flag.equals("dropletPlease"))
 		{
-			String url = request.getParameter("url");
-
-			String[] dropletStr = new String[2];
-			if(url == null)
-			{
-				//response.getWriter().append("Request contains no url id");
-				//response.flushBuffer();
-				//return;
-				dropletStr = SiteMap.getRandomDroplet(null);
-				url = dropletStr[1];
-			}	
-			else
-			{
-				System.err.println("Request droplet url : " + url);
-
-				dropletStr = SiteMap.getRandomDroplet(url);
-				
-				System.out.println(dropletStr[0]);
-			}
-			
-			JSONObject jObject = new JSONObject();
-
-			//sign droplet|url
-
-			String dropletStrMod = dropletStr[0].concat(url);
-
-			byte[] dropletByte = dropletStrMod.getBytes(StandardCharsets.UTF_8);
-			byte[] signatureBytes = null;
-			String signatureBase64 = null;
-
-
-			System.out.println("Droplet " + dropletByte.length);
-			try 
-			{
-
-				MessageDigest md = MessageDigest.getInstance("SHA-256");
-				byte[] hashtableBytes = md.digest(dropletByte);
-
-				System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
-
-				signatureBytes = Curve25519.getInstance("best").calculateSignature(this.privateKey, hashtableBytes);
-				signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
-			} 
-
-			catch (NoSuchAlgorithmException e) 
-			{
-				e.printStackTrace();
-				response.getWriter().append("Exception in signature calculation!");
-				response.flushBuffer();
-			}
-
-
-			jObject.put("url", url);
-			jObject.put("droplet", dropletStr[0]);
-			jObject.put("signature", signatureBase64);	
-
-			if(ENV.PADDING_ENABLE)
-			{
-				String responseString = jObject.toString();
-				int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
-				String randomPadding = ServerUtil.randomString(padLen);
-				jObject.put("pad", randomPadding);
-			}
-			
-			
-			if(ENV.ENABLE_COMPRESS)
-			{
-				byte[] bytes = jObject.toString().getBytes();
-
-				OutputStream output = response.getOutputStream();
-				output.write(CompressUtil.compress(bytes, ENV.COMPRESSION_PRESET));
-				output.flush();
-				output.close();
-			}
-			else
-				response.getWriter().append(jObject.toString());
-
-			response.flushBuffer();
+			ResponseUtil.dropletPlease(request, response, this.privateKey);
 		}
 
 		else if(flag.equals("end"))
