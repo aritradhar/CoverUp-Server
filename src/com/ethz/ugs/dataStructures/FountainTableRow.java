@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.json.JSONObject;
@@ -16,6 +18,9 @@ import com.ethz.ugs.server.ENV;
 
 public class FountainTableRow 
 {
+	//dropletloc->url mapping
+	public static Map<Integer, String> dropletLocUrlMap = new HashMap<>();
+	
 	String url;
 	int num_chunks, chunk_size, datalenBeforPadding, droplet_count;
 	byte[] data;
@@ -43,6 +48,8 @@ public class FountainTableRow
 		this.dropletLoc = new Integer(new Random().nextInt(Integer.MAX_VALUE)).toString();
 		File f = new File(dropletLoc);
 		f.mkdir();
+		
+		dropletLocUrlMap.put(Integer.parseInt(this.dropletLoc), this.url);
 	}
 	
 	public FountainTableRow(String jsonString) throws IOException, NoSuchAlgorithmException, NoSuchProviderException
@@ -60,6 +67,7 @@ public class FountainTableRow
 		this.data = Files.readAllBytes(file.toPath());
 		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
 		
+		dropletLocUrlMap.put(Integer.parseInt(this.dropletLoc), this.url);
 	}
 	
 	public void makeDroplets() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
