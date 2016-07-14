@@ -235,7 +235,7 @@ public class MainServer extends HttpServlet {
 		//request for the sitemap table
 		else if(flag.equals("tablePlease"))
 		{
-			ResponseUtil.dropletPlease(request, response, this.privateKey);
+			ResponseUtil.tablePlease(request, response, this.privateKey);
 		}
 
 
