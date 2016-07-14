@@ -23,6 +23,8 @@ public class ResponseUtil
 	
 	public static void tablePlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
+		System.out.println("Table request from : " + request.getRemoteAddr());
+		
 		JSONObject jObject = new JSONObject();
 
 		String theTable = SiteMap.getTable();
@@ -79,6 +81,8 @@ public class ResponseUtil
 	
 	public static void dropletPlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
+		System.out.println("Droplet request from : " + request.getRemoteAddr());
+		
 		String url = request.getParameter("url");
 
 		String[] dropletStr = new String[2];
@@ -98,6 +102,8 @@ public class ResponseUtil
 			
 			System.out.println(dropletStr[0]);
 		}
+		
+		System.err.println("Fountain served : " + url);
 		
 		JSONObject jObject = new JSONObject();
 
