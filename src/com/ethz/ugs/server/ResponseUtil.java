@@ -172,14 +172,19 @@ public class ResponseUtil
 	
 	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
+		//0/1,id_x,id_1,...,id_n:padding
+		
 		String requestBody = ServerUtil.GetBody(request);
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
-		String intrFountainId = fountains[0];
+		
+		//2nd element is the requested id
+		String intrFountainId = fountains[1];
 		
 		Set<String> fountainSet = new HashSet<>();
 		
-		for(int i = 1; i < fountains.length; i++)
+		//starts form 3rd element
+		for(int i = 2; i < fountains.length; i++)
 		{
 			try
 			{

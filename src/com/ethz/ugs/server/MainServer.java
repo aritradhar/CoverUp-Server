@@ -241,15 +241,15 @@ public class MainServer extends HttpServlet {
 
 		else if(flag.equals("dropletPlease"))
 		{
-			String xFlag = request.getHeader("x-flag");
+			String xFlag = ServerUtil.GetBody(request);
 			
-			if(xFlag == null)
+			if(xFlag == null || xFlag.length() == 0)
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
-			else if(xFlag.compareToIgnoreCase("0") == 0)
+			else if(xFlag.startsWith("0"))
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
-			else if(xFlag.compareToIgnoreCase("1") == 0)
+			else if(xFlag.startsWith("1"))
 			{
 				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey);
 			}
