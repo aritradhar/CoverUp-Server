@@ -7,7 +7,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,6 +80,8 @@ public class ResponseUtil
 		response.flushBuffer();
 
 	}
+	
+	
 	
 	public static void dropletPlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
@@ -165,6 +169,82 @@ public class ResponseUtil
 		response.flushBuffer();
 	}
 	
+	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
+	{
+		String requestBody = ServerUtil.GetBody(request);
+		String fountainIdString = requestBody.split(":")[0];
+		String[] fountains = fountainIdString.split(",");
+		String intrFountainId = fountains[0];
+		
+		Set<String> fountainSet = new HashSet<>();
+		
+		for(int i = 1; i < fountains.length; i++)
+			fountainSet.add(fountains[i]);
+		
+		String[] dropletStr = SiteMap.getRandomDroplet(null);
+		String url = dropletStr[1];
+		
+		JSONObject jObject = new JSONObject();
+		String dropletStrMod = dropletStr[0].concat(url);
+
+		byte[] dropletByte = dropletStrMod.getBytes(StandardCharsets.UTF_8);
+		byte[] signatureBytes = null;
+		String signatureBase64 = null;
+		
+		try 
+		{
+
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hashtableBytes = md.digest(dropletByte);
+
+			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
+
+			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
+			signatureBase64 = Base64.getUrlEncoder().encodeToString(signatureBytes);
+		} 
+
+		catch (NoSuchAlgorithmException e) 
+		{
+			e.printStackTrace();
+			response.getWriter().append("Exception in signature calculation!");
+			response.flushBuffer();
+		}
+
+
+		jObject.put("url", url);
+		
+		if(!fountainSet.contains(url))
+		{
+			JSONObject oldDroplet = new JSONObject(dropletStr[0]);
+			
+			JSONObject dropletJObject = new JSONObject();
+			dropletJObject.put("seed", oldDroplet.getString("seed"));
+			dropletJObject.put("data", "YOLO!");
+			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
+			
+			jObject.put("droplet", dropletJObject.toString());
+		}
+		
+		else
+			jObject.put("droplet", dropletStr[0]);
+		
+		
+		jObject.put("signature", signatureBase64);	
+		//mandetory padding
+		if(ENV.PADDING_ENABLE)
+		{
+			String responseString = jObject.toString();
+			int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
+			String randomPadding = ServerUtil.randomString(padLen);
+			jObject.put("pad", randomPadding);
+		}
+		
+		
+		response.setHeader("x-flag", "2");
+		response.getWriter().append(jObject.toString());
+		response.flushBuffer();
+	}
+	
 	public static void broadCastjson(HttpServletRequest request, HttpServletResponse response, String broadCastMessage, byte[] publicKey, byte[] privateKey) throws IOException
 	{
 		Stats.TOTAL_CONNECTIONS++;
@@ -181,8 +261,6 @@ public class ResponseUtil
 
 		else if(requestBody.equals("tableRequest"))
 			jObject = new JSONObject(SiteMap.SITE_MAP);
-
-
 
 		if(ENV.ENABLE_COMPRESS)
 		{
