@@ -60,6 +60,7 @@ public class SliceManager
 		if(sliceId == null)
 			return null;
 		
+		System.out.println("Slice with " + url + " found");
 		//File sliceDir = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString());
 		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + index + ".json");
 		

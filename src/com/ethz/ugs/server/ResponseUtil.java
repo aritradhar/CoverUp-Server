@@ -20,6 +20,7 @@ import org.whispersystems.curve25519.Curve25519;
 import com.ethz.ugs.compressUtil.CompressUtil;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
+import com.ethz.ugs.test.InitialGen;
 
 public class ResponseUtil 
 {
@@ -209,9 +210,9 @@ public class ResponseUtil
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
 		
-		int indexSlice = Integer.parseInt(fountains[1]);
+		int sliceIndex = Integer.parseInt(fountains[1]);
 		//3rd element is the requested id
-		String intrFountainId = fountains[2];
+		String intrSliceId = fountains[2];
 		
 		Set<String> fountainSet = new HashSet<>();
 		
@@ -290,7 +291,9 @@ public class ResponseUtil
 			dropletJObject.put("seed", oldDroplet.getString("seed"));
 			
 			//this is to be manipulated by intrFountainId
-			dropletJObject.put("data", "YOLO!");
+			//InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			dropletJObject.put("data", InitialGen.sdm.getSlice(intrSliceId, sliceIndex));
+			
 			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
 			
 			jObject.put("droplet", dropletJObject.toString());
