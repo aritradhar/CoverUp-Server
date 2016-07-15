@@ -168,8 +168,10 @@ public class MainServer extends HttpServlet {
 		String remoteAddress = request.getRemoteAddr();
 		Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
 
-		System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
-		System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
+		System.out.println(flag + "  Request from : " + request.getRemoteAddr());
+		
+		//System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
+		//System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 
@@ -252,8 +254,6 @@ public class MainServer extends HttpServlet {
 			
 			String postBody = stb.toString();
 			
-			//postBody = ServerUtil.GetBody(request);
-			
 			System.out.println("BODY : " + postBody);
 			
 			if(postBody == null || postBody.length() == 0)
@@ -263,9 +263,8 @@ public class MainServer extends HttpServlet {
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
 			else if(postBody.startsWith("1"))
-			{
 				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey,postBody);
-			}
+
 			else
 			{
 				response.getWriter().append("Header against specification");

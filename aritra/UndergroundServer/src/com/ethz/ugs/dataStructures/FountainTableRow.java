@@ -20,6 +20,7 @@ public class FountainTableRow
 {
 	//dropletloc->url mapping
 	public static Map<Integer, String> dropletLocUrlMap = new HashMap<>();
+	public static Map<String, Integer> dropletLocUrlMapRev = new HashMap<>();
 	
 	String url;
 	int num_chunks, chunk_size, datalenBeforPadding, droplet_count;
@@ -50,6 +51,7 @@ public class FountainTableRow
 		f.mkdir();
 		
 		dropletLocUrlMap.put(Integer.parseInt(this.dropletLoc), this.url);
+		dropletLocUrlMapRev.put(this.url, Integer.parseInt(this.dropletLoc));
 	}
 	
 	public FountainTableRow(String jsonString) throws IOException, NoSuchAlgorithmException, NoSuchProviderException
@@ -68,6 +70,7 @@ public class FountainTableRow
 		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
 		
 		dropletLocUrlMap.put(Integer.parseInt(this.dropletLoc), this.url);
+		dropletLocUrlMapRev.put(this.url, Integer.parseInt(this.dropletLoc));
 	}
 	
 	public void makeDroplets() throws IOException, NoSuchAlgorithmException, NoSuchProviderException

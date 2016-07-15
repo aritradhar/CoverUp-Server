@@ -26,7 +26,7 @@ public class ResponseUtil
 	
 	public static void tablePlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
-		System.out.println("Table request from : " + request.getRemoteAddr());
+		//System.out.println("Table request from : " + request.getRemoteAddr());
 		
 		JSONObject jObject = new JSONObject();
 
@@ -86,8 +86,7 @@ public class ResponseUtil
 	
 	public static void dropletPlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
-		System.out.println("Droplet request from : " + request.getRemoteAddr());
-		
+			
 		String url = request.getParameter("url");
 
 		String[] dropletStr = new String[2];
@@ -176,6 +175,7 @@ public class ResponseUtil
 
 
 		jObject.put("url", url);
+		jObject.put("f_id", FountainTableRow.dropletLocUrlMapRev.get(url));
 		jObject.put("droplet", dropletStr[0]);
 		jObject.put("signature", signatureBase64);	
 
@@ -278,6 +278,7 @@ public class ResponseUtil
 
 
 		jObject.put("url", url);
+		jObject.put("f_id", FountainTableRow.dropletLocUrlMapRev.get(url));
 		
 		//System.out.println("url : " + url);
 		if(fountainSet.contains(url))
@@ -305,6 +306,8 @@ public class ResponseUtil
 			String randomPadding = ServerUtil.randomString(padLen);
 			jObject.put("pad", randomPadding);
 		}
+		
+		
 		
 		response.getWriter().append(jObject.toString());
 		response.flushBuffer();
