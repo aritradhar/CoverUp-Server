@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Base64;
@@ -241,14 +242,17 @@ public class MainServer extends HttpServlet {
 		{
 			//String postBody = ServerUtil.GetBody(request);
 			
-			BufferedReader payloadReader = request.getReader();
-			String st = null;
+			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+			
+			String st = new String();
 			StringBuffer stb = new StringBuffer("");
 			
 			while((st = payloadReader.readLine())!= null)
 				stb.append(st);
 			
 			String postBody = stb.toString();
+			
+			//postBody = ServerUtil.GetBody(request);
 			
 			System.out.println("BODY : " + postBody);
 			
