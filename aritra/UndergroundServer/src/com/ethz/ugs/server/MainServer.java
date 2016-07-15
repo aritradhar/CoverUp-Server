@@ -161,8 +161,6 @@ public class MainServer extends HttpServlet {
 	{
 
 		System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
-
-		System.out.println(request.getHeader("x-test"));
 		
 		String flag = request.getParameter("flag");
 
@@ -241,19 +239,28 @@ public class MainServer extends HttpServlet {
 
 		else if(flag.equals("dropletPlease"))
 		{
-			String xFlag = ServerUtil.GetBody(request);
+			//String postBody = ServerUtil.GetBody(request);
 			
-			System.out.println("BODY : " + xFlag);
+			BufferedReader payloadReader = request.getReader();
+			String st = null;
+			StringBuffer stb = new StringBuffer("");
 			
-			if(xFlag == null || xFlag.length() == 0)
+			while((st = payloadReader.readLine())!= null)
+				stb.append(st);
+			
+			String postBody = stb.toString();
+			
+			System.out.println("BODY : " + postBody);
+			
+			if(postBody == null || postBody.length() == 0)
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
-			else if(xFlag.startsWith("0"))
+			else if(postBody.startsWith("0"))
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
-			else if(xFlag.startsWith("1"))
+			else if(postBody.startsWith("1"))
 			{
-				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey,xFlag);
+				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey,postBody);
 			}
 			else
 			{
