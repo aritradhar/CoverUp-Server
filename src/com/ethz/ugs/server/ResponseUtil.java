@@ -209,13 +209,14 @@ public class ResponseUtil
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
 		
-		//2nd element is the requested id
-		String intrFountainId = fountains[1];
+		int indexSlice = Integer.parseInt(fountains[1]);
+		//3rd element is the requested id
+		String intrFountainId = fountains[2];
 		
 		Set<String> fountainSet = new HashSet<>();
 		
 		//starts form 3rd element
-		for(int i = 2; i < fountains.length; i++)
+		for(int i = 3; i < fountains.length; i++)
 		{
 			try
 			{
@@ -287,6 +288,8 @@ public class ResponseUtil
 			
 			JSONObject dropletJObject = new JSONObject();
 			dropletJObject.put("seed", oldDroplet.getString("seed"));
+			
+			//this is to be manipulated by intrFountainId
 			dropletJObject.put("data", "YOLO!");
 			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
 			
@@ -306,8 +309,6 @@ public class ResponseUtil
 			String randomPadding = ServerUtil.randomString(padLen);
 			jObject.put("pad", randomPadding);
 		}
-		
-		
 		
 		response.getWriter().append(jObject.toString());
 		response.flushBuffer();
