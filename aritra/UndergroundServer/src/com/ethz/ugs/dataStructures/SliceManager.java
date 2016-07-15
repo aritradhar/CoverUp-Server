@@ -49,7 +49,8 @@ public class SliceManager
 				fw_slice.close();
 			}
 			
-			SLICE_MAP.put(file.getAbsolutePath(), id);
+			System.out.println("Slice added : " + file.getName());
+			SLICE_MAP.put(file.getName(), id);
 		}
 	}
 	

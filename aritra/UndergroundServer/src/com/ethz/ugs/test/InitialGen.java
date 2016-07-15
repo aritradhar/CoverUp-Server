@@ -7,14 +7,22 @@ import java.security.NoSuchProviderException;
 
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
+import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.server.ENV;
 
 
 public class InitialGen 
 {
 	
+	public static SliceManager sdm = null;
+	
+	
 	public static void init() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
+		
+		sdm = new SliceManager(ENV.FOUNTAIN_CHUNK_SIZE);
+		
+		
 		SiteMap.loadTable();
 
 		File[] files = new File(ENV.SOURCE_DOCUMENT_LOCATION).listFiles();
