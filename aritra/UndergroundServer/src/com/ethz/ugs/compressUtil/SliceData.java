@@ -12,6 +12,7 @@ public class SliceData {
 	int originalLength;
 	
 	List<byte[]> slicedData;
+	public int sliceCount;
 	
 	public SliceData(byte[] data, int chunk_size)
 	{
@@ -48,6 +49,8 @@ public class SliceData {
 			System.arraycopy(tempChunk, 0, data, lenArray.length, tempChunk.length);
 			this.slicedData.add(data);
 		}
+		
+		this.sliceCount = this.slicedData.size();
 	}
 	
 	public List<byte[]> getAllSlices()

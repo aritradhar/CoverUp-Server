@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
-import com.ethz.ugs.test.Test;
+import com.ethz.ugs.test.InitialGen;
 
 
 /**
@@ -84,7 +84,7 @@ public class MainServer extends HttpServlet {
 		//dummy initialization
 		try
 		{
-			Test.init();
+			InitialGen.init();
 		}
 		catch(Exception ex)
 		{

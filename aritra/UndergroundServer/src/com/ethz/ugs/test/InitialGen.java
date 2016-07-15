@@ -10,7 +10,7 @@ import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.server.ENV;
 
 
-public class Test 
+public class InitialGen 
 {
 	
 	public static void init() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
