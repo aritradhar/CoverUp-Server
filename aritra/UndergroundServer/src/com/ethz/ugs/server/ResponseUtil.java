@@ -222,12 +222,27 @@ public class ResponseUtil
 				int fountainId = Integer.parseInt(fountains[i]);
 				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
 				
+				
+				if(url == null)
+				{
+					response.getWriter().append("Invalid fountain id " + fountainId);
+					response.flushBuffer();
+					
+					return;
+				}
 				//System.out.println("added" + url);
 				fountainSet.add(url);
 			}
 			catch(Exception ex)
 			{
 				//System.out.println("added" + fountains[i]);
+				if(!SiteMap.TABLE_MAP.containsKey(fountains[i]))
+				{
+					response.getWriter().append("Invalid fountain url " + fountains[i]);
+					response.flushBuffer();
+					
+					return;
+				}
 				fountainSet.add(fountains[i]);
 			}
 		}
