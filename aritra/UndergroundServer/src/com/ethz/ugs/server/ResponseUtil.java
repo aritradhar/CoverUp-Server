@@ -107,10 +107,21 @@ public class ResponseUtil
 			{
 				int urlId = Integer.parseInt(url);
 				url = FountainTableRow.dropletLocUrlMap.get(urlId);
+				
+				if(url == null)
+				{
+					response.getWriter().append("Invalid fountain id");
+					response.flushBuffer();
+					
+					return;
+				}
 			}
 			catch(NullPointerException ex)
 			{
 				response.getWriter().append("Invalid fountain id");
+				response.flushBuffer();
+				
+				return;
 			}
 			catch(Exception ex)
 			{
@@ -120,9 +131,12 @@ public class ResponseUtil
 			{
 				dropletStr = SiteMap.getRandomDroplet(url);
 			}
-			catch(RuntimeException ex)
+			catch(Exception ex)
 			{
 				response.getWriter().append(ex.getMessage());
+				response.flushBuffer();
+				
+				return;
 			}
 			//System.out.println(dropletStr[0]);
 		}
