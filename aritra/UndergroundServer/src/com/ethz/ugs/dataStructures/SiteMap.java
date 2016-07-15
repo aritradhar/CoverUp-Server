@@ -171,6 +171,9 @@ public class SiteMap {
 		else
 			row = SiteMap.TABLE_MAP.get(url);
 		
+		if(row == null)
+			throw new RuntimeException("url : " + url + " is invalid");
+		
 		String dropletLocation = row.dropletLoc;
 		
 		File dropletDir = new File(dropletLocation);

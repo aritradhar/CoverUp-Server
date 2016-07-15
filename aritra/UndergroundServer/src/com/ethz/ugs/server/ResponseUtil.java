@@ -103,9 +103,28 @@ public class ResponseUtil
 		{
 			System.err.println("Request droplet url : " + url);
 
-			dropletStr = SiteMap.getRandomDroplet(url);
-			
-			System.out.println(dropletStr[0]);
+			try
+			{
+				int urlId = Integer.parseInt(url);
+				url = FountainTableRow.dropletLocUrlMap.get(urlId);
+			}
+			catch(NullPointerException ex)
+			{
+				response.getWriter().append("Invalid fountain id");
+			}
+			catch(Exception ex)
+			{
+				
+			}
+			try
+			{
+				dropletStr = SiteMap.getRandomDroplet(url);
+			}
+			catch(RuntimeException ex)
+			{
+				response.getWriter().append(ex.getMessage());
+			}
+			//System.out.println(dropletStr[0]);
 		}
 		
 		System.err.println("Fountain served : " + url);
