@@ -1,7 +1,9 @@
 package com.ethz.ugs.compressUtil;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SliceData {
 	
@@ -38,7 +40,13 @@ public class SliceData {
 				System.arraycopy(data, i * this.chunk_size, tempChunk, 0, offSet);
 				System.arraycopy(pad, 0, tempChunk, offSet, pad.length);			
 			}
-			this.slicedData.add(tempChunk);
+			ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		    buffer.putInt(i);
+		    byte[] lenArray = buffer.array();
+			byte[] data = new byte[lenArray.length + tempChunk.length];
+			System.arraycopy(lenArray, 0, data, 0, lenArray.length);
+			System.arraycopy(tempChunk, 0, data, lenArray.length, tempChunk.length);
+			this.slicedData.add(data);
 		}
 	}
 	
@@ -55,6 +63,15 @@ public class SliceData {
 			throw new IllegalArgumentException("Index higer than maximum");
 		
 		return this.slicedData.get(index);
+	}
+	
+	public static void main(String[] args) 
+	{
+		byte[] data = new byte[1000000000];
+		new Random().nextBytes(data);
+		
+		SliceData sd = new SliceData(data, 128);
+		sd.getSlice(1);
 	}
 
 }
