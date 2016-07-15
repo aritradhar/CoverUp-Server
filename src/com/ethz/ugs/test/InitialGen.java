@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Arrays;
 
+import com.ethz.fountain.Droplet;
+import com.ethz.fountain.Fountain;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.dataStructures.SliceManager;
@@ -47,6 +50,22 @@ public class InitialGen
 		System.out.println("---------------------done----------------------");
 	}
 
+	
+	@SuppressWarnings("unused")
+	public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException {
+		
+		byte[] data = new byte[100];
+		Arrays.fill(data, (byte)0x01);
+		
+		byte[] seed = new byte[10];
+		Arrays.fill(seed, (byte) 0x02);
+		
+		Fountain f1 = new Fountain(data, 10, seed);
+		Droplet d1 = f1.droplet();
+		
+		Fountain f2 = new Fountain(data, 10, seed);
+		Droplet d2 = f2.droplet();
+	}
 /*	
  * public static void main(String[] args) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 

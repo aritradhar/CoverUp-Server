@@ -9,8 +9,8 @@ public class ENV {
 	public static final String SLICS_TABLE_LOC = "SLICE_TABLE.txt";
 	
 	
-	public static final String INTR_SOURCE_DOCUMENT_LOC = "Source";
-	public static final String INTR_SLICE_OUTPUT_LOC = "INTR_DOCUMENT";
+	public static final String INTR_SOURCE_DOCUMENT_LOC = "INTR_DOCUMENT";
+	public static final String INTR_SLICE_OUTPUT_LOC = "INTR_DOCUMENT_OUT";
 	
 	
 	public static final boolean ENABLE_COMPRESS = false;

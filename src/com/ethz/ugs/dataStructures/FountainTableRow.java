@@ -28,6 +28,7 @@ public class FountainTableRow
 	Fountain fountain;
 	String dropletLoc;
 	byte[] seed;
+	byte[] unchangedSeed;
 	
 	public FountainTableRow(String url, int chunk_size, int droplet_count) throws IOException, NoSuchAlgorithmException, NoSuchProviderException 
 	{
@@ -41,6 +42,9 @@ public class FountainTableRow
 		
 		this.seed = new byte[32];
 		new Random().nextBytes(seed);
+		
+		this.unchangedSeed = new byte[32];
+		System.arraycopy(this.seed, 0, this.unchangedSeed, 0, this.unchangedSeed.length);
 
 		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
 		this.num_chunks = fountain.num_chunks;
@@ -62,6 +66,7 @@ public class FountainTableRow
 		this.num_chunks = jObject.getInt("num_chunks");
 		this.chunk_size = jObject.getInt("chunk_size");
 		this.seed = Base64.getUrlDecoder().decode(jObject.getString("seed"));
+		this.unchangedSeed = Base64.getUrlDecoder().decode(jObject.getString("seed"));
 		this.datalenBeforPadding = jObject.getInt("len");
 		this.dropletLoc = jObject.getString("dropletLoc");
 		
@@ -93,7 +98,7 @@ public class FountainTableRow
 		jObject.put("url", this.url);
 		jObject.put("num_chunks", this.num_chunks);
 		jObject.put("chunk_size", this.chunk_size);
-		jObject.put("seed", Base64.getUrlEncoder().encodeToString(this.seed));
+		jObject.put("seed", Base64.getUrlEncoder().encodeToString(this.unchangedSeed));
 		jObject.put("len", this.datalenBeforPadding);
 		jObject.put("dropletLoc", this.dropletLoc);
 		
