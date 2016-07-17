@@ -22,6 +22,10 @@ public class SliceManager
 	//slice url -> fragment location (id)
 	public static Map<String, Long> SLICE_MAP = new HashMap<>();
 	
+	public static final String INVALID_SLICE_URL = "invalid slice url";
+	public static final String INVALID_SLICE_FILE = "slice file in local storage does not exist";
+	public static final String INVALID_SLICE_ERROR = "unknown error related to I/O";
+	
 	
 	public SliceManager(int chunk_size) throws IOException 
 	{
@@ -54,29 +58,36 @@ public class SliceManager
 		}
 	}
 	
-	public String getSlice(String url, int index) throws IOException
+	public String getSlice(String url, int index)
 	{
 		Long sliceId = SLICE_MAP.get(url);
 		if(sliceId == null)
-			return null;
+			return INVALID_SLICE_URL;
 		
 		System.out.println("Slice with " + url + " found");
 		//File sliceDir = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString());
 		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + index + ".json");
 		
 		if(!sliceFile.exists())
-			return null;
+			return INVALID_SLICE_FILE;
 		
-		BufferedReader br = new BufferedReader(new FileReader(sliceFile));
-		String st = null;
-		StringBuffer stb = new StringBuffer("");
-		
-		while((st = br.readLine()) != null)
-			stb.append(st);
-		
-		br.close();
-		
-		return st;
+		try
+		{
+			BufferedReader br = new BufferedReader(new FileReader(sliceFile));
+			String st = null;
+			StringBuffer stb = new StringBuffer("");
+
+			while((st = br.readLine()) != null)
+				stb.append(st);
+
+			br.close();
+
+			return st;
+		}
+		catch(IOException ex)
+		{
+			return INVALID_SLICE_ERROR;
+		}
 	}
 	
 	public void saveSliceTable() throws IOException
