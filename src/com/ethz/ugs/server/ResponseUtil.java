@@ -20,6 +20,7 @@ import org.whispersystems.curve25519.Curve25519;
 import com.ethz.ugs.compressUtil.CompressUtil;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
+import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
 
 public class ResponseUtil 
@@ -291,8 +292,20 @@ public class ResponseUtil
 			dropletJObject.put("seed", oldDroplet.getString("seed"));
 			
 			//this is to be manipulated by intrFountainId
-			//InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
-			dropletJObject.put("data", InitialGen.sdm.getSlice(intrSliceId, sliceIndex));
+			String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			
+			if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR) ||
+					sliceData.equals(SliceManager.INVALID_SLICE_FILE) ||
+					sliceData.equals(SliceManager.INVALID_SLICE_URL)
+					)
+			{
+				response.getWriter().append(sliceData);
+				response.flushBuffer();
+				return;
+			}
+			
+			
+			dropletJObject.put("data", sliceData);
 			
 			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
 			
