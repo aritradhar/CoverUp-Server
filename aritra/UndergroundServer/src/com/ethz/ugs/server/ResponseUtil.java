@@ -207,7 +207,7 @@ public class ResponseUtil
 	
 	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
-		//0/1,id_x,id_1,...,id_n:padding
+		//0/1,slice_index,id_x,id_1,...,id_n:padding
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
 		
