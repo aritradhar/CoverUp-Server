@@ -62,11 +62,11 @@ public class SliceManager
 	{
 		Long sliceId = SLICE_MAP.get(url);
 		
-		System.out.println("slice url");
-		for(String st : SLICE_MAP.keySet())
+		//System.out.println("slice url");
+		/*for(String st : SLICE_MAP.keySet())
 		{
 			System.out.println("SLICE url in tab : " + st);
-		}
+		}*/
 		
 		if(sliceId == null)
 			return INVALID_SLICE_URL;
@@ -75,7 +75,7 @@ public class SliceManager
 		//File sliceDir = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString());
 		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + ENV.DELIM + index + ".slice");
 		
-		System.out.println("Slice file loc : " + sliceFile);
+		//System.out.println("Slice file loc : " + sliceFile);
 		
 		if(!sliceFile.exists())
 			return INVALID_SLICE_FILE;
