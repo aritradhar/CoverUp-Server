@@ -1,6 +1,5 @@
 package com.ethz.ugs.server;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -81,10 +80,10 @@ public class ResponseUtil
 		else
 			response.getWriter().append(jObject.toString());
 
+		response.addHeader("x-flag", "0");
+		
 		System.out.println("len (String) :: " + jObject.toString().length());
 		
-		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-		System.out.println("Stream size (byte)  :: " + dos.size());
 		response.flushBuffer();
 
 	}
@@ -207,11 +206,9 @@ public class ResponseUtil
 		else
 			response.getWriter().append(jObject.toString());
 		
-		System.out.println("len (String) :: " + jObject.toString().length());
-
-		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-		System.out.println("Stream size (byte)  :: " + dos.size());
+		response.addHeader("x-flag", "0");
 		
+		System.out.println("len (String) :: " + jObject.toString().length());	
 		response.flushBuffer();
 	}
 	
@@ -313,18 +310,21 @@ public class ResponseUtil
 				response.flushBuffer();
 				return;
 			}
-			
+
 			
 			dropletJObject.put("data", sliceData);
 			
 			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
 			
 			jObject.put("droplet", dropletJObject.toString());
+			response.addHeader("x-flag", "1");
 		}
 		
 		else
+		{
 			jObject.put("droplet", dropletStr[0]);
-		
+			response.addHeader("x-flag", "0");
+		}
 		
 		jObject.put("signature", signatureBase64);	
 		//mandetory padding
