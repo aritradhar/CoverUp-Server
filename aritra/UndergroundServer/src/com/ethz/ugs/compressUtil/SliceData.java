@@ -1,7 +1,11 @@
 package com.ethz.ugs.compressUtil;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -68,13 +72,26 @@ public class SliceData {
 		return this.slicedData.get(index);
 	}
 	
-	public static void main(String[] args) 
+	public static void main(String[] args) throws IOException 
 	{
-		byte[] data = new byte[1000000000];
+		/*byte[] data = new byte[1000000000];
 		new Random().nextBytes(data);
 		
 		SliceData sd = new SliceData(data, 128);
-		sd.getSlice(1);
+		sd.getSlice(1);*/
+		
+		BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\Desktop\\0.slice"));
+		StringBuffer stb = new StringBuffer("");
+		String st = null;
+		
+		while((st = br.readLine()) != null)
+			stb.append(st);
+		
+		String x = new String(Base64.getDecoder().decode(stb.toString()), "UTF-8");
+		
+		System.out.println(x);
+		br.close();
+		
 	}
 
 }

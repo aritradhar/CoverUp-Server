@@ -22,7 +22,7 @@ public class SliceManager
 	public static Map<String, Long> SLICE_MAP = new HashMap<>();
 	
 	public static final String INVALID_SLICE_URL = "invalid slice url";
-	public static final String INVALID_SLICE_FILE = "slice file in local storage does not exist";
+	public static final String INVALID_SLICE_FILE = "slice index overflow";
 	public static final String INVALID_SLICE_ERROR = "unknown error related to I/O";
 	
 	
@@ -46,11 +46,15 @@ public class SliceManager
 		
 			int i = 0;
 			
+			System.out.println("slices : " + sd.getAllSlices().size());
+			
 			for(byte[] slice : sd.getAllSlices())
 			{
 				FileWriter fw_slice = new FileWriter(sliceDir + ENV.DELIM + i + ".slice");
-				fw_slice.append(Base64.getUrlEncoder().encodeToString(slice));
+				fw_slice.append(Base64.getEncoder().encodeToString(slice));
 				fw_slice.close();
+
+				i++;
 			}
 			
 			System.out.println("Slice added : " + file.getName());
