@@ -302,21 +302,31 @@ public class ResponseUtil
 			String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
 			
 			//some stupid code here. But I will fix this later
-			if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR) ||
+			
+			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
+				response.addHeader("x-flag", "2");
+			
+			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
+				response.addHeader("x-flag", "3");
+			
+			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
+				response.addHeader("x-flag", "4");
+			
+			else
+				response.addHeader("x-flag", "1");
+/*			if(sliceData.equals(SliceManager.INVALID_SLICE_URL) ||
 					sliceData.equals(SliceManager.INVALID_SLICE_FILE) ||
 					sliceData.equals(SliceManager.INVALID_SLICE_URL)
 					)
 				
 				dropletJObject.put("data", sliceData);
-			
-
-			else
-				dropletJObject.put("data", sliceData);
+*/						
+			dropletJObject.put("data", sliceData);
 			
 			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
 			
 			jObject.put("droplet", dropletJObject.toString());
-			response.addHeader("x-flag", "1");
+			//response.addHeader("x-flag", "1");
 			
 			System.out.println("here");
 		}
