@@ -41,13 +41,14 @@ public class SliceManager
 				sliceDir.mkdir();
 			
 			byte[] data = Files.readAllBytes(file.toPath());
-			SliceData sd = new SliceData(data, ENV.FOUNTAIN_CHUNK_SIZE);
+			//chunk size should be same as the data size
+			SliceData sd = new SliceData(data, chunk_size);
 		
 			int i = 0;
 			
 			for(byte[] slice : sd.getAllSlices())
 			{
-				FileWriter fw_slice = new FileWriter(sliceDir + ENV.DELIM + i);
+				FileWriter fw_slice = new FileWriter(sliceDir + ENV.DELIM + i + ".slice");
 				fw_slice.append(Base64.getUrlEncoder().encodeToString(slice));
 				fw_slice.close();
 			}
@@ -60,12 +61,21 @@ public class SliceManager
 	public String getSlice(String url, int index)
 	{
 		Long sliceId = SLICE_MAP.get(url);
+		
+		System.out.println("slice url");
+		for(String st : SLICE_MAP.keySet())
+		{
+			System.out.println("SLICE url in tab : " + st);
+		}
+		
 		if(sliceId == null)
 			return INVALID_SLICE_URL;
 		
 		System.out.println("Slice with " + url + " found");
 		//File sliceDir = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString());
-		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + index + ".json");
+		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + ENV.DELIM + index + ".slice");
+		
+		System.out.println("Slice file loc : " + sliceFile);
 		
 		if(!sliceFile.exists())
 			return INVALID_SLICE_FILE;
@@ -73,7 +83,7 @@ public class SliceManager
 		try
 		{
 			BufferedReader br = new BufferedReader(new FileReader(sliceFile));
-			String st = null;
+			String st = new String();
 			StringBuffer stb = new StringBuffer("");
 
 			while((st = br.readLine()) != null)
@@ -81,7 +91,7 @@ public class SliceManager
 
 			br.close();
 
-			return st;
+			return stb.toString();
 		}
 		catch(IOException ex)
 		{

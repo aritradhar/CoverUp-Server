@@ -301,29 +301,32 @@ public class ResponseUtil
 			//this is to be manipulated by intrFountainId
 			String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
 			
+			//some stupid code here. But I will fix this later
 			if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR) ||
 					sliceData.equals(SliceManager.INVALID_SLICE_FILE) ||
 					sliceData.equals(SliceManager.INVALID_SLICE_URL)
 					)
-			{
-				response.getWriter().append(sliceData);
-				response.flushBuffer();
-				return;
-			}
-
+				
+				dropletJObject.put("data", sliceData);
 			
-			dropletJObject.put("data", sliceData);
+
+			else
+				dropletJObject.put("data", sliceData);
 			
 			dropletJObject.put("num_chunks", oldDroplet.get("num_chunks"));
 			
 			jObject.put("droplet", dropletJObject.toString());
 			response.addHeader("x-flag", "1");
+			
+			System.out.println("here");
 		}
 		
 		else
 		{
 			jObject.put("droplet", dropletStr[0]);
 			response.addHeader("x-flag", "0");
+			
+			System.out.println("here out");
 		}
 		
 		jObject.put("signature", signatureBase64);	
