@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Base64;
@@ -93,6 +94,8 @@ public class MainServer extends HttpServlet {
 			System.exit(1);
 		}
 		System.out.println("Started...");
+		
+		System.out.println("Default Charset=" + Charset.defaultCharset());    	
 	}
 
 	private String readBroadcastFile() throws IOException
@@ -237,6 +240,7 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("tablePlease"))
 		{
 			ResponseUtil.tablePlease(request, response, this.privateKey);
+			System.out.println("-------------------------------------");
 		}
 
 
@@ -279,6 +283,9 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Header against specification");
 				response.flushBuffer();
 			}
+			
+			System.out.println("-------------------------------------");
+			
 		}
 
 		else if(flag.equals("end"))
