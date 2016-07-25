@@ -257,8 +257,17 @@ public class MainServer extends HttpServlet {
 			System.out.println("BODY : " + postBody);
 			
 			if(postBody == null || postBody.length() == 0)
-				ResponseUtil.dropletPlease(request, response, this.privateKey);
-			
+			{
+				try
+				{
+					ResponseUtil.dropletPlease(request, response, this.privateKey);
+				}
+				catch(IOException ex)
+				{
+					response.getWriter().append(ex.getMessage());
+					response.flushBuffer();
+				}
+			}
 			else if(postBody.startsWith("0"))
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
 			
