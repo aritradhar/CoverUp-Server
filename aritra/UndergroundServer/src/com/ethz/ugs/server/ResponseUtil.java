@@ -1,5 +1,6 @@
 package com.ethz.ugs.server;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -80,6 +81,10 @@ public class ResponseUtil
 		else
 			response.getWriter().append(jObject.toString());
 
+		System.out.println("len (String) :: " + jObject.toString().length());
+		
+		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+		System.out.println("Stream size (byte)  :: " + dos.size());
 		response.flushBuffer();
 
 	}
@@ -201,7 +206,12 @@ public class ResponseUtil
 		}
 		else
 			response.getWriter().append(jObject.toString());
+		
+		System.out.println("len (String) :: " + jObject.toString().length());
 
+		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+		System.out.println("Stream size (byte)  :: " + dos.size());
+		
 		response.flushBuffer();
 	}
 	
