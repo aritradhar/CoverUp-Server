@@ -60,9 +60,9 @@ public class ResponseUtilBin {
 		//P = fixed packet size
 		//table-> table_len | table | signature | padding |
 		//			4			x		64		  P-(68+x)
-		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE];
+		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		byte[] tableLen = ByteBuffer.allocate(Integer.BYTES).putInt(theTableBytes.length).array();
-		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE - tableLen.length - theTableBytes.length - signatureBytes.length];
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - tableLen.length - theTableBytes.length - signatureBytes.length];
 		rand.nextBytes(padding);
 		
 		System.arraycopy(tableLen, 0, packetToSend, 0, tableLen.length);
@@ -196,10 +196,10 @@ public class ResponseUtilBin {
 		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
 		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
 		
-		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE - dropletLenBytes.length - dropletByte.length - signatureBytes.length - urlLenBytes.length - urlBytes.length - f_idBytes.length];
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dropletLenBytes.length - dropletByte.length - signatureBytes.length - urlLenBytes.length - urlBytes.length - f_idBytes.length];
 		rand.nextBytes(padding);
 		
-		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE];
+		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		
 		System.arraycopy(dropletLenBytes, 0, packetToSend, 0, dropletLenBytes.length);
 		System.arraycopy(dropletByte, 0, packetToSend, dropletLenBytes.length, dropletByte.length);

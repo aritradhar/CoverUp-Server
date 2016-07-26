@@ -20,6 +20,8 @@ public class ENV {
 	//9 bytes for JSON => "pad":"", 9 bytes
 	public static final int FIXED_PACKET_SIZE = 15000 - 9;
 	
+	public static final int FIXED_PACKET_SIZE_BIN = 15000;
+	
 	public static final long PEER_TIMEOUT = 5500;
 	
 	public static final int PEER_CHECK_SCHEDULE = 1000;

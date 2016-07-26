@@ -296,6 +296,18 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 			
 		}
+		
+		else if(flag.equals("tablePleaseBin"))
+		{
+			ResponseUtilBin.tablePleaseBin(request, response, this.privateKey);
+			System.out.println("-------------------------------------");
+		}
+		
+		else if(flag.equals("dropletPleaseBin"))
+		{
+			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+			System.out.println("-------------------------------------");
+		}
 
 		else if(flag.equals("end"))
 		{
