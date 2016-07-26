@@ -23,9 +23,20 @@ import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
 
+/**
+ * Response processing class
+ * @author Aritra
+ *	
+ */
 public class ResponseUtil 
 {
-	
+	/**
+	 * Table request
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param privateKey
+	 * @throws IOException
+	 */
 	public static void tablePlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
 		//System.out.println("Table request from : " + request.getRemoteAddr());
@@ -89,7 +100,13 @@ public class ResponseUtil
 	}
 	
 	
-	
+	/**
+	 * normal droplet request
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param privateKey
+	 * @throws IOException
+	 */
 	public static void dropletPlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
 			
@@ -212,6 +229,13 @@ public class ResponseUtil
 		response.flushBuffer();
 	}
 	
+	/**
+	 * Intr droplet request
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param privateKey
+	 * @throws IOException
+	 */
 	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
 		//0/1,slice_index,id_x,id_1,...,id_n:padding
