@@ -6,6 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Arrays;
 
+import org.whispersystems.curve25519.Curve25519;
+import org.whispersystems.curve25519.Curve25519KeyPair;
+
 import com.ethz.fountain.Droplet;
 import com.ethz.fountain.Fountain;
 import com.ethz.ugs.dataStructures.FountainTableRow;
@@ -54,8 +57,18 @@ public class InitialGen
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException {
 		
-		byte[] data = new byte[100];
+		Curve25519KeyPair keypair = Curve25519.getInstance(Curve25519.BEST).generateKeyPair();
+		byte[] sk = keypair.getPrivateKey();
+		byte[] pk = keypair.getPublicKey();
+		
+		System.out.println(sk.length);
+		System.out.println(pk.length);
+		
+		byte[] data = new byte[256];
 		Arrays.fill(data, (byte)0x01);
+		
+		byte[] sig = Curve25519.getInstance(Curve25519.BEST).calculateSignature(sk, data);
+		System.out.println(sig.length);
 		
 		byte[] seed = new byte[10];
 		Arrays.fill(seed, (byte) 0x02);
