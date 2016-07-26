@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class FountainTableRow
 		this.num_chunks = fountain.num_chunks;
 		this.datalenBeforPadding = fountain.dataLenBeforPadding;
 
-		this.dropletLoc = new Integer(new Random().nextInt(Integer.MAX_VALUE)).toString();
+		this.dropletLoc = new Integer(new SecureRandom().nextInt(Integer.MAX_VALUE)).toString();
 		File f = new File(dropletLoc);
 		f.mkdir();
 		

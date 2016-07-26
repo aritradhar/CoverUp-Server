@@ -68,7 +68,7 @@ public class ResponseUtilBin {
 		System.arraycopy(tableLen, 0, packetToSend, 0, tableLen.length);
 		System.arraycopy(theTableBytes, 0, packetToSend, tableLen.length, theTableBytes.length);
 		System.arraycopy(signatureBytes, 0, packetToSend, tableLen.length + theTableBytes.length, signatureBytes.length);
-		System.arraycopy(padding, 0, packetToSend, tableLen.length + theTableBytes.length + signatureBytes.length, packetToSend.length);
+		System.arraycopy(padding, 0, packetToSend, tableLen.length + theTableBytes.length + signatureBytes.length, padding.length);
 		
 
 		response.getOutputStream().write(packetToSend);

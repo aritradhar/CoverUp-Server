@@ -17,7 +17,7 @@ public class ENV {
 	
 	public static final int COMPRESSION_PRESET = 7;
 	
-	//9 bytes for JSON => "pad":"", 9 bytes
+	//9 bytes for JSON => "pad":"",   9 bytes
 	public static final int FIXED_PACKET_SIZE = 15000 - 9;
 	
 	public static final int FIXED_PACKET_SIZE_BIN = 15000;
@@ -35,6 +35,7 @@ public class ENV {
 	
 	public static final boolean PADDING_ENABLE = true;
 	
+	public static final boolean EXPERIMENTAL = false;
 	static
 	{
 		String OS = System.getProperty("os.name");
