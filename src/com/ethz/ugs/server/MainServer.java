@@ -29,7 +29,9 @@ import com.ethz.ugs.test.InitialGen;
 
 
 /**
- * Servlet implementation class MainServer
+ * Main server class for underground server implementation
+ * @author Aritra
+ *
  */
 @WebServlet("/MainServer")
 public class MainServer extends HttpServlet {
@@ -113,6 +115,10 @@ public class MainServer extends HttpServlet {
 		return sb.toString();
 	}
 
+	/**
+	 * Generate Curve25519 private and public key pairs
+	 * @throws IOException
+	 */
 	private void keyGeneration() throws IOException
 	{
 		Stats.keygen_done = true;
@@ -161,6 +167,9 @@ public class MainServer extends HttpServlet {
 	}
 
 
+	/**
+	 * Post. Defalt
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 

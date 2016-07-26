@@ -17,6 +17,7 @@ public class ENV {
 	
 	public static final int COMPRESSION_PRESET = 7;
 	
+	//9 bytes for JSON => "pad":"", 9 bytes
 	public static final int FIXED_PACKET_SIZE = 15000 - 9;
 	
 	public static final long PEER_TIMEOUT = 5500;
