@@ -383,6 +383,7 @@ public class ResponseUtil
 		else
 			response.getWriter().append(jObject.toString(2));
 
+		response.addHeader("x-flag", "0");
 		response.flushBuffer();
 	}
 	public static void broadCast(HttpServletRequest request, HttpServletResponse response, String broadCastMessage) throws IOException
