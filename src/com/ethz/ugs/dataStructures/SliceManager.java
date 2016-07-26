@@ -6,10 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.json.JSONObject;
 
@@ -30,12 +30,16 @@ public class SliceManager
 	{
 		File files = new File(ENV.INTR_SOURCE_DOCUMENT_LOC);
 		
-		Random rand = new Random();
+		SecureRandom rand = new SecureRandom();
 		
 		for(File file: files.listFiles())
 		{
-			Long id = rand.nextLong();
-			File sliceDir = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + id.toString());
+			long id = rand.nextLong();
+			
+			if(id < 0)
+				id *= -1;
+			
+			File sliceDir = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + id);
 			
 			if(!sliceDir.exists())
 				sliceDir.mkdir();
