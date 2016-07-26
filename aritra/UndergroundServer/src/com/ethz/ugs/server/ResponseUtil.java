@@ -309,7 +309,7 @@ public class ResponseUtil
 			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
 				response.addHeader("x-flag", "3");
 			
-			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
+			else if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 				response.addHeader("x-flag", "4");
 			
 			else
