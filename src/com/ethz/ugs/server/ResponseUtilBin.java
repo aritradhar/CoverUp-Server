@@ -86,9 +86,9 @@ public class ResponseUtilBin {
 	/**
 	 * P = fixed packet size
 	 * <br>
-	 * table-> deoplet_len (4) | droplet (n) | signature (64) | url_len (4) | url (n_1) | f_id (8) | padding (p - 72 - n - n_1) |</br>
+	 * table-> packet_len (4) | droplet (n) | url_len (4) | url (n_1) | f_id (8) | signature (64) | padding (p - 72 - n - n_1) |</br>
 	 * 
-	 * Signature is on droplet
+	 * Signature is on  packet_len | droplet | url_len | url | f_id 
 	 * <br>
 	 * droplet -> seedlen (4) | seed(n) | num_chunk (4) | datalen (4) | data (n)
 	 * <br>
@@ -175,16 +175,28 @@ public class ResponseUtilBin {
 		System.arraycopy(dataLenBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, dataLenBytes.length);
 		System.arraycopy(data, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length, data.length);
 		
-		byte[] dropletLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(dropletByte.length).array();
+		byte[] fixedPacketLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
+		
+		byte[] urlBytes = url.getBytes(StandardCharsets.UTF_8);
+		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
+		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
+		
+		
+		
+		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
+		
+		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
+		System.arraycopy(dropletByte, 0, dataToSign, fixedPacketLenBytes.length, dropletByte.length);
+		System.arraycopy(urlLenBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length, urlLenBytes.length);
+		System.arraycopy(urlBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length, urlBytes.length);
+		System.arraycopy(f_idBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length, f_idBytes.length);
 		
 		byte[] signatureBytes = null;
-
-		System.out.println("Droplet " + dropletByte.length);
 		try 
 		{
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] hashtableBytes = md.digest(dropletByte);
+			byte[] hashtableBytes = md.digest(dataToSign);
 			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
 			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
 		} 
@@ -195,24 +207,17 @@ public class ResponseUtilBin {
 			response.getWriter().append("Exception in signature calculation!");
 			response.flushBuffer();
 		}
-
-
-		byte[] urlBytes = url.getBytes(StandardCharsets.UTF_8);
-		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
-		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
 		
-		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dropletLenBytes.length - dropletByte.length - signatureBytes.length - urlLenBytes.length - urlBytes.length - f_idBytes.length];
+		
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];
 		rand.nextBytes(padding);
 		
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		
-		System.arraycopy(dropletLenBytes, 0, packetToSend, 0, dropletLenBytes.length);
-		System.arraycopy(dropletByte, 0, packetToSend, dropletLenBytes.length, dropletByte.length);
-		System.arraycopy(signatureBytes, 0, packetToSend, dropletLenBytes.length + dropletByte.length, signatureBytes.length);
-		System.arraycopy(urlLenBytes, 0, packetToSend, dropletLenBytes.length + dropletByte.length + signatureBytes.length, urlLenBytes.length);
-		System.arraycopy(urlBytes, 0, packetToSend, dropletLenBytes.length + dropletByte.length + signatureBytes.length + urlLenBytes.length, urlBytes.length);
-		System.arraycopy(f_idBytes, 0, packetToSend, dropletLenBytes.length + dropletByte.length + signatureBytes.length + urlLenBytes.length + urlBytes.length, f_idBytes.length);
-		System.arraycopy(padding, 0, packetToSend, dropletLenBytes.length + dropletByte.length + signatureBytes.length + urlLenBytes.length + urlBytes.length + f_idBytes.length, padding.length);
+		//dataToSign | signature | padding
+		System.arraycopy(dataToSign, 0, packetToSend, 0, dataToSign.length);
+		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
+		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
 		
 		response.getOutputStream().write(packetToSend);
 		
