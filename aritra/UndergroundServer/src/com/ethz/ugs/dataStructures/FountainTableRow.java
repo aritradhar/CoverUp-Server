@@ -17,10 +17,16 @@ import org.json.JSONObject;
 import com.ethz.fountain.Fountain;
 import com.ethz.ugs.server.ENV;
 
+/**
+ * On single row of the fountain table. Contains all required field 
+ * @author Aritra
+ *
+ */
 public class FountainTableRow 
 {
 	//dropletloc->url mapping
 	public static Map<Integer, String> dropletLocUrlMap = new HashMap<>();
+	//reverse mapping of the above one
 	public static Map<String, Integer> dropletLocUrlMapRev = new HashMap<>();
 	
 	String url;
