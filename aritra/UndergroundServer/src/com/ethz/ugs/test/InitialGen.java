@@ -16,7 +16,11 @@ import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.server.ENV;
 
-
+/**
+ * Droplet and slice data initialization. For every server deployment this will execute.
+ * @author Aritra
+ *
+ */
 public class InitialGen 
 {
 	
