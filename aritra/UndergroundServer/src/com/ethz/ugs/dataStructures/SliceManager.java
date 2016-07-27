@@ -29,7 +29,7 @@ public class SliceManager
 	
 	public SliceManager(int chunk_size) throws IOException 
 	{
-		if(!loadSliceTable())
+		if(loadSliceTable())
 		{
 			System.out.println("Slice dir loaded from table");
 			return;
@@ -136,8 +136,13 @@ public class SliceManager
 		while((str = br.readLine()) != null)
 			stb.append(str);
 		
+		br.close();
+		
 		JSONObject jObject = new JSONObject(stb.toString());
+
 		Iterator<String> itKey = jObject.keys();
+		
+		System.out.println(jObject.keySet().size());
 		
 		while(itKey.hasNext())
 		{
@@ -149,7 +154,7 @@ public class SliceManager
 				return false;
 			}
 			
-			System.out.println("Slice : " + sliceKey + "with id : " + sliceId + " found...");
+			System.out.println("Slice : " + sliceKey + " with id : " + sliceId + " found...");
 			SLICE_MAP.put(sliceKey, sliceId);
 		}
 		
