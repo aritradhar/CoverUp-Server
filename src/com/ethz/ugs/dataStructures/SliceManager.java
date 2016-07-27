@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -28,7 +29,17 @@ public class SliceManager
 	
 	public SliceManager(int chunk_size) throws IOException 
 	{
+		if(!loadSliceTable())
+		{
+			System.out.println("Slice dir loaded from table");
+			return;
+		}
+		
 		File files = new File(ENV.INTR_SOURCE_DOCUMENT_LOC);
+		
+		for(File sliceDir : new File(ENV.INTR_SLICE_OUTPUT_LOC).listFiles())
+			sliceDir.delete();
+		
 		
 		SecureRandom rand = new SecureRandom();
 		
@@ -64,6 +75,7 @@ public class SliceManager
 			System.out.println("Slice added : " + file.getName());
 			SLICE_MAP.put(file.getName(), id);
 		}
+		this.saveSliceTable();
 	}
 	
 	public String getSlice(String url, int index)
@@ -107,7 +119,7 @@ public class SliceManager
 		}
 	}
 	
-	public void saveSliceTable() throws IOException
+	private void saveSliceTable() throws IOException
 	{
 		JSONObject jObject = new JSONObject(SLICE_MAP);
 		FileWriter fw_slice = new FileWriter(ENV.SLICS_TABLE_LOC);
@@ -115,5 +127,33 @@ public class SliceManager
 		fw_slice.close();
 	}
 	
+	private boolean loadSliceTable() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new FileReader(ENV.SLICS_TABLE_LOC));
+		StringBuffer stb = new StringBuffer();
+		String str = null;
+		
+		while((str = br.readLine()) != null)
+			stb.append(str);
+		
+		JSONObject jObject = new JSONObject(stb.toString());
+		Iterator<String> itKey = jObject.keys();
+		
+		while(itKey.hasNext())
+		{
+			String sliceKey = itKey.next();
+			long sliceId = jObject.getLong(sliceKey);
+			
+			if(!new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId).exists())
+			{
+				return false;
+			}
+			
+			System.out.println("Slice : " + sliceKey + "with id : " + sliceId + " found...");
+			SLICE_MAP.put(sliceKey, sliceId);
+		}
+		
+		return true;
+	}
 	
 }
