@@ -49,6 +49,12 @@ public class ServerUtil {
 		return jObject;
 	}
 
+	/**
+	 * Get http reuest body.
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
 	public static String GetBody(HttpServletRequest request) throws IOException
 	{
 		String body = null;

@@ -17,6 +17,11 @@ import org.json.JSONObject;
 import com.ethz.ugs.compressUtil.SliceData;
 import com.ethz.ugs.server.ENV;
 
+/**
+ * This class handles the slicing of the data for interactive browing
+ * @author Aritra
+ *
+ */
 public class SliceManager 
 {
 	//slice url -> fragment location (id)
@@ -26,7 +31,12 @@ public class SliceManager
 	public static final String INVALID_SLICE_FILE = "slice index overflow";
 	public static final String INVALID_SLICE_ERROR = "unknown error related to I/O";
 	
-	
+	/**
+	 * Initiate {@code SliceManager} with {@code chunk_size}
+	 * @param chunk_size In bytes. Should be same as the droplet chunk size. This also checks for existing slice table.
+	 * Needs more optimization later on.
+	 * @throws IOException
+	 */
 	public SliceManager(int chunk_size) throws IOException 
 	{
 		if(loadSliceTable())
@@ -78,6 +88,12 @@ public class SliceManager
 		this.saveSliceTable();
 	}
 	
+	/**
+	 * Fetch a slice specific to a url and slice index
+	 * @param url Slice url
+	 * @param index Index of the Specific slice
+	 * @return
+	 */
 	public String getSlice(String url, int index)
 	{
 		Long sliceId = SLICE_MAP.get(url);
@@ -119,6 +135,10 @@ public class SliceManager
 		}
 	}
 	
+	/**
+	 * Save the inmemory slice table in disk
+	 * @throws IOException
+	 */
 	private void saveSliceTable() throws IOException
 	{
 		JSONObject jObject = new JSONObject(SLICE_MAP);
@@ -127,8 +147,16 @@ public class SliceManager
 		fw_slice.close();
 	}
 	
+	/**
+	 * Load slice table from disk to memory
+	 * @return true/false in case it can able to load or not. In case load fails, it will reslice the data and remake the slice table.
+	 * @throws IOException
+	 */
 	private boolean loadSliceTable() throws IOException
 	{
+		if(!new File(ENV.SLICS_TABLE_LOC).exists())
+			return false;
+		
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SLICS_TABLE_LOC));
 		StringBuffer stb = new StringBuffer();
 		String str = null;

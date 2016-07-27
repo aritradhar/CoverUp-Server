@@ -20,6 +20,11 @@ import com.ethz.ugs.compressUtil.CompressUtil;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 
+/**
+ * Response processing class. Provide resposne in byte stream.
+ * @author Aritra
+ *
+ */
 public class ResponseUtilBin {
 	
 	public static SecureRandom rand = new SecureRandom();

@@ -34,7 +34,7 @@ public class ResponseUtil
 	 * Table request
 	 * @param request HttpServletRequest
 	 * @param response HttpServletResponse
-	 * @param privateKey
+	 * @param privateKey Server curve25519 private key
 	 * @throws IOException
 	 */
 	public static void tablePlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
@@ -104,7 +104,7 @@ public class ResponseUtil
 	 * normal droplet request
 	 * @param request HttpServletRequest
 	 * @param response HttpServletResponse
-	 * @param privateKey
+	 * @param privateKey Server curve25519 private key
 	 * @throws IOException
 	 */
 	public static void dropletPlease(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
@@ -233,7 +233,7 @@ public class ResponseUtil
 	 * Intr droplet request
 	 * @param request HttpServletRequest
 	 * @param response HttpServletResponse
-	 * @param privateKey
+	 * @param privateKey Server curve25519 private key
 	 * @throws IOException
 	 */
 	public static void dropletPleaseIntr(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
@@ -434,6 +434,12 @@ public class ResponseUtil
 		response.flushBuffer();
 	}
 	
+	/**
+	 * Produce a random resopse of specified size.
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	public static void rand(HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
 		Stats.TOTAL_CONNECTIONS++;
@@ -450,6 +456,16 @@ public class ResponseUtil
 		response.flushBuffer();
 	}
 	
+	/**
+	 * EC base DHKE.
+	 * @param request
+	 * @param response
+	 * @param publicKey
+	 * @param privateKey
+	 * @param sharedSecret
+	 * @param sharedSecretMap
+	 * @throws IOException
+	 */
 	public static void ke(HttpServletRequest request, HttpServletResponse response, byte[] publicKey, byte[] privateKey, byte[] sharedSecret, Map<String, byte[]> sharedSecretMap) throws IOException
 	{
 		Stats.TOTAL_CONNECTIONS++;
