@@ -403,7 +403,7 @@ public class ResponseUtilBin {
 			System.arraycopy(signatureBytes, 0, packetToSend, sliceToSign.length, signatureBytes.length);
 			System.arraycopy(padding, 0, packetToSend, sliceToSign.length + signatureBytes.length, padding.length);
 			
-			response.getOutputStream().write(packetToSend);
+			
 
 			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
 				response.addHeader("x-flag", "2");
@@ -417,6 +417,7 @@ public class ResponseUtilBin {
 			else
 				response.addHeader("x-flag", "1");
 
+			response.getOutputStream().write(packetToSend);
 			System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
 
