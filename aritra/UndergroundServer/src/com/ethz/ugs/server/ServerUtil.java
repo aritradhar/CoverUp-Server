@@ -116,6 +116,13 @@ public class ServerUtil {
 		
 		return sb.toString();
 	}
+	
+	public static String deterministicString(int len)
+	{
+		String string = new String(new char[len]).replace('\0', ENV.PADDING_DETERMINISTIC_STRING);
+		
+		return string;
+	}
 
 
 

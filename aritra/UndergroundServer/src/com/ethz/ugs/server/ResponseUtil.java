@@ -206,8 +206,14 @@ public class ResponseUtil
 		{
 			String responseString = jObject.toString();
 			int padLen = ENV.FIXED_PACKET_SIZE - responseString.length();
-			String randomPadding = ServerUtil.randomString(padLen);
-			jObject.put("pad", randomPadding);
+			String stringPadding = null;
+			
+			if(ENV.RANDOM_PADDING)
+				stringPadding = ServerUtil.randomString(padLen);
+			else
+				stringPadding = ServerUtil.deterministicString(padLen);
+			
+			jObject.put("pad", stringPadding);
 		}
 		
 		
