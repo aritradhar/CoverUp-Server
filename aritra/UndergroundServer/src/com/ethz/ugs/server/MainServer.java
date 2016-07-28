@@ -352,5 +352,4 @@ public class MainServer extends HttpServlet {
 			response.flushBuffer();
 		}
 	}
-
 }
