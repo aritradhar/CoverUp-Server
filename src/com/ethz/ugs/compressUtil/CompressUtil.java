@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
@@ -14,6 +15,13 @@ import org.tukaani.xz.XZOutputStream;
 
 public class CompressUtil {
 	
+	/**
+	 * 
+	 * @param infileString
+	 * @param outfileString
+	 * @param preSet play with this number: 6 is default but 7 works better for mid sized archives ( > 8mb)
+	 * @throws IOException
+	 */
 	public static void compress(String infileString, String outfileString, int preSet) throws IOException
 	{
 		FileInputStream inFile = new FileInputStream(infileString);
@@ -21,7 +29,7 @@ public class CompressUtil {
 
 		LZMA2Options options = new LZMA2Options();
 
-		options.setPreset(preSet); // play with this number: 6 is default but 7 works better for mid sized archives ( > 8mb)
+		options.setPreset(preSet);
 
 		XZOutputStream out = new XZOutputStream(outfile, options);
 
@@ -101,7 +109,7 @@ public class CompressUtil {
 	//Test
 	public static void main(String[] args) throws IOException 
 	{
-		byte[] bytes = new byte[10000];
+		byte[] bytes = new byte[1000000];
 		Arrays.fill(bytes, (byte) 0x01);
 		//new Random().nextBytes(bytes);
 		
