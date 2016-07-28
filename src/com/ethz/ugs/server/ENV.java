@@ -33,7 +33,7 @@ public class ENV {
 	public static String BROADCAST_LOCATION = null;
 	
 	public static final boolean PADDING_ENABLE = true;
-	public static final boolean RANDOM_PADDING = true;
+	public static final boolean RANDOM_PADDING = false;
 	//iff RANDOM_PADDING = false
 	public static final byte PADDING_DETERMINISTIC_BYTE = (byte) 0xaa;
 	public static final char PADDING_DETERMINISTIC_STRING = 'A';
