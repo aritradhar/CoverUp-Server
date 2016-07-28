@@ -370,8 +370,17 @@ public class ResponseUtilBin {
 		if(fountainSet.contains(url))
 		{
 			String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			byte[] sliceDataBytes = null;
 			
-			byte[] sliceDataBytes = Base64.getDecoder().decode(sliceData);
+			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+			{
+				sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
+				Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
+			}
+			
+			else
+				sliceDataBytes = Base64.getDecoder().decode(sliceData);
+			
 			byte[] sliceLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
 			
 			byte[] sliceByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + sliceLenBytes.length + sliceDataBytes.length];
