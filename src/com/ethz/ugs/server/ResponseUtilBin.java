@@ -86,6 +86,7 @@ public class ResponseUtilBin {
 
 
 		response.getOutputStream().write(packetToSend);
+		//response.addHeader("x-flag", "0");
 		response.addHeader("x-flag", "0");
 		System.out.println("len (byte) :: " + packetToSend.length);
 
@@ -230,10 +231,10 @@ public class ResponseUtilBin {
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
 
 		response.getOutputStream().write(packetToSend);
-
 		response.addHeader("x-flag", "0");
-
-		System.out.println("len (bytes on line) :: " + packetToSend.length);	
+		
+		System.out.println("len (bytes on line) :: " + packetToSend.length);
+		System.out.println("x-flag value : " + response.getHeader("x-flag"));
 		response.flushBuffer();
 	}
 
@@ -402,7 +403,7 @@ public class ResponseUtilBin {
 			System.arraycopy(sliceToSign, 0, packetToSend, 0, sliceToSign.length);
 			System.arraycopy(signatureBytes, 0, packetToSend, sliceToSign.length, signatureBytes.length);
 			System.arraycopy(padding, 0, packetToSend, sliceToSign.length + signatureBytes.length, padding.length);
-			
+			response.getOutputStream().write(packetToSend);
 			
 
 			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
@@ -416,8 +417,7 @@ public class ResponseUtilBin {
 			
 			else
 				response.addHeader("x-flag", "1");
-
-			response.getOutputStream().write(packetToSend);
+			
 			System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
 

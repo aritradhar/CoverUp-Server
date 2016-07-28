@@ -171,8 +171,8 @@ public class MainServer extends HttpServlet {
 	 * Post. Defalt
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
-	{
-
+	{	
+		
 		System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 		
 		String flag = request.getParameter("flag");
