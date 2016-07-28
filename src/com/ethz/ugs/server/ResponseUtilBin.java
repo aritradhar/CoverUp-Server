@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,8 +73,12 @@ public class ResponseUtilBin {
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		byte[] tableLen = ByteBuffer.allocate(Integer.BYTES).putInt(theTableBytes.length).array();
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - tableLen.length - theTableBytes.length - signatureBytes.length];
-		rand.nextBytes(padding);
-
+		
+		if(ENV.RANDOM_PADDING)
+			rand.nextBytes(padding);
+		else
+			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
+		
 		System.arraycopy(tableLen, 0, packetToSend, 0, tableLen.length);
 		System.arraycopy(theTableBytes, 0, packetToSend, tableLen.length, theTableBytes.length);
 		System.arraycopy(signatureBytes, 0, packetToSend, tableLen.length + theTableBytes.length, signatureBytes.length);
@@ -212,7 +217,10 @@ public class ResponseUtilBin {
 
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];
-		rand.nextBytes(padding);
+		if(ENV.RANDOM_PADDING)
+			rand.nextBytes(padding);
+		else
+			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 
@@ -316,8 +324,6 @@ public class ResponseUtilBin {
 		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
 		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
 
-
-
 		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
 
 		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
@@ -345,7 +351,10 @@ public class ResponseUtilBin {
 
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];
-		rand.nextBytes(padding);
+		if(ENV.RANDOM_PADDING)
+			rand.nextBytes(padding);
+		else
+			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 
@@ -380,10 +389,12 @@ public class ResponseUtilBin {
 			System.arraycopy(urlLenBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length, urlLenBytes.length);
 			System.arraycopy(urlBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length, urlBytes.length);
 			System.arraycopy(f_idBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length + urlBytes.length, f_idBytes.length);
-			
-			
+					
 			padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - sliceToSign.length - signatureBytes.length];
-			rand.nextBytes(padding);
+			if(ENV.RANDOM_PADDING)
+				rand.nextBytes(padding);
+			else
+				Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 
 			packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 
