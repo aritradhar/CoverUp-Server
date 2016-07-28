@@ -47,6 +47,8 @@ public class ResponseUtilBin {
 
 	public static void tablePleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
+		response.addHeader("x-flag", "0");
+		
 		String theTable = SiteMap.getTable();
 
 		byte[] theTableBytes = theTable.getBytes(StandardCharsets.UTF_8);
@@ -85,11 +87,14 @@ public class ResponseUtilBin {
 		System.arraycopy(padding, 0, packetToSend, tableLen.length + theTableBytes.length + signatureBytes.length, padding.length);
 
 
-		response.getOutputStream().write(packetToSend);
-		//response.addHeader("x-flag", "0");
-		response.addHeader("x-flag", "0");
-		System.out.println("len (byte) :: " + packetToSend.length);
-
+		OutputStream out = response.getOutputStream();
+		out.write(packetToSend);
+		out.flush();
+		out.close();
+		//response.addHeader("x-flag", "0");	
+		
+		System.out.println("len (byte on line) :: " + packetToSend.length);
+		System.out.println(response.getHeader("x-flag"));
 		response.flushBuffer();
 	}
 
@@ -111,6 +116,8 @@ public class ResponseUtilBin {
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
 
+		response.addHeader("x-flag", "0");
+		
 		String url = request.getParameter("url");
 
 		String[] dropletStr = new String[2];
@@ -230,8 +237,10 @@ public class ResponseUtilBin {
 		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
 
-		response.getOutputStream().write(packetToSend);
-		response.addHeader("x-flag", "0");
+		OutputStream out = response.getOutputStream();
+		out.write(packetToSend);
+		out.flush();
+		out.close();
 		
 		System.out.println("len (bytes on line) :: " + packetToSend.length);
 		System.out.println("x-flag value : " + response.getHeader("x-flag"));
@@ -381,6 +390,21 @@ public class ResponseUtilBin {
 			else
 				sliceDataBytes = Base64.getDecoder().decode(sliceData);
 			
+			//for some stupid reason
+			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
+				response.addHeader("x-flag", "2");
+			
+			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
+				response.addHeader("x-flag", "3");
+			
+			else if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+				response.addHeader("x-flag", "4");
+			
+			else
+				response.addHeader("x-flag", "1");
+			
+			
+			
 			byte[] sliceLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
 			
 			byte[] sliceByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + sliceLenBytes.length + sliceDataBytes.length];
@@ -412,31 +436,25 @@ public class ResponseUtilBin {
 			System.arraycopy(sliceToSign, 0, packetToSend, 0, sliceToSign.length);
 			System.arraycopy(signatureBytes, 0, packetToSend, sliceToSign.length, signatureBytes.length);
 			System.arraycopy(padding, 0, packetToSend, sliceToSign.length + signatureBytes.length, padding.length);
-			response.getOutputStream().write(packetToSend);
 			
-
-			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
-				response.addHeader("x-flag", "2");
-			
-			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
-				response.addHeader("x-flag", "3");
-			
-			else if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
-				response.addHeader("x-flag", "4");
-			
-			else
-				response.addHeader("x-flag", "1");
+			OutputStream out = response.getOutputStream();
+			out.write(packetToSend);	
+			out.flush();
+			out.close();
 			
 			System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
-
+			
 			return;
 				
 		}
 
-		response.getOutputStream().write(packetToSend);
-
 		response.addHeader("x-flag", "0");
+		OutputStream out = response.getOutputStream();
+		out.write(packetToSend);
+		out.flush();
+		out.close();
+
 
 		System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();
