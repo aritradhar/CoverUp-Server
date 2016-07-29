@@ -1,5 +1,6 @@
 package com.ethz.ugs.server;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -53,11 +54,11 @@ public class ResponseUtilBin {
 
 		byte[] fixedPacketSizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_BASE_SIZE).array();
 		byte[] theTableBytes = theTable.getBytes(StandardCharsets.UTF_8);
+		//System.out.println("HT : " + Base64.getUrlEncoder().encodeToString(theTableBytes));
 		byte[] signatureBytes = null;
 
 		try 
 		{
-
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			byte[] hashtableBytes = md.digest(theTableBytes);
 			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
@@ -84,6 +85,8 @@ public class ResponseUtilBin {
 		else
 			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 		
+		System.out.println("table len " + theTableBytes.length);
+		
 		System.arraycopy(fixedPacketSizeBytes, 0, packetToSend, 0, fixedPacketSizeBytes.length);
 		System.arraycopy(tableLen, 0, packetToSend, fixedPacketSizeBytes.length, tableLen.length);
 		System.arraycopy(theTableBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length, theTableBytes.length);
@@ -95,7 +98,12 @@ public class ResponseUtilBin {
 		out.write(packetToSend);
 		out.flush();
 		out.close();
-		//response.addHeader("x-flag", "0");	
+		//response.addHeader("x-flag", "0");
+		
+		FileWriter fw = new FileWriter("binResp.txt");
+		fw.append(Base64.getEncoder().encodeToString(packetToSend));
+		fw.flush();
+		fw.close();
 		
 		System.out.println("len (byte on line) :: " + packetToSend.length);
 		System.out.println(response.getHeader("x-flag"));
@@ -246,6 +254,13 @@ public class ResponseUtilBin {
 		out.flush();
 		out.close();
 		
+		//test
+		/*FileWriter fw = new FileWriter("binResp.txt");
+		fw.append(Base64.getEncoder().encodeToString(packetToSend));
+		fw.flush();
+		fw.close();*/
+		
+		
 		System.out.println("len (bytes on line) :: " + packetToSend.length);
 		System.out.println("x-flag value : " + response.getHeader("x-flag"));
 		response.flushBuffer();
@@ -287,7 +302,6 @@ public class ResponseUtilBin {
 			{
 				int fountainId = Integer.parseInt(fountains[i]);
 				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
-
 
 				if(url == null)
 				{
@@ -351,9 +365,9 @@ public class ResponseUtilBin {
 		{
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] hashtableBytes = md.digest(dataToSign);
-			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
-			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
+			byte[] hashDataToSign = md.digest(dataToSign);
+			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashDataToSign));
+			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashDataToSign);
 		} 
 
 		catch (NoSuchAlgorithmException e) 
@@ -449,8 +463,7 @@ public class ResponseUtilBin {
 			System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
 			
-			return;
-				
+			return;	
 		}
 
 		response.addHeader("x-flag", "0");
@@ -458,8 +471,7 @@ public class ResponseUtilBin {
 		out.write(packetToSend);
 		out.flush();
 		out.close();
-
-
+		
 		System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();
 
