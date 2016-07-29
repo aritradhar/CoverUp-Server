@@ -82,7 +82,7 @@ public class FountainTableRow
 		File file = new File(this.url);
 		this.data = Files.readAllBytes(file.toPath());
 		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
-		
+	
 		dropletLocUrlMap.put(Long.parseLong(this.dropletLoc), this.url);
 		dropletLocUrlMapRev.put(this.url, Long.parseLong(this.dropletLoc));
 	}
