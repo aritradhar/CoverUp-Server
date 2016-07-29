@@ -37,8 +37,8 @@ public class ResponseUtilBin {
 	/**
 	 * P = fixed packet size
 	 * <p>
-	 * table-> table_len | table | signature | padding |</p><p>
-	 * 				4		 x		  64	   P-(68+x)</p>
+	 * table-> P (4) | table_len (4) | table (n) | signature (64) | padding (P - 72 - n) |</p><p>
+	 * signature is on table
 	 * @param request
 	 * @param response
 	 * @param privateKey
@@ -51,6 +51,7 @@ public class ResponseUtilBin {
 		
 		String theTable = SiteMap.getTable();
 
+		byte[] fixedPacketSizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_BASE_SIZE).array();
 		byte[] theTableBytes = theTable.getBytes(StandardCharsets.UTF_8);
 		byte[] signatureBytes = null;
 
@@ -74,17 +75,20 @@ public class ResponseUtilBin {
 		//			4			x		64		  P-(68+x)
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		byte[] tableLen = ByteBuffer.allocate(Integer.BYTES).putInt(theTableBytes.length).array();
-		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - tableLen.length - theTableBytes.length - signatureBytes.length];
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - 
+		                          fixedPacketSizeBytes.length - 
+		                          tableLen.length - theTableBytes.length - signatureBytes.length];
 		
 		if(ENV.RANDOM_PADDING)
 			rand.nextBytes(padding);
 		else
 			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 		
-		System.arraycopy(tableLen, 0, packetToSend, 0, tableLen.length);
-		System.arraycopy(theTableBytes, 0, packetToSend, tableLen.length, theTableBytes.length);
-		System.arraycopy(signatureBytes, 0, packetToSend, tableLen.length + theTableBytes.length, signatureBytes.length);
-		System.arraycopy(padding, 0, packetToSend, tableLen.length + theTableBytes.length + signatureBytes.length, padding.length);
+		System.arraycopy(fixedPacketSizeBytes, 0, packetToSend, 0, fixedPacketSizeBytes.length);
+		System.arraycopy(tableLen, 0, packetToSend, fixedPacketSizeBytes.length, tableLen.length);
+		System.arraycopy(theTableBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length, theTableBytes.length);
+		System.arraycopy(signatureBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length + theTableBytes.length, signatureBytes.length);
+		System.arraycopy(padding, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length + theTableBytes.length + signatureBytes.length, padding.length);
 
 
 		OutputStream out = response.getOutputStream();
