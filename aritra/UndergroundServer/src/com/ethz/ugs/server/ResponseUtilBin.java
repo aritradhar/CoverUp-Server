@@ -300,7 +300,7 @@ public class ResponseUtilBin {
 		{
 			try
 			{
-				int fountainId = Integer.parseInt(fountains[i]);
+				long fountainId = Long.parseLong(fountains[i]);
 				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
 
 				if(url == null)
