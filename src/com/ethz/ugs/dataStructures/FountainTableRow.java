@@ -25,9 +25,9 @@ import com.ethz.ugs.server.ENV;
 public class FountainTableRow 
 {
 	//dropletloc->url mapping
-	public static Map<Integer, String> dropletLocUrlMap = new HashMap<>();
+	public static Map<Long, String> dropletLocUrlMap = new HashMap<>();
 	//reverse mapping of the above one
-	public static Map<String, Integer> dropletLocUrlMapRev = new HashMap<>();
+	public static Map<String, Long> dropletLocUrlMapRev = new HashMap<>();
 	
 	String url;
 	int num_chunks, chunk_size, datalenBeforPadding, droplet_count;
@@ -57,12 +57,14 @@ public class FountainTableRow
 		this.num_chunks = fountain.num_chunks;
 		this.datalenBeforPadding = fountain.dataLenBeforPadding;
 
-		this.dropletLoc = new Integer(new SecureRandom().nextInt(Integer.MAX_VALUE)).toString();
+		long l = new SecureRandom().nextLong();
+		if(l < 0) l *= -1;
+		this.dropletLoc = new Long(l).toString();
 		File f = new File(dropletLoc);
 		f.mkdir();
 		
-		dropletLocUrlMap.put(Integer.parseInt(this.dropletLoc), this.url);
-		dropletLocUrlMapRev.put(this.url, Integer.parseInt(this.dropletLoc));
+		dropletLocUrlMap.put(Long.parseLong(this.dropletLoc), this.url);
+		dropletLocUrlMapRev.put(this.url, Long.parseLong(this.dropletLoc));
 	}
 	
 	public FountainTableRow(String jsonString) throws IOException, NoSuchAlgorithmException, NoSuchProviderException
@@ -81,8 +83,8 @@ public class FountainTableRow
 		this.data = Files.readAllBytes(file.toPath());
 		this.fountain = new Fountain(this.data, this.chunk_size, this.seed);
 		
-		dropletLocUrlMap.put(Integer.parseInt(this.dropletLoc), this.url);
-		dropletLocUrlMapRev.put(this.url, Integer.parseInt(this.dropletLoc));
+		dropletLocUrlMap.put(Long.parseLong(this.dropletLoc), this.url);
+		dropletLocUrlMapRev.put(this.url, Long.parseLong(this.dropletLoc));
 	}
 	
 	public void makeDroplets() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
