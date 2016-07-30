@@ -37,6 +37,15 @@ public class FountainTableRow
 	byte[] seed;
 	byte[] unchangedSeed;
 	
+	/**
+	 * Create a new row in the fountain table
+	 * @param url Url of the input data
+	 * @param chunk_size chunk size of the fountain
+	 * @param droplet_count number of droplets to generate
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException
+	 */
 	public FountainTableRow(String url, int chunk_size, int droplet_count) throws IOException, NoSuchAlgorithmException, NoSuchProviderException 
 	{
 		this.url = url;
@@ -67,6 +76,13 @@ public class FountainTableRow
 		dropletLocUrlMapRev.put(this.url, Long.parseLong(this.dropletLoc));
 	}
 	
+	/**
+	 * Reate a row of fountain table from already existing table file from the disk.
+	 * @param jsonString Table in JSON format recovered from the disk
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException
+	 */
 	public FountainTableRow(String jsonString) throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
 		JSONObject jObject = new JSONObject(jsonString);
@@ -87,6 +103,12 @@ public class FountainTableRow
 		dropletLocUrlMapRev.put(this.url, Long.parseLong(this.dropletLoc));
 	}
 	
+	/**
+	 * Create droplets
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException
+	 */
 	public void makeDroplets() throws IOException, NoSuchAlgorithmException, NoSuchProviderException
 	{
 		//String delm = (System.getProperty("os.name").contains("Windows")) ? "\\" : "/";
