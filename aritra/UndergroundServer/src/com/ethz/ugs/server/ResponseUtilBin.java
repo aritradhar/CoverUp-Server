@@ -460,6 +460,11 @@ public class ResponseUtilBin {
 			out.flush();
 			out.close();
 			
+			FileWriter fw = new FileWriter("binResp.txt");
+			fw.append(Base64.getEncoder().encodeToString(packetToSend));
+			fw.flush();
+			fw.close();
+			
 			System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
 			
@@ -471,6 +476,11 @@ public class ResponseUtilBin {
 		out.write(packetToSend);
 		out.flush();
 		out.close();
+		
+		FileWriter fw = new FileWriter("binResp.txt");
+		fw.append(Base64.getEncoder().encodeToString(packetToSend));
+		fw.flush();
+		fw.close();
 		
 		System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();

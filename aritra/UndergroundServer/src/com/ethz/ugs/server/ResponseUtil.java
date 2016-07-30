@@ -267,12 +267,6 @@ public class ResponseUtil
 				long fountainId = Long.parseLong(fountains[i]);
 				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
 				
-				
-				for(Long s : FountainTableRow.dropletLocUrlMap.keySet())
-				{
-					System.out.println(s);
-				}
-				
 				if(url == null)
 				{
 					response.getWriter().append("Invalid fountain id " + fountainId);
