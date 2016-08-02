@@ -2,6 +2,7 @@ package com.ethz.ugs.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Arrays;
@@ -61,6 +62,9 @@ public class InitialGen
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException {
 		
+		
+		byte[] b1 = ByteBuffer.allocate(8).putLong(5409821196803746949L).array();
+		
 		Curve25519KeyPair keypair = Curve25519.getInstance(Curve25519.BEST).generateKeyPair();
 		byte[] sk = keypair.getPrivateKey();
 		byte[] pk = keypair.getPublicKey();
@@ -83,6 +87,8 @@ public class InitialGen
 		Fountain f2 = new Fountain(data, 10, seed);
 		Droplet d2 = f2.droplet();
 	}
+	
+	
 /*	
  * public static void main(String[] args) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 

@@ -346,6 +346,48 @@ public class MainServer extends HttpServlet {
 			
 			System.out.println("-------------------------------------");
 		}
+		
+		else if(flag.equals("dropletPleaseBin_1"))
+		{
+			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+			
+			String st = new String();
+			StringBuffer stb = new StringBuffer("");
+			
+			while((st = payloadReader.readLine())!= null)
+				stb.append(st);
+			
+			String postBody = stb.toString();
+			
+			System.out.println("BODY : " + postBody);
+			
+			if(postBody == null || postBody.length() == 0)
+			{
+				try
+				{
+					ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+				}
+				catch(IOException ex)
+				{
+					response.getWriter().append(ex.getMessage());
+					response.flushBuffer();
+				}
+			}
+			else if(postBody.startsWith("0"))
+				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+			
+			else if(postBody.startsWith("1"))
+				ResponseUtilBin.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
+
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
+			
+			System.out.println("-------------------------------------");
+		}
+		
 
 		else if(flag.equals("end"))
 		{
