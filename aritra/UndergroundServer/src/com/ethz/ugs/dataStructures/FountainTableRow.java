@@ -18,7 +18,8 @@ import com.ethz.fountain.Fountain;
 import com.ethz.ugs.server.ENV;
 
 /**
- * On single row of the fountain table. Contains all required field 
+ * Defines single row of the fountain table. This is used to create new fountain table row or load it from disk.
+ * Contains all required field for a fountain to operate.
  * @author Aritra
  *
  */
