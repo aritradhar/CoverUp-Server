@@ -192,6 +192,7 @@ public class ResponseUtilBin {
 		byte[] num_chunksBytes = ByteBuffer.allocate(Integer.BYTES).putInt(jObject2.getInt("num_chunks")).array();
 		byte[] data = Base64.getUrlDecoder().decode(jObject2.getString("data"));
 		byte[] dataLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(data.length).array();
+		//System.out.println(dataLenBytes[3] + "," + dataLenBytes[2] + "," + dataLenBytes[1] + "," + dataLenBytes[0]);
 
 
 		byte[] dropletByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length + data.length];

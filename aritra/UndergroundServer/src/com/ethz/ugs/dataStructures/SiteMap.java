@@ -191,7 +191,7 @@ public class SiteMap {
 		BufferedReader br = new BufferedReader(new FileReader(randDropletFile));
 		
 		String st = null;
-		StringBuffer stb = new StringBuffer();
+		StringBuffer stb = new StringBuffer("");
 		
 		while((st = br.readLine()) != null)
 			stb.append(st);
