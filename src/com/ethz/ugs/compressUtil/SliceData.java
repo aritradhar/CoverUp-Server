@@ -21,7 +21,8 @@ public class SliceData {
 	public SliceData(byte[] data, int chunk_size)
 	{
 		this.data = data;
-		this.chunk_size = chunk_size;
+		//first 4 bytes are index value
+		this.chunk_size = chunk_size - Integer.BYTES;
 		this.originalLength = data.length;
 		this.slice();
 	}
@@ -45,6 +46,7 @@ public class SliceData {
 				System.arraycopy(data, i * this.chunk_size, tempChunk, 0, offSet);
 				System.arraycopy(pad, 0, tempChunk, offSet, pad.length);			
 			}
+			//first 4 bytes are index value
 			ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
 		    buffer.putInt(i);
 		    byte[] lenArray = buffer.array();
