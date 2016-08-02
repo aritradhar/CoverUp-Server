@@ -21,8 +21,8 @@ public class SliceData {
 	public SliceData(byte[] data, int chunk_size)
 	{
 		this.data = data;
-		//first 4 bytes are index value
-		this.chunk_size = chunk_size - Integer.BYTES;
+		//first 4 bytes are index value, next 4 byes num_chunks
+		this.chunk_size = chunk_size - Integer.BYTES - Integer.BYTES;
 		this.originalLength = data.length;
 		this.slice();
 	}
@@ -32,6 +32,8 @@ public class SliceData {
 		int num_chunks = (this.data.length % chunk_size == 0) ? data.length / chunk_size : data.length / chunk_size + 1;
 		this.slicedData = new ArrayList<>();
 		
+		byte[] num_chunksBytes = ByteBuffer.allocate(Integer.BYTES).putInt(num_chunks).array();
+				
 		for(int i = 0; i < num_chunks; i++)
 		{
 			byte[] tempChunk = new byte[this.chunk_size];
@@ -47,12 +49,12 @@ public class SliceData {
 				System.arraycopy(pad, 0, tempChunk, offSet, pad.length);			
 			}
 			//first 4 bytes are index value
-			ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-		    buffer.putInt(i);
-		    byte[] lenArray = buffer.array();
-			byte[] data = new byte[lenArray.length + tempChunk.length];
-			System.arraycopy(lenArray, 0, data, 0, lenArray.length);
-			System.arraycopy(tempChunk, 0, data, lenArray.length, tempChunk.length);
+			byte[] sliceIndexBytes = ByteBuffer.allocate(Integer.BYTES).putInt(i).array();
+
+			byte[] data = new byte[sliceIndexBytes.length + num_chunksBytes.length + tempChunk.length];
+			System.arraycopy(sliceIndexBytes, 0, data, 0, sliceIndexBytes.length);
+			System.arraycopy(num_chunksBytes, 0, data, sliceIndexBytes.length, num_chunksBytes.length);
+			System.arraycopy(tempChunk, 0, data, sliceIndexBytes.length + num_chunksBytes.length, tempChunk.length);
 			this.slicedData.add(data);
 		}
 		
