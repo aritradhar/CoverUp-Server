@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,7 +50,7 @@ public class MainServer extends HttpServlet {
 
 	private Map<String, byte[]> sharedSecretMap;
 	public String broadCastMessage;
-
+	static Logger logger = Logger.getLogger(MainServer.class.getName());
 
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
@@ -95,6 +97,7 @@ public class MainServer extends HttpServlet {
 			System.err.println("Fatal error..");
 			System.exit(1);
 		}
+		logger.log(Level.ALL, "bla", "");
 		System.out.println("Started...");
 		
 		System.out.println("Default Charset=" + Charset.defaultCharset());    	

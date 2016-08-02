@@ -47,6 +47,11 @@ public class SiteMap {
 		System.out.println("Row added with url : " + tableRow.url);
 	}
 	
+	/**
+	 * 
+	 * @return Table from local storage.
+	 * @throws IOException
+	 */
 	public static String getTable() throws IOException
 	{
 		if(updated)
