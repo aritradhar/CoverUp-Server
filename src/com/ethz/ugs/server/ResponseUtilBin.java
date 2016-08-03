@@ -353,11 +353,12 @@ public class ResponseUtilBin {
 		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
 		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
 		
-		System.out.println("@@");
+		/*debug
+		 * System.out.println("@@");
 		for(byte b : f_idBytes)
 			System.out.println(b);
 		System.out.println("@@");
-		
+		*/
 		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
 
 		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
