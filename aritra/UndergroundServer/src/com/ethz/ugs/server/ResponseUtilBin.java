@@ -82,7 +82,7 @@ public class ResponseUtilBin {
 		else
 			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 		
-		System.out.println("table len " + theTableBytes.length);
+		//System.out.println("table len " + theTableBytes.length);
 		
 		System.arraycopy(fixedPacketSizeBytes, 0, packetToSend, 0, fixedPacketSizeBytes.length);
 		System.arraycopy(tableLen, 0, packetToSend, fixedPacketSizeBytes.length, tableLen.length);
@@ -103,8 +103,8 @@ public class ResponseUtilBin {
 		fw.flush();
 		fw.close();
 		*/
-		System.out.println("len (byte on line) :: " + packetToSend.length);
-		System.out.println(response.getHeader("x-flag"));
+		//System.out.println("len (byte on line) :: " + packetToSend.length);
+		//System.out.println(response.getHeader("x-flag"));
 		response.flushBuffer();
 	}
 
@@ -183,7 +183,7 @@ public class ResponseUtilBin {
 			//System.out.println(dropletStr[0]);
 		}
 
-		System.err.println("Fountain served : " + url);
+		//System.err.println("Fountain served : " + url);
 
 
 		JSONObject jObject2 = new JSONObject(dropletStr[0]);
@@ -223,7 +223,7 @@ public class ResponseUtilBin {
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			byte[] hashtableBytes = md.digest(dataToSign);
-			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
+			//System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashtableBytes));
 			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
 		} 
 
@@ -260,8 +260,8 @@ public class ResponseUtilBin {
 		fw.close();*/
 		
 		
-		System.out.println("len (bytes on line) :: " + packetToSend.length);
-		System.out.println("x-flag value : " + response.getHeader("x-flag"));
+		//System.out.println("len (bytes on line) :: " + packetToSend.length);
+		//System.out.println("x-flag value : " + response.getHeader("x-flag"));
 		response.flushBuffer();
 	}
 
@@ -374,7 +374,7 @@ public class ResponseUtilBin {
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			byte[] hashDataToSign = md.digest(dataToSign);
-			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashDataToSign));
+			//System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashDataToSign));
 			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashDataToSign);
 		} 
 
@@ -474,7 +474,7 @@ public class ResponseUtilBin {
 			fw.close();
 			*/
 			
-			System.out.println("len (bytes on line) :: " + packetToSend.length);	
+			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
 			
 			return;	
@@ -493,7 +493,7 @@ public class ResponseUtilBin {
 		fw.close();
 		*/
 		
-		System.out.println("len (bytes on line) :: " + packetToSend.length);	
+		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}
 

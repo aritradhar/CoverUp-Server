@@ -104,7 +104,7 @@ public class ResponseUtilBinHP {
 		System.arraycopy(seedBytes, 0, dropletByte, seedLenBytes.length, seedBytes.length);
 		System.arraycopy(num_chunksBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length, num_chunksBytes.length);
 		System.arraycopy(dataLenBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, dataLenBytes.length);
-		int dataOffset = seedLenBytes.length + seedBytes.length + num_chunksBytes.length;
+		int dataOffset = seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length;
 		System.arraycopy(data, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length, data.length);
 
 		byte[] fixedPacketLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
@@ -124,8 +124,9 @@ public class ResponseUtilBinHP {
 		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
 		//move offset by fixedPacketLenBytes.length bytes as it is prepended in the packet
 		dataOffset += fixedPacketLenBytes.length; 
+		//System.out.println("offset :" + dataOffset);
+		
 		System.arraycopy(dropletByte, 0, dataToSign, fixedPacketLenBytes.length, dropletByte.length);
-		int dataOffsetEnd = dataOffset + dropletByte.length;
 		
 		System.arraycopy(urlLenBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length, urlLenBytes.length);
 		System.arraycopy(urlBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length, urlBytes.length);
@@ -137,7 +138,7 @@ public class ResponseUtilBinHP {
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			byte[] hashDataToSign = md.digest(dataToSign);
-			System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashDataToSign));
+			//System.out.println("hash : " + Base64.getUrlEncoder().encodeToString(hashDataToSign));
 			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashDataToSign);
 		} 
 
@@ -194,8 +195,7 @@ public class ResponseUtilBinHP {
 			
 			//replace the droplet data with slice data. Finger crossed :P
 			System.arraycopy(sliceDataBytes, 0, packetToSend, dataOffset, sliceDataBytes.length);
-
-			
+		
 			OutputStream out = response.getOutputStream();
 			out.write(packetToSend);	
 			out.flush();
@@ -207,7 +207,7 @@ public class ResponseUtilBinHP {
 			fw.close();
 			*/
 			
-			System.out.println("len (bytes on line) :: " + packetToSend.length);	
+			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
 			
 			return;	
@@ -226,7 +226,7 @@ public class ResponseUtilBinHP {
 		fw.close();
 		*/
 		
-		System.out.println("len (bytes on line) :: " + packetToSend.length);	
+		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}
 

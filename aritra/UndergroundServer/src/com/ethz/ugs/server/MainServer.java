@@ -176,14 +176,14 @@ public class MainServer extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{	
 		
-		System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
+		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 		
 		String flag = request.getParameter("flag");
 
-		String remoteAddress = request.getRemoteAddr();
-		Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
+		//String remoteAddress = request.getRemoteAddr();
+		//Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
 
-		System.out.println(flag + "  Request from : " + request.getRemoteAddr());
+		//System.out.println(flag + "  Request from : " + request.getRemoteAddr());
 		
 		//System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
 		//System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
@@ -216,12 +216,13 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("admin"))
 		{
 			StringBuffer responseStr = new StringBuffer("Total connection : " + Stats.TOTAL_CONNECTIONS + "\nlive connections : " + Stats.LIVE_CONNECTIONS + "\n");
-			responseStr.append("Unique IP addresses\n");
+			//responseStr.append("Unique IP addresses\n");
 
-			for(String address : Stats.UNIQUE_IP_ADDRESSES)
-				responseStr.append(address + "\n");
+			//for(String address : Stats.UNIQUE_IP_ADDRESSES)
+			//	responseStr.append(address + "\n");
 
-
+			responseStr.append(Base64.getUrlEncoder().encodeToString(publicKey));
+			
 			response.getWriter().append(responseStr.toString());
 			response.flushBuffer();
 		}
@@ -270,7 +271,7 @@ public class MainServer extends HttpServlet {
 			
 			String postBody = stb.toString();
 			
-			System.out.println("BODY : " + postBody);
+			//System.out.println("BODY : " + postBody);
 			
 			if(postBody == null || postBody.length() == 0)
 			{
@@ -296,14 +297,15 @@ public class MainServer extends HttpServlet {
 				response.flushBuffer();
 			}
 			
-			System.out.println("-------------------------------------");
+			//System.out.println("-------------------------------------");
 			
 		}
 		
 		else if(flag.equals("tablePleaseBin"))
 		{
 			ResponseUtilBin.tablePleaseBin(request, response, this.privateKey);
-			System.out.println("-------------------------------------");
+			System.out.println(0);
+			//System.out.println("-------------------------------------");
 		}
 		
 		else if(flag.equals("dropletPleaseBin"))
@@ -318,7 +320,7 @@ public class MainServer extends HttpServlet {
 			
 			String postBody = stb.toString();
 			
-			System.out.println("BODY : " + postBody);
+			//System.out.println("BODY : " + postBody);
 			
 			if(postBody == null || postBody.length() == 0)
 			{
@@ -343,8 +345,8 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Header against specification");
 				response.flushBuffer();
 			}
-			
-			System.out.println("-------------------------------------");
+			System.out.println(1);
+			//System.out.println("-------------------------------------");
 		}
 		
 		else if(flag.equals("dropletPleaseBin_1"))
@@ -359,7 +361,7 @@ public class MainServer extends HttpServlet {
 			
 			String postBody = stb.toString();
 			
-			System.out.println("BODY : " + postBody);
+			//System.out.println("BODY : " + postBody);
 			
 			if(postBody == null || postBody.length() == 0)
 			{
@@ -384,15 +386,16 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Header against specification");
 				response.flushBuffer();
 			}
-			
-			System.out.println("-------------------------------------");
+			System.out.println(2);
+			//System.out.println("-------------------------------------");
 		}
 		
 		//the fake one
 		else if(flag.equals("dropletPleaseBinFake"))
 		{
 			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, true);
-			System.out.println("-------------------------------------");
+			//System.out.println("-------------------------------------");
+			System.out.println(3);
 		}
 		
 
