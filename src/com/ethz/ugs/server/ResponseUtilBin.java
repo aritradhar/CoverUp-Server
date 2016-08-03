@@ -100,11 +100,12 @@ public class ResponseUtilBin {
 		out.close();
 		//response.addHeader("x-flag", "0");
 		
-		FileWriter fw = new FileWriter("binResp.txt");
+		/*
+		 * FileWriter fw = new FileWriter("binResp.txt");
 		fw.append(Base64.getEncoder().encodeToString(packetToSend));
 		fw.flush();
 		fw.close();
-		
+		*/
 		System.out.println("len (byte on line) :: " + packetToSend.length);
 		System.out.println(response.getHeader("x-flag"));
 		response.flushBuffer();
@@ -345,6 +346,7 @@ public class ResponseUtilBin {
 		System.arraycopy(seedBytes, 0, dropletByte, seedLenBytes.length, seedBytes.length);
 		System.arraycopy(num_chunksBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length, num_chunksBytes.length);
 		System.arraycopy(dataLenBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, dataLenBytes.length);
+		int dataOffset = seedLenBytes.length + seedBytes.length + num_chunksBytes.length;
 		System.arraycopy(data, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length, data.length);
 
 		byte[] fixedPacketLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
@@ -362,6 +364,8 @@ public class ResponseUtilBin {
 		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
 
 		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
+		//move offset by fixedPacketLenBytes.length bytes as it is prepended in the packet
+		dataOffset += fixedPacketLenBytes.length; 
 		System.arraycopy(dropletByte, 0, dataToSign, fixedPacketLenBytes.length, dropletByte.length);
 		System.arraycopy(urlLenBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length, urlLenBytes.length);
 		System.arraycopy(urlBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length, urlBytes.length);
@@ -467,10 +471,11 @@ public class ResponseUtilBin {
 			out.flush();
 			out.close();
 			
-			FileWriter fw = new FileWriter("binResp.txt");
+			/*FileWriter fw = new FileWriter("binResp.txt");
 			fw.append(Base64.getEncoder().encodeToString(packetToSend));
 			fw.flush();
 			fw.close();
+			*/
 			
 			System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			response.flushBuffer();
@@ -484,10 +489,12 @@ public class ResponseUtilBin {
 		out.flush();
 		out.close();
 		
+		/*
 		FileWriter fw = new FileWriter("binResp.txt");
 		fw.append(Base64.getEncoder().encodeToString(packetToSend));
 		fw.flush();
 		fw.close();
+		*/
 		
 		System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();
