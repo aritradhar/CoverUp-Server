@@ -125,10 +125,12 @@ public class ResponseUtilBin {
 	 * @throws IOException
 	 */
 
-	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
+	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, boolean fake) throws IOException
 	{
-
-		response.addHeader("x-flag", "0");
+		if(fake)
+			response.addHeader("x-flag", "1");
+		else
+			response.addHeader("x-flag", "0");
 		
 		String url = request.getParameter("url");
 

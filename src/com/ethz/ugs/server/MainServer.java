@@ -324,7 +324,7 @@ public class MainServer extends HttpServlet {
 			{
 				try
 				{
-					ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+					ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 				}
 				catch(IOException ex)
 				{
@@ -333,7 +333,7 @@ public class MainServer extends HttpServlet {
 				}
 			}
 			else if(postBody.startsWith("0"))
-				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 			
 			else if(postBody.startsWith("1"))
 				ResponseUtilBin.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
@@ -365,7 +365,7 @@ public class MainServer extends HttpServlet {
 			{
 				try
 				{
-					ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+					ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 				}
 				catch(IOException ex)
 				{
@@ -374,7 +374,7 @@ public class MainServer extends HttpServlet {
 				}
 			}
 			else if(postBody.startsWith("0"))
-				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey);
+				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 			
 			else if(postBody.startsWith("1"))
 				ResponseUtilBin.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
@@ -386,6 +386,12 @@ public class MainServer extends HttpServlet {
 			}
 			
 			System.out.println("-------------------------------------");
+		}
+		
+		//the fake one
+		else if(flag.equals("dropletPleaseBinFake"))
+		{
+			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, true);
 		}
 		
 
