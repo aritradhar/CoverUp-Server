@@ -1,10 +1,8 @@
 package com.ethz.ugs.server;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 
-import com.ethz.ugs.compressUtil.CompressUtil;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.dataStructures.SliceManager;
@@ -497,10 +494,7 @@ public class ResponseUtilBin {
 		*/
 		
 		System.out.println("len (bytes on line) :: " + packetToSend.length);	
-		response.flushBuffer();
-
-		
-		
+		response.flushBuffer();		
 	}
 
 
