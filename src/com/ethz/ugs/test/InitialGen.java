@@ -6,6 +6,10 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Arrays;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
@@ -60,14 +64,24 @@ public class InitialGen
 
 	
 	@SuppressWarnings("unused")
-	public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException {
+	public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, SecurityException, IOException {
 		
+		FileHandler fh = new FileHandler("data.log", true);
 		
+		Logger logger = Logger.getLogger(InitialGen.class.getName());
+
 		byte[] b1 = ByteBuffer.allocate(8).putLong(5409821196803746949L).array();
 		
 		Curve25519KeyPair keypair = Curve25519.getInstance(Curve25519.BEST).generateKeyPair();
 		byte[] sk = keypair.getPrivateKey();
 		byte[] pk = keypair.getPublicKey();
+		
+		logger.addHandler(fh);
+        SimpleFormatter formatter = new SimpleFormatter();  
+        fh.setFormatter(formatter);  
+        
+        logger.info("ab");
+		logger.log(Level.FINE, "msg", pk.length);
 		
 		System.out.println(sk.length);
 		System.out.println(pk.length);
