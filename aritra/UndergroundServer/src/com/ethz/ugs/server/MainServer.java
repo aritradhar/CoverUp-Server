@@ -336,7 +336,7 @@ public class MainServer extends HttpServlet {
 				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 			
 			else if(postBody.startsWith("1"))
-				ResponseUtilBin.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
+				ResponseUtilBinHP.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
 
 			else
 			{
@@ -377,7 +377,7 @@ public class MainServer extends HttpServlet {
 				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 			
 			else if(postBody.startsWith("1"))
-				ResponseUtilBin.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
+				ResponseUtilBinHP.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
 
 			else
 			{
