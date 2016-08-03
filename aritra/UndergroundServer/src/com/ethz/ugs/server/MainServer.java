@@ -392,6 +392,7 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("dropletPleaseBinFake"))
 		{
 			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, true);
+			System.out.println("-------------------------------------");
 		}
 		
 
