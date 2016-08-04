@@ -28,8 +28,8 @@ public class ResponseUtilBinHP {
 
 	public static SecureRandom rand = new SecureRandom();
 	/**
-	 * Intr droplet request
-	 * 
+	 * Intr droplet request. High performance version.
+	 * <br>
 	 * P = fixed packet size
 	 * <br>
 	 * table-> packet_len (4) | droplet (n) | url_len (4) | url (n_1) | f_id (8) | signature (64) | padding (p - 72 - n - n_1) |</br>
@@ -211,7 +211,7 @@ public class ResponseUtilBinHP {
 			
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			long end = System.currentTimeMillis();
-			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
+			MainServer.logger.info("Droplet Bin HP : " + (end - start)  + " ms");
 			
 			response.flushBuffer();
 			

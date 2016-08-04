@@ -10,14 +10,17 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +42,7 @@ import com.ethz.ugs.test.InitialGen;
 @WebServlet("/MainServer")
 public class MainServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-		
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -51,15 +54,16 @@ public class MainServer extends HttpServlet {
 
 	private Map<String, byte[]> sharedSecretMap;
 	public String broadCastMessage;
-	
+
 	public static Logger logger = Logger.getLogger(MainServer.class.getName());
-	
+
 	public static int C = 0;
 
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
-		
+
 		FileHandler fileH = new FileHandler("MainServer.log", true);
+		fileH.setFormatter(new SimpleFormatter());
 		MainServer.logger.addHandler(fileH);
 
 		this.sharedSecretMap = new HashMap<>();
@@ -106,14 +110,14 @@ public class MainServer extends HttpServlet {
 		}
 		logger.log(Level.ALL, "bla", "");
 		System.out.println("Started...");
-		
+
 		System.out.println("Default Charset=" + Charset.defaultCharset());    	
 	}
 
 	private String readBroadcastFile() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(ENV.BROADCAST_LOCATION));
-		
+
 		String s = "";
 		StringBuffer sb = new StringBuffer("");
 		while((s = br.readLine()) != null)
@@ -184,18 +188,18 @@ public class MainServer extends HttpServlet {
 	{	
 		C += 1;
 		C %= 4;
-		
+
 		char[] charC = {'|', '/', '-', '\\'};
-		
+
 		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
-		
+
 		String flag = request.getParameter("flag");
 
 		//String remoteAddress = request.getRemoteAddr();
 		//Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
 
 		//System.out.println(flag + "  Request from : " + request.getRemoteAddr());
-		
+
 		//System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
 		//System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 
@@ -232,8 +236,54 @@ public class MainServer extends HttpServlet {
 			//for(String address : Stats.UNIQUE_IP_ADDRESSES)
 			//	responseStr.append(address + "\n");
 
-			responseStr.append(Base64.getUrlEncoder().encodeToString(publicKey));
-			
+			responseStr.append(Base64.getUrlEncoder().encodeToString(publicKey)).append("\n");
+
+			File[] files = new File(".").listFiles();
+
+			for(File file : files)
+			{
+				if(file.getName().contains(".lck"))
+					continue;
+				
+				if(!file.getName().contains("MainServer.log"))
+					continue;
+				
+				
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				List<Integer> el = new ArrayList<>();
+
+				String st = null;
+				int counter = 0, k = 0, tot = 0;
+				while((st = br.readLine()) != null)
+				{
+					counter++;
+					if(counter % 2 == 1)
+						continue;
+					if(st.length() == 0)
+						continue;
+
+					st = st.split(":")[2].trim().split(" ")[0].trim();
+					k++;
+					int l = Integer.parseInt(st);
+					tot += l;
+					el.add(l);
+					//System.out.println(st);
+				}
+				br.close();
+				double mean = (double) tot/k;
+
+				double s = 0;
+				for(int i : el)
+					s += ((double)mean - i) * ((double)mean - i);
+
+				double var = (double) s/ (k-1);
+
+				responseStr.append("Log file : " + file.getName()).append("\n");
+				responseStr.append("sample size : " + k).append("\n");
+				responseStr.append("Mean : " + mean).append("\n");
+				responseStr.append("Variance : " + var).append("\n");
+				responseStr.append("----------------------------------\n");
+			}
 			response.getWriter().append(responseStr.toString());
 			response.flushBuffer();
 		}
@@ -273,19 +323,19 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("dropletPlease"))
 		{
 			//String postBody = ServerUtil.GetBody(request);
-			
+
 			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-			
+
 			String st = new String();
 			StringBuffer stb = new StringBuffer("");
-			
+
 			while((st = payloadReader.readLine())!= null)
 				stb.append(st);
-			
+
 			String postBody = stb.toString();
-			
+
 			//System.out.println("BODY : " + postBody);
-			
+
 			if(postBody == null || postBody.length() == 0)
 			{
 				try
@@ -300,7 +350,7 @@ public class MainServer extends HttpServlet {
 			}
 			else if(postBody.startsWith("0"))
 				ResponseUtil.dropletPlease(request, response, this.privateKey);
-			
+
 			else if(postBody.startsWith("1"))
 				ResponseUtil.dropletPleaseIntr(request, response, this.privateKey,postBody);
 
@@ -311,9 +361,9 @@ public class MainServer extends HttpServlet {
 			}
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
-			
+
 		}
-		
+
 		else if(flag.equals("tablePleaseBin"))
 		{
 			ResponseUtilBin.tablePleaseBin(request, response, this.privateKey);
@@ -322,21 +372,21 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-		
+
 		else if(flag.equals("dropletPleaseBin"))
 		{
 			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-			
+
 			String st = new String();
 			StringBuffer stb = new StringBuffer("");
-			
+
 			while((st = payloadReader.readLine())!= null)
 				stb.append(st);
-			
+
 			String postBody = stb.toString();
-			
-			System.out.println("BODY : " + postBody);
-			
+
+			//System.out.println("BODY : " + postBody);
+
 			if(postBody == null || postBody.length() == 0)
 			{
 				try
@@ -351,7 +401,7 @@ public class MainServer extends HttpServlet {
 			}
 			else if(postBody.startsWith("0"))
 				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
-			
+
 			else if(postBody.startsWith("1"))
 				ResponseUtilBinHP.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
 
@@ -365,7 +415,7 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-		
+
 		else if(flag.equals("dropletPleaseBin_1"))
 		{
 			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, true);
@@ -373,7 +423,7 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-		
+
 		//the fake one
 		else if(flag.equals("dropletPleaseBinFake"))
 		{
@@ -383,7 +433,7 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 			//System.out.println(3);
 		}
-		
+
 
 		else if(flag.equals("end"))
 		{
