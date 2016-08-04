@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +39,7 @@ import com.ethz.ugs.test.InitialGen;
 @WebServlet("/MainServer")
 public class MainServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+		
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -50,10 +51,16 @@ public class MainServer extends HttpServlet {
 
 	private Map<String, byte[]> sharedSecretMap;
 	public String broadCastMessage;
-	static Logger logger = Logger.getLogger(MainServer.class.getName());
+	
+	public static Logger logger = Logger.getLogger(MainServer.class.getName());
+	
+	public static int C = 0;
 
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
+		
+		FileHandler fileH = new FileHandler("MainServer.log", true);
+		MainServer.logger.addHandler(fileH);
 
 		this.sharedSecretMap = new HashMap<>();
 
@@ -175,6 +182,10 @@ public class MainServer extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{	
+		C += 1;
+		C %= 4;
+		
+		char[] charC = {'|', '/', '-', '\\'};
 		
 		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 		
@@ -253,6 +264,8 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("tablePlease"))
 		{
 			ResponseUtil.tablePlease(request, response, this.privateKey);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
 
@@ -296,16 +309,18 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Header against specification");
 				response.flushBuffer();
 			}
-			
-			//System.out.println("-------------------------------------");
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
 			
 		}
 		
 		else if(flag.equals("tablePleaseBin"))
 		{
 			ResponseUtilBin.tablePleaseBin(request, response, this.privateKey);
-			System.out.println(0);
-			//System.out.println("-------------------------------------");
+			//System.out.println(0);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
 		}
 		
 		else if(flag.equals("dropletPleaseBin"))
@@ -320,7 +335,7 @@ public class MainServer extends HttpServlet {
 			
 			String postBody = stb.toString();
 			
-			//System.out.println("BODY : " + postBody);
+			System.out.println("BODY : " + postBody);
 			
 			if(postBody == null || postBody.length() == 0)
 			{
@@ -345,57 +360,28 @@ public class MainServer extends HttpServlet {
 				response.getWriter().append("Header against specification");
 				response.flushBuffer();
 			}
-			System.out.println(1);
-			//System.out.println("-------------------------------------");
+			//System.out.println(1);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
 		}
 		
 		else if(flag.equals("dropletPleaseBin_1"))
 		{
-			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-			
-			String st = new String();
-			StringBuffer stb = new StringBuffer("");
-			
-			while((st = payloadReader.readLine())!= null)
-				stb.append(st);
-			
-			String postBody = stb.toString();
-			
-			//System.out.println("BODY : " + postBody);
-			
-			if(postBody == null || postBody.length() == 0)
-			{
-				try
-				{
-					ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
-				}
-				catch(IOException ex)
-				{
-					response.getWriter().append(ex.getMessage());
-					response.flushBuffer();
-				}
-			}
-			else if(postBody.startsWith("0"))
-				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
-			
-			else if(postBody.startsWith("1"))
-				ResponseUtilBinHP.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
-
-			else
-			{
-				response.getWriter().append("Header against specification");
-				response.flushBuffer();
-			}
-			System.out.println(2);
-			//System.out.println("-------------------------------------");
+			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, true);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
 		}
 		
 		//the fake one
 		else if(flag.equals("dropletPleaseBinFake"))
 		{
 			ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, true);
-			//System.out.println("-------------------------------------");
-			System.out.println(3);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+			//System.out.println(3);
 		}
 		
 

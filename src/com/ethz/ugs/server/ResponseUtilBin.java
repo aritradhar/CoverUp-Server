@@ -45,6 +45,8 @@ public class ResponseUtilBin {
 
 	public static void tablePleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
+		
+		long start = System.currentTimeMillis();
 		response.addHeader("x-flag", "0");
 		
 		String theTable = SiteMap.getTable();
@@ -105,6 +107,10 @@ public class ResponseUtilBin {
 		*/
 		//System.out.println("len (byte on line) :: " + packetToSend.length);
 		//System.out.println(response.getHeader("x-flag"));
+		
+		long end = System.currentTimeMillis();
+		MainServer.logger.info("Table : " + (end - start) + " ms");
+		
 		response.flushBuffer();
 	}
 
@@ -125,6 +131,8 @@ public class ResponseUtilBin {
 
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, boolean fake) throws IOException
 	{
+		long start = System.currentTimeMillis();
+		
 		if(fake)
 			response.addHeader("x-flag", "1");
 		else
@@ -262,6 +270,8 @@ public class ResponseUtilBin {
 		
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);
 		//System.out.println("x-flag value : " + response.getHeader("x-flag"));
+		long end = System.currentTimeMillis();
+		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
 		response.flushBuffer();
 	}
 
@@ -284,6 +294,8 @@ public class ResponseUtilBin {
 	 */
 	public static void dropletPleaseIntrBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
+		long start = System.currentTimeMillis();
+		
 		//0/1,slice_index,id_x,id_1,...,id_n:padding
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
@@ -343,7 +355,6 @@ public class ResponseUtilBin {
 		System.arraycopy(seedBytes, 0, dropletByte, seedLenBytes.length, seedBytes.length);
 		System.arraycopy(num_chunksBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length, num_chunksBytes.length);
 		System.arraycopy(dataLenBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, dataLenBytes.length);
-		int dataOffset = seedLenBytes.length + seedBytes.length + num_chunksBytes.length;
 		System.arraycopy(data, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length, data.length);
 
 		byte[] fixedPacketLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
@@ -361,8 +372,6 @@ public class ResponseUtilBin {
 		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
 
 		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
-		//move offset by fixedPacketLenBytes.length bytes as it is prepended in the packet
-		dataOffset += fixedPacketLenBytes.length; 
 		System.arraycopy(dropletByte, 0, dataToSign, fixedPacketLenBytes.length, dropletByte.length);
 		System.arraycopy(urlLenBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length, urlLenBytes.length);
 		System.arraycopy(urlBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length, urlBytes.length);
@@ -475,6 +484,10 @@ public class ResponseUtilBin {
 			*/
 			
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
+			
+			long end = System.currentTimeMillis();
+			MainServer.logger.info("Droplet bin intr : " + (end - start) + " ms");
+			
 			response.flushBuffer();
 			
 			return;	
@@ -492,7 +505,8 @@ public class ResponseUtilBin {
 		fw.flush();
 		fw.close();
 		*/
-		
+		long end = System.currentTimeMillis();
+		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}
