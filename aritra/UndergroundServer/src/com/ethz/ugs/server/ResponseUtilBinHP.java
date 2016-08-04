@@ -45,6 +45,8 @@ public class ResponseUtilBinHP {
 	 */
 	public static void dropletPleaseIntrBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
+		long start = System.currentTimeMillis();
+		
 		//0/1,slice_index,id_x,id_1,...,id_n:padding
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
@@ -208,6 +210,9 @@ public class ResponseUtilBinHP {
 			*/
 			
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
+			long end = System.currentTimeMillis();
+			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
+			
 			response.flushBuffer();
 			
 			return;	
@@ -225,7 +230,8 @@ public class ResponseUtilBinHP {
 		fw.flush();
 		fw.close();
 		*/
-		
+		long end = System.currentTimeMillis();
+		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}
