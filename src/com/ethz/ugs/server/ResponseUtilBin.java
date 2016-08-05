@@ -45,10 +45,10 @@ public class ResponseUtilBin {
 
 	public static void tablePleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
-		
+
 		long start = System.currentTimeMillis();
 		response.addHeader("x-flag", "0");
-		
+
 		String theTable = SiteMap.getTable();
 
 		byte[] fixedPacketSizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_BASE_SIZE).array();
@@ -78,14 +78,14 @@ public class ResponseUtilBin {
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - 
 		                          fixedPacketSizeBytes.length - 
 		                          tableLen.length - theTableBytes.length - signatureBytes.length];
-		
+
 		if(ENV.RANDOM_PADDING)
 			rand.nextBytes(padding);
 		else
 			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
-		
+
 		//System.out.println("table len " + theTableBytes.length);
-		
+
 		System.arraycopy(fixedPacketSizeBytes, 0, packetToSend, 0, fixedPacketSizeBytes.length);
 		System.arraycopy(tableLen, 0, packetToSend, fixedPacketSizeBytes.length, tableLen.length);
 		System.arraycopy(theTableBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length, theTableBytes.length);
@@ -98,19 +98,19 @@ public class ResponseUtilBin {
 		out.flush();
 		out.close();
 		//response.addHeader("x-flag", "0");
-		
+
 		/*
 		 * FileWriter fw = new FileWriter("binResp.txt");
 		fw.append(Base64.getEncoder().encodeToString(packetToSend));
 		fw.flush();
 		fw.close();
-		*/
+		 */
 		//System.out.println("len (byte on line) :: " + packetToSend.length);
 		//System.out.println(response.getHeader("x-flag"));
-		
+
 		long end = System.currentTimeMillis();
 		MainServer.logger.info("Table : " + (end - start) + " ms");
-		
+
 		response.flushBuffer();
 	}
 
@@ -132,12 +132,12 @@ public class ResponseUtilBin {
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, boolean fake) throws IOException
 	{
 		long start = System.currentTimeMillis();
-		
+
 		if(fake)
 			response.addHeader("x-flag", "1");
 		else
 			response.addHeader("x-flag", "0");
-		
+
 		String url = request.getParameter("url");
 
 		String[] dropletStr = new String[2];
@@ -260,14 +260,14 @@ public class ResponseUtilBin {
 		out.write(packetToSend);
 		out.flush();
 		out.close();
-		
+
 		//test
 		/*FileWriter fw = new FileWriter("binResp.txt");
 		fw.append(Base64.getEncoder().encodeToString(packetToSend));
 		fw.flush();
 		fw.close();*/
-		
-		
+
+
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);
 		//System.out.println("x-flag value : " + response.getHeader("x-flag"));
 		long end = System.currentTimeMillis();
@@ -295,7 +295,7 @@ public class ResponseUtilBin {
 	public static void dropletPleaseIntrBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
 		long start = System.currentTimeMillis();
-		
+
 		//0/1,slice_index,id_x,id_1,...,id_n:padding
 		String fountainIdString = requestBody.split(":")[0];
 		String[] fountains = fountainIdString.split(",");
@@ -337,17 +337,17 @@ public class ResponseUtilBin {
 				fountainSet.add(fountains[i]);
 			}
 		}
-		
+
 		String[] dropletStr = SiteMap.getRandomDroplet(null);
 		String url = dropletStr[1];
-		
+
 		JSONObject jObject2 = new JSONObject(dropletStr[0]);
 		byte[] seedBytes = Base64.getUrlDecoder().decode(jObject2.getString("seed"));
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(seedBytes.length).array();
 		byte[] num_chunksBytes = ByteBuffer.allocate(Integer.BYTES).putInt(jObject2.getInt("num_chunks")).array();
 		byte[] data = Base64.getUrlDecoder().decode(jObject2.getString("data"));
 		byte[] dataLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(data.length).array();
-	
+
 
 		byte[] dropletByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length + data.length];
 
@@ -362,13 +362,13 @@ public class ResponseUtilBin {
 		byte[] urlBytes = url.getBytes(StandardCharsets.UTF_8);
 		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
 		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
-		
+
 		/*debug
 		 * System.out.println("@@");
 		for(byte b : f_idBytes)
 			System.out.println(b);
 		System.out.println("@@");
-		*/
+		 */
 		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
 
 		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
@@ -407,89 +407,88 @@ public class ResponseUtilBin {
 		System.arraycopy(dataToSign, 0, packetToSend, 0, dataToSign.length);
 		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
-		
-		
+
+
 		//replace droplet data with teh slice data
-		
+
 		if(fountainSet.contains(url))
 		{
 			String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
 			byte[] sliceDataBytes = null;
-			
+
 			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 			{
 				sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
 				Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
 			}
-			
+
 			else
 				sliceDataBytes = Base64.getDecoder().decode(sliceData);
-			
+
 			//for some stupid reason
 			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
 				response.addHeader("x-flag", "2");
-			
+
 			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))
 				response.addHeader("x-flag", "3");
-			
+
 			else if(sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 				response.addHeader("x-flag", "4");
-			
+
 			else
+			{
 				response.addHeader("x-flag", "1");
-			
-			
-			
-			byte[] sliceLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
-			
-			byte[] sliceByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + sliceLenBytes.length + sliceDataBytes.length];
-			
-			//make slice pack
-			System.arraycopy(seedLenBytes, 0, sliceByte, 0, seedLenBytes.length);
-			System.arraycopy(seedBytes, 0, sliceByte, seedLenBytes.length, seedBytes.length);
-			System.arraycopy(num_chunksBytes, 0, sliceByte, seedLenBytes.length + seedBytes.length, num_chunksBytes.length);
-			System.arraycopy(sliceLenBytes, 0, sliceByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, sliceLenBytes.length);
-			System.arraycopy(sliceDataBytes, 0, sliceByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + sliceLenBytes.length, sliceDataBytes.length);
-			
-			byte[] sliceToSign = new byte[fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
-			
-			System.arraycopy(fixedPacketLenBytes, 0, sliceToSign, 0, fixedPacketLenBytes.length);
-			System.arraycopy(sliceByte, 0, sliceToSign, fixedPacketLenBytes.length, sliceByte.length);
-			System.arraycopy(urlLenBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length, urlLenBytes.length);
-			System.arraycopy(urlBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length, urlBytes.length);
-			System.arraycopy(f_idBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length + urlBytes.length, f_idBytes.length);
-					
-			padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - sliceToSign.length - signatureBytes.length];
-			if(ENV.RANDOM_PADDING)
-				rand.nextBytes(padding);
-			else
-				Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
 
-			packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+				byte[] sliceLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
 
-			//dataToSign | signature | padding
-			System.arraycopy(sliceToSign, 0, packetToSend, 0, sliceToSign.length);
-			System.arraycopy(signatureBytes, 0, packetToSend, sliceToSign.length, signatureBytes.length);
-			System.arraycopy(padding, 0, packetToSend, sliceToSign.length + signatureBytes.length, padding.length);
-			
+				byte[] sliceByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + sliceLenBytes.length + sliceDataBytes.length];
+
+				//make slice pack
+				System.arraycopy(seedLenBytes, 0, sliceByte, 0, seedLenBytes.length);
+				System.arraycopy(seedBytes, 0, sliceByte, seedLenBytes.length, seedBytes.length);
+				System.arraycopy(num_chunksBytes, 0, sliceByte, seedLenBytes.length + seedBytes.length, num_chunksBytes.length);
+				System.arraycopy(sliceLenBytes, 0, sliceByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, sliceLenBytes.length);
+				System.arraycopy(sliceDataBytes, 0, sliceByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + sliceLenBytes.length, sliceDataBytes.length);
+
+				byte[] sliceToSign = new byte[fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
+
+				System.arraycopy(fixedPacketLenBytes, 0, sliceToSign, 0, fixedPacketLenBytes.length);
+				System.arraycopy(sliceByte, 0, sliceToSign, fixedPacketLenBytes.length, sliceByte.length);
+				System.arraycopy(urlLenBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length, urlLenBytes.length);
+				System.arraycopy(urlBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length, urlBytes.length);
+				System.arraycopy(f_idBytes, 0, sliceToSign, fixedPacketLenBytes.length + sliceByte.length + urlLenBytes.length + urlBytes.length, f_idBytes.length);
+
+				padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - sliceToSign.length - signatureBytes.length];
+				if(ENV.RANDOM_PADDING)
+					rand.nextBytes(padding);
+				else
+					Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
+
+				packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+
+				//dataToSign | signature | padding
+				System.arraycopy(sliceToSign, 0, packetToSend, 0, sliceToSign.length);
+				System.arraycopy(signatureBytes, 0, packetToSend, sliceToSign.length, signatureBytes.length);
+				System.arraycopy(padding, 0, packetToSend, sliceToSign.length + signatureBytes.length, padding.length);
+			}
 			OutputStream out = response.getOutputStream();
 			out.write(packetToSend);	
 			out.flush();
 			out.close();
-			
+
 			/*FileWriter fw = new FileWriter("binResp.txt");
 			fw.append(Base64.getEncoder().encodeToString(packetToSend));
 			fw.flush();
 			fw.close();
-			*/
-			
+			 */
+
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
-			
+
 			long end = System.currentTimeMillis();
 			MainServer.logger.info("Droplet bin intr : " + (end - start) + " ms");
-			
+
 			response.flushBuffer();
-			
+
 			return;	
 		}
 
@@ -498,13 +497,13 @@ public class ResponseUtilBin {
 		out.write(packetToSend);
 		out.flush();
 		out.close();
-		
+
 		/*
 		FileWriter fw = new FileWriter("binResp.txt");
 		fw.append(Base64.getEncoder().encodeToString(packetToSend));
 		fw.flush();
 		fw.close();
-		*/
+		 */
 		long end = System.currentTimeMillis();
 		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
