@@ -193,10 +193,12 @@ public class ResponseUtilBinHP {
 				response.addHeader("x-flag", "4");
 			
 			else
+			{
 				response.addHeader("x-flag", "1");
-			
+				System.arraycopy(sliceDataBytes, 0, packetToSend, dataOffset, sliceDataBytes.length);
+			}
 			//replace the droplet data with slice data. Finger crossed :P
-			System.arraycopy(sliceDataBytes, 0, packetToSend, dataOffset, sliceDataBytes.length);
+			
 		
 			OutputStream out = response.getOutputStream();
 			out.write(packetToSend);	
