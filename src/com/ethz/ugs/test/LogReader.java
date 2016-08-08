@@ -16,14 +16,38 @@ package com.ethz.ugs.test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import sun.misc.Unsafe;
+
 public class LogReader {
 	
-	public static void main(String[] args) throws IOException {
+    private static Unsafe getUnsafe() throws NoSuchFieldException, IllegalAccessException {
+        try {
+
+            Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
+            singleoneInstanceField.setAccessible(true);
+            return (Unsafe) singleoneInstanceField.get(null);
+
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (SecurityException e) {
+            throw e;
+        } catch (NoSuchFieldException e) {
+            throw e;
+        } catch (IllegalAccessException e) {
+            throw e;
+        }
+    }
+
+	
+	public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException {
 		
-		BufferedReader br = new BufferedReader(new FileReader("MainServer_HP.log"));
+		getUnsafe();
+		
+		BufferedReader br = new BufferedReader(new FileReader("MainServer_1.log"));
 		List<Integer> el = new ArrayList<>();
 		
 		String st = null;
