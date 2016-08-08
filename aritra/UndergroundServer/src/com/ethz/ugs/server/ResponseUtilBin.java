@@ -264,6 +264,23 @@ public class ResponseUtilBin {
 
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Dummy operation for same access pattern as the intr droplet serve
+		String sliceData = InitialGen.sdm.getSlice();
+		byte[] sliceDataBytes = null;
+		
+		if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+		{
+			sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
+			Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
+		}
+		
+		else
+			sliceDataBytes = Base64.getDecoder().decode(sliceData);
+		System.arraycopy(sliceDataBytes, 0, packetToSend, 0, sliceDataBytes.length);
+		//Dummy operation end
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 		//dataToSign | signature | padding
 		System.arraycopy(dataToSign, 0, packetToSend, 0, dataToSign.length);
 		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);

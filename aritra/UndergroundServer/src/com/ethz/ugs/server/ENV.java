@@ -52,6 +52,8 @@ public class ENV {
 	
 	public static final boolean EXPERIMENTAL = false;
 	
+	public static final boolean UNIFIED_ACCESS = true;
+	
 	static
 	{
 		String OS = System.getProperty("os.name");

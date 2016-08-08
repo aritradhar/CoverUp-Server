@@ -160,7 +160,7 @@ public class ResponseUtilBinHP {
 		catch (NoSuchAlgorithmException e) 
 		{
 			e.printStackTrace();
-			response.getWriter().append("Exception in signature calculation!");
+			response.getWriter().append("Server Error.");
 			response.flushBuffer();
 		}
 
@@ -179,7 +179,7 @@ public class ResponseUtilBinHP {
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
 		
 		
-		//replace droplet data with teh slice data
+		//replace droplet data with the slice data
 		
 		if(fountainSet.contains(url))
 		{

@@ -147,6 +147,36 @@ public class SliceManager
 			return INVALID_SLICE_ERROR;
 		}
 	}
+	/**
+	 * Give a slice from the first available slice. This is to increase the normal droplet response.
+	 * @return
+	 */
+	public String getSlice()
+	{
+		Long sliceId = SLICE_MAP.get(SLICE_MAP.keySet().toArray()[0]);
+		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + ENV.DELIM + 0 + ".slice");
+		
+		if(!sliceFile.exists())
+			return INVALID_SLICE_FILE;
+		
+		try
+		{
+			BufferedReader br = new BufferedReader(new FileReader(sliceFile));
+			String st = new String();
+			StringBuffer stb = new StringBuffer("");
+
+			while((st = br.readLine()) != null)
+				stb.append(st);
+
+			br.close();
+
+			return stb.toString();
+		}
+		catch(IOException ex)
+		{
+			return INVALID_SLICE_ERROR;
+		}
+	}
 	
 	/**
 	 * Save the inmemory slice table in disk
