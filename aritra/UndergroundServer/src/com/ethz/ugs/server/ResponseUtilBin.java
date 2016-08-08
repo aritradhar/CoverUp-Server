@@ -59,7 +59,7 @@ public class ResponseUtilBin {
 	public static void tablePleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
 	{
 
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		response.addHeader("x-flag", "0");
 
 		String theTable = SiteMap.getTable();
@@ -121,8 +121,8 @@ public class ResponseUtilBin {
 		//System.out.println("len (byte on line) :: " + packetToSend.length);
 		//System.out.println(response.getHeader("x-flag"));
 
-		long end = System.currentTimeMillis();
-		MainServer.logger.info("Table : " + (end - start) + " ms");
+		long end = System.nanoTime();
+		MainServer.logger.info("Table : " + (end - start) + " ns");
 
 		response.flushBuffer();
 	}
@@ -144,7 +144,7 @@ public class ResponseUtilBin {
 
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, boolean fake) throws IOException
 	{
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 
 		if(fake)
 			response.addHeader("x-flag", "1");
@@ -300,8 +300,8 @@ public class ResponseUtilBin {
 
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);
 		//System.out.println("x-flag value : " + response.getHeader("x-flag"));
-		long end = System.currentTimeMillis();
-		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
+		long end = System.nanoTime();
+		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
 		response.flushBuffer();
 	}
 
@@ -324,7 +324,7 @@ public class ResponseUtilBin {
 	 */
 	public static void dropletPleaseIntrBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 
 		//0/1,slice_index,id_x,id_1,...,id_n:padding
 		String fountainIdString = requestBody.split(":")[0];
@@ -514,8 +514,8 @@ public class ResponseUtilBin {
 
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 
-			long end = System.currentTimeMillis();
-			MainServer.logger.info("Droplet bin intr : " + (end - start) + " ms");
+			long end = System.nanoTime();
+			MainServer.logger.info("Droplet bin intr : " + (end - start) + " ns");
 
 			response.flushBuffer();
 
@@ -534,8 +534,8 @@ public class ResponseUtilBin {
 		fw.flush();
 		fw.close();
 		 */
-		long end = System.currentTimeMillis();
-		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ms");
+		long end = System.nanoTime();
+		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}
