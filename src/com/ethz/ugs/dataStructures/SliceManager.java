@@ -154,8 +154,8 @@ public class SliceManager
 	 */
 	public String getSlice()
 	{
-		///Long sliceId = SLICE_MAP.entrySet().iterator().next().getValue();
-		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + this.firstSliceId + ENV.DELIM + 0 + ".slice");
+		Long sliceId = SLICE_MAP.entrySet().iterator().next().getValue();
+		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId + ENV.DELIM + 0 + ".slice");
 		
 		if(!sliceFile.exists())
 			return INVALID_SLICE_FILE;
