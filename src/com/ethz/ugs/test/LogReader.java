@@ -55,6 +55,10 @@ public class LogReader {
 		long tot = 0;
 		while((st = br.readLine()) != null)
 		{
+			//only consider sample size upto 50k
+			if(k == 50000)
+				break;
+			
 			counter++;
 			if(!st.startsWith("INFO"))
 				continue;
