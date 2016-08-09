@@ -43,7 +43,7 @@ public class SliceManager
 	public static final String INVALID_SLICE_URL = "invalid slice url";
 	public static final String INVALID_SLICE_FILE = "slice index overflow";
 	public static final String INVALID_SLICE_ERROR = "unknown error related to I/O";
-	
+	public long firstSliceId;
 	/**
 	 * Initiate {@code SliceManager} with {@code chunk_size}
 	 * @param chunk_size In bytes. Should be same as the droplet chunk size. This also checks for existing slice table.
@@ -99,6 +99,7 @@ public class SliceManager
 			SLICE_MAP.put(file.getName(), id);
 		}
 		this.saveSliceTable();
+		this.firstSliceId = SLICE_MAP.entrySet().iterator().next().getValue();
 	}
 	
 	/**
@@ -153,8 +154,8 @@ public class SliceManager
 	 */
 	public String getSlice()
 	{
-		Long sliceId = SLICE_MAP.get(SLICE_MAP.keySet().toArray()[0]);
-		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString() + ENV.DELIM + 0 + ".slice");
+		///Long sliceId = SLICE_MAP.entrySet().iterator().next().getValue();
+		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + this.firstSliceId + ENV.DELIM + 0 + ".slice");
 		
 		if(!sliceFile.exists())
 			return INVALID_SLICE_FILE;

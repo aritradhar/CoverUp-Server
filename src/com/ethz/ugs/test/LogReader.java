@@ -45,13 +45,14 @@ public class LogReader {
 	
 	public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException {
 		
-		getUnsafe();
+		//getUnsafe();
 		
-		BufferedReader br = new BufferedReader(new FileReader("MainServer_1.log"));
-		List<Integer> el = new ArrayList<>();
+		BufferedReader br = new BufferedReader(new FileReader("MainServer.log.8"));
+		List<Long> el = new ArrayList<>();
 		
 		String st = null;
-		int counter = 0, k = 0, tot = 0;
+		long counter = 0, k = 0;
+		long tot = 0;
 		while((st = br.readLine()) != null)
 		{
 			counter++;
@@ -62,7 +63,7 @@ public class LogReader {
 			
 			st = st.split(":")[2].trim().split(" ")[0].trim();
 			k++;
-			int l = Integer.parseInt(st);
+			long l = Long.parseLong(st);
 			tot += l;
 			el.add(l);
 			//System.out.println(st);
@@ -71,14 +72,18 @@ public class LogReader {
 		double mean = (double) tot/k;
 		
 		double s = 0;
-		for(int i : el)
-			s += ((double)mean - i) * ((double)mean - i);
-		
+		for(long i : el)
+		{
+			long x = (long) (mean - i);
+			s += Math.pow((mean - i), 2);//((double)mean - i) * ((double)mean - i);
+		}
 		double var = (double) s/ (k-1);
+		var /= 1000000;
+		var /= 1000000;
 		
 		System.out.println("sample size : " + k);
 		System.out.println("Mean : " + mean);
-		System.out.println("Variance : " + var);
+		//System.out.println("Variance : " + var + " ms");
 	}
 	
 	
