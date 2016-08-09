@@ -24,7 +24,7 @@ import sun.misc.Unsafe;
 
 public class LogReader {
 	
-    private static Unsafe getUnsafe() throws NoSuchFieldException, IllegalAccessException {
+    public static Unsafe getUnsafe() throws NoSuchFieldException, IllegalAccessException {
         try {
 
             Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
@@ -47,7 +47,7 @@ public class LogReader {
 		
 		//getUnsafe();
 		
-		BufferedReader br = new BufferedReader(new FileReader("MainServer.log.8"));
+		BufferedReader br = new BufferedReader(new FileReader("MainServer.log.11"));
 		List<Long> el = new ArrayList<>();
 		
 		String st = null;
@@ -56,7 +56,7 @@ public class LogReader {
 		while((st = br.readLine()) != null)
 		{
 			counter++;
-			if(counter % 2 == 1)
+			if(!st.startsWith("INFO"))
 				continue;
 			if(st.length() == 0)
 				continue;
