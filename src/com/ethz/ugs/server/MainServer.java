@@ -428,6 +428,15 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
+		
+		else if(flag.equals("slicePleaseBin"))
+		{
+			ResponseUtilBinHP.slicePleaseBin(request, response, privateKey, null);
+			
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+		}
 
 		else if(flag.equals("dropletPleaseBin_1"))
 		{
