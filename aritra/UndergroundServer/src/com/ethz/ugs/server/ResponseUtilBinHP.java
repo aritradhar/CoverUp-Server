@@ -254,54 +254,17 @@ public class ResponseUtilBinHP {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+	/**
+	 * Sends slices
+	 * @param request
+	 * @param response
+	 * @param privateKey
+	 * @param requestBody
+	 * @throws IOException
+	 */
 	public static void slicePleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, String requestBody) throws IOException
 	{
 		long start = System.nanoTime();
-
-		//0/1,slice_index,id_x,id_1,...,id_n:padding
-
-		/*
-		 * String fountainIdString = requestBody.split(":")[0];
-		String[] fountains = fountainIdString.split(",");
-
-		int sliceIndex = Integer.parseInt(fountains[1]);
-		//3rd element is the requested id
-		String intrSliceId = fountains[2];
-
-		Set<String> fountainSet = new HashSet<>();
-
-		//starts form 3rd element
-		for(int i = 3; i < fountains.length; i++)
-		{
-			try
-			{
-				long fountainId = Long.parseLong(fountains[i]);
-				String url = FountainTableRow.dropletLocUrlMap.get(fountainId);
-
-				if(url == null)
-				{
-					response.getWriter().append("Invalid fountain id " + fountainId);
-					response.flushBuffer();
-
-					return;
-				}
-				//System.out.println("added" + url);
-				fountainSet.add(url);
-			}
-			catch(Exception ex)
-			{
-				//System.out.println("added" + fountains[i]);
-				if(!SiteMap.TABLE_MAP.containsKey(fountains[i]))
-				{
-					response.getWriter().append("Invalid fountain url " + fountains[i]);
-					response.flushBuffer();
-
-					return;
-				}
-				fountainSet.add(fountains[i]);
-			}
-		}
-		 */
 
 		String[] dropletStr = SiteMap.getRandomDroplet(null);
 		String url = dropletStr[1];

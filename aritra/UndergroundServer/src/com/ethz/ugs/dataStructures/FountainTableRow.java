@@ -146,6 +146,7 @@ public class FountainTableRow
 		jObject.put("seed", Base64.getUrlEncoder().encodeToString(this.unchangedSeed));
 		jObject.put("len", this.datalenBeforPadding);
 		jObject.put("dropletLoc", this.dropletLoc);
+		jObject.put("dropletCount", this.droplet_count);
 		
 		return jObject.toString(2);
 	}

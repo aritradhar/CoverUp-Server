@@ -47,7 +47,7 @@ public class LogReader {
 		
 		//getUnsafe();
 		
-		BufferedReader br = new BufferedReader(new FileReader("MainServer.log.11"));
+		BufferedReader br = new BufferedReader(new FileReader("MainServer.log.8"));
 		List<Long> el = new ArrayList<>();
 		
 		String st = null;
@@ -77,17 +77,14 @@ public class LogReader {
 		
 		double s = 0;
 		for(long i : el)
-		{
-			long x = (long) (mean - i);
-			s += Math.pow((mean - i), 2);//((double)mean - i) * ((double)mean - i);
-		}
+			s += Math.pow((mean - i), 2);
+		
 		double var = (double) s/ (k-1);
-		var /= 1000000;
-		var /= 1000000;
+		double sd = Math.sqrt(var);
 		
 		System.out.println("sample size : " + k);
 		System.out.println("Mean : " + mean);
-		//System.out.println("Variance : " + var + " ms");
+		System.out.println("sd : " + sd + " ns");
 	}
 	
 	

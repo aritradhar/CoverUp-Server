@@ -180,7 +180,7 @@ public class SliceManager
 	}
 	
 	/**
-	 * Save the inmemory slice table in disk
+	 * Save the in memory slice table in disk
 	 * @throws IOException
 	 */
 	private void saveSliceTable() throws IOException

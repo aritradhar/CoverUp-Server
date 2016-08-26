@@ -70,8 +70,9 @@ public class MainServer extends HttpServlet {
 
 	public static Logger logger = Logger.getLogger(MainServer.class.getName());
 
-	public static int C = 0;
-
+	public static volatile int C = 0;
+	public static final char[] charC = {'|', '/', '-', '\\'};
+	
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 
@@ -199,11 +200,12 @@ public class MainServer extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{	
-		C += 1;
-		C %= 4;
-
-		char[] charC = {'|', '/', '-', '\\'};
-
+		synchronized (request) 
+		{
+			C += 1;
+			C %= 4;
+		}
+		
 		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 
 		String flag = request.getParameter("flag");
