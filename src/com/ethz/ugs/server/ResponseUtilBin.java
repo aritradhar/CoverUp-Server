@@ -50,9 +50,9 @@ public class ResponseUtilBin {
 	 * <p>
 	 * table-> P (4) | table_len (4) | table (n) | signature (64) | padding (P - 72 - n) |</p><p>
 	 * signature is on table
-	 * @param request
-	 * @param response
-	 * @param privateKey
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param privateKey Server's Curve 25519 private key 
 	 * @throws IOException
 	 */
 
@@ -136,9 +136,10 @@ public class ResponseUtilBin {
 	 * <br>
 	 * droplet -> seedlen (4) | seed(n) | num_chunk (4) | datalen (4) | data (n)
 	 * <br>
-	 * @param request
-	 * @param response
-	 * @param privateKey
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param privateKey Server's Curve 25519 private key 
+	 * @param fake for testing purpose
 	 * @throws IOException
 	 */
 
