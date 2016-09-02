@@ -15,6 +15,7 @@ package com.ethz.ugs.test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -70,14 +71,55 @@ public class LogReader {
 			long l = Long.parseLong(st);
 			tot += l;
 			el.add(l);
-			//System.out.println(st);
+			//System.out.println(l);
 		}
 		br.close();
 		double mean = (double) tot/k;
 		
 		double s = 0;
+		long min = el.get(0), max = 0;
 		for(long i : el)
+		{
+			if(min >= i)
+				min = i;
+			
+			if(max < i)
+				max = i;
 			s += Math.pow((mean - i), 2);
+		}
+		
+		long blockLen = 500;
+		int blockSize = (int) (((max - min) % blockLen == 0) ? ((max - min) / blockLen) : ((max - min) / blockLen) + 1);
+		
+		//System.out.println(blockSize);
+		int[] block = new int[blockSize + 1];
+		for(long i : el)
+		{
+			long diff = i - min;
+			int pos = (int) ((diff % blockLen == 0) ? (diff / blockLen) : (diff / blockLen) + 1);
+			//System.out.println(pos);
+			block[pos]++;
+			//System.out.println("---" + block[pos]);
+		}
+		
+		FileWriter fw = new FileWriter("out.txt");
+		int t = 0;
+		for(int i : block)
+		{
+			t += i;
+			fw.append(i + "\n");
+		}	
+		fw.close();
+		
+		FileWriter fw1 = new FileWriter("out1.txt");
+		//float[] blockF = new float[block.length];
+		for(int i : block)
+		{
+			float pr = (float )i/tot;
+			fw1.append(String.format("%.30f", pr) + "\n");
+		}	
+		fw1.close();
+		
 		
 		double var = (double) s/ (k-1);
 		double sd = Math.sqrt(var);
@@ -85,6 +127,9 @@ public class LogReader {
 		System.out.println("sample size : " + k);
 		System.out.println("Mean : " + mean);
 		System.out.println("sd : " + sd + " ns");
+		
+		System.out.println("Min : " + min);
+		System.out.println("Max : " + max);
 	}
 	
 	
