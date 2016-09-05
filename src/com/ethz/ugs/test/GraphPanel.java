@@ -3,6 +3,7 @@ package com.ethz.ugs.test;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -43,15 +45,21 @@ public class GraphPanel extends JPanel {
     //private int heigth = 400;
     private int padding = 80;
     private int labelPadding = 25;
-    //private Color lineColor = new Color(0, 102, 230, 180);
-    //private Color pointColor = new Color(100, 100, 100, 180);
+    private Color lineColor = new Color(0, 102, 230, 180);
+    private Color pointColor = new Color(0, 0, 0, 180);
     private Color gridColor = new Color(200, 200, 200, 200);
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     private int pointWidth = 4;
-    private int numberYDivisions = 10;
-    private List<Long> scores1;
+    private int numberYDivisions = 20;
+    private List<Double> scores1;
 
-    public GraphPanel(List<Long> scores1) {
+    ////
+    public static long max = 0, min =0; 
+    //bucket length in ns
+    public static long bucketLen = 500;
+    ///
+    
+    public GraphPanel(List<Double> scores1) {
         this.scores1 = scores1;
     }
 
@@ -59,12 +67,9 @@ public class GraphPanel extends JPanel {
     protected void paintComponent(Graphics g) {
     	      
         super.paintComponent(g);
-        BufferedImage paintImage = new BufferedImage(500, 400, BufferedImage.TYPE_3BYTE_BGR);
-        //g = paintImage.createGraphics();
-
-        
+      
         try {
-			draw((Graphics2D) g, this.scores1, new Color(0, 102, 230, 180), new Color(100, 100, 100, 180));
+			draw((Graphics2D) g, this.scores1, lineColor, pointColor);
 						
 		} catch (FileNotFoundException | DocumentException e) {
 			// TODO Auto-generated catch block
@@ -72,8 +77,11 @@ public class GraphPanel extends JPanel {
 		}
     }
     
-    private void draw(Graphics2D g2,List<Long> scores1, Color lineColor, Color pointColor) throws FileNotFoundException, DocumentException
+    @SuppressWarnings("unused")
+	private void draw(Graphics2D g2,List<Double> scores1, Color lineColor, Color pointColor) throws FileNotFoundException, DocumentException
     {      
+    	g2.setFont(new Font("Lucida Console", Font.BOLD, 25)); 
+    	
     	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
  
         double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (scores1.size() - 1);
@@ -106,7 +114,7 @@ public class GraphPanel extends JPanel {
                 String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
                 FontMetrics metrics = g2.getFontMetrics();
                 int labelWidth = metrics.stringWidth(yLabel);
-                g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
+                g2.drawString(yLabel, x0 - labelWidth - 10, y0 + (metrics.getHeight() / 2) - 3);
                
             }
             g2.drawLine(x0, y0, x1, y1);
@@ -123,12 +131,13 @@ public class GraphPanel extends JPanel {
                     g2.setColor(gridColor);
                     g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
                     g2.setColor(Color.BLACK);
-                    String xLabel = i + "";
+                               
+                    String xLabel = String.format("%.3f", (float)(min + bucketLen * i)/ 1000000);
                     FontMetrics metrics = g2.getFontMetrics();
                     int labelWidth = metrics.stringWidth(xLabel);
-                    g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
-                }
-                g2.drawLine(x0, y0, x1, y1);
+                    g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 10);
+                }     
+                //g2.drawLine(x0, y0, x1, y1);
             }
         }
 
@@ -165,7 +174,7 @@ public class GraphPanel extends JPanel {
 //    }
     private double getMinScore() {
         double minScore = Double.MAX_VALUE;
-        for (long score : scores1) {
+        for (double score : scores1) {
             minScore = Math.min(minScore, score);
         }
         return minScore;
@@ -173,28 +182,27 @@ public class GraphPanel extends JPanel {
 
     private double getMaxScore() {
         double maxScore = Double.MIN_VALUE;
-        for (long score : scores1) {
+        for (double score : scores1) {
             maxScore = Math.max(maxScore, score);
         }
         return maxScore;
     }
 
-    public void setScores(List<Long> scores) {
+    public void setScores(List<Double> scores) {
         this.scores1 = scores;
         invalidate();
         this.repaint();
     }
 
-    public List<Long> getScores() {
+    public List<Double> getScores() {
         return scores1;
     }
 
-    
-
+      
     private static void createAndShowGui() throws NumberFormatException, IOException, DocumentException {
         List<Long> scores1 = new ArrayList<>();
         
-        BufferedReader br = new BufferedReader(new FileReader("MainServer.log.8"));
+        BufferedReader br = new BufferedReader(new FileReader("Traces\\MainServer.log.14"));
 	
 		String st = null;
 		long k = 0;
@@ -214,7 +222,8 @@ public class GraphPanel extends JPanel {
 		}
 		br.close();
 		
-		long min = scores1.get(0), max = 0;
+		min = scores1.get(0);
+		max = 0;
 		for(long i : scores1)
 		{
 			if(min >= i)
@@ -223,29 +232,43 @@ public class GraphPanel extends JPanel {
 			if(max < i)
 				max = i;
 		}
+	
+			
+		int bucketCount = (int) (((max - min) % bucketLen == 0) ? ((max - min) / bucketLen) : ((max - min) / bucketLen) + 1);
 		
-		long blockLen = 500;
-		int blockSize = (int) (((max - min) % blockLen == 0) ? ((max - min) / blockLen) : ((max - min) / blockLen) + 1);
-		
-		//System.out.println(blockSize);
-		int[] block = new int[blockSize + 1];
+		//System.out.println(bucketCount);
+		int[] bucket = new int[bucketCount + 1];
 		for(long i : scores1)
 		{
 			long diff = i - min;
-			int pos = (int) ((diff % blockLen == 0) ? (diff / blockLen) : (diff / blockLen) + 1);
+			int pos = (int) ((diff % bucketLen == 0) ? (diff / bucketLen) : (diff / bucketLen) + 1);
 			//System.out.println(pos);
-			block[pos]++;
+			bucket[pos]++;
 			//System.out.println("---" + block[pos]);
 		}
 		
-		List<Long> scores_n = new ArrayList<>();
-		for(int i : block)
-			scores_n.add((long) i);		
-        
-		Collections.shuffle(scores1, new SecureRandom());
+		List<Double> scores_n = new ArrayList<>();
+		int score_max = 0;
+		for(int i : bucket)
+		{
+			if(score_max < i)
+				score_max = i;
+			scores_n.add((double) i);		
+		}
+        //percentage
+		List<Double> scores_relative = new ArrayList<>();
+		
+		for(int i : bucket)
+		{
+			Double d =  (double) (i/(double)score_max) * 100;
+			scores_relative.add(d);
+		}
+		scores_n = scores_relative;
+		
+		//Collections.shuffle(scores1, new SecureRandom());
 		//take a random sample
-		int sampleSize = 15000;
-		List<Long> _scores1 = null;
+		int sampleSize = 3500;
+		/*List<Long> _scores1 = null;
 		
 		try
 		{
@@ -254,10 +277,10 @@ public class GraphPanel extends JPanel {
 		catch(IndexOutOfBoundsException ex)
 		{
 			_scores1 = scores1;
-		}
+		}*/
        // GraphPanel mainPanel = new GraphPanel(_scores1);
         
-		List<Long> subScore = null;
+		List<Double> subScore = null;
 		try
 		{
 			subScore = scores_n.subList(0, sampleSize);
@@ -283,13 +306,16 @@ public class GraphPanel extends JPanel {
         try{ImageIO.write(bi,"png",new File("test.png"));}catch (Exception e) {}
         
         Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("GraphOut.pdf"));
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\GraphOut.pdf"));
         document.open();
         PdfContentByte cb = writer.getDirectContent();
         Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
+    	//g2.setFont(new Font("Courier New", Font.BOLD, 25)); 
         frame.paint(g2);
         g2.dispose();
         document.close();
+        
+        //JOptionPane.showMessageDialog(frame, "Graph saved in png and pdf format!");
     }
 
     public static void main(String[] args) {
