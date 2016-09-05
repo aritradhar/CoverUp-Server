@@ -14,5 +14,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/com.lowagie.text-2.1.7.jar"/>
+	<classpathentry kind="lib" path="/UndergroundApp/lib/swt.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
