@@ -71,6 +71,13 @@ public class ResponseUtilBinHP {
 		Set<String> fountainSet = new HashSet<>();
 
 		//starts form 3rd element
+		/*
+		 * Important:
+		 * Current implementation will ignore any invalid fountain id/url.
+		 * It will simply go to the next fountain id in the request payload.
+		 * Example: Server has 3 fountains : a,b,c. If client send a,b,d
+		 * it will be treated as a,b. d will be ignored.
+		 */
 		for(int i = 3; i < fountains.length; i++)
 		{
 			try
@@ -80,10 +87,13 @@ public class ResponseUtilBinHP {
 
 				if(url == null)
 				{
+					continue;
+					
+					/*
 					response.getWriter().append("Invalid fountain id " + fountainId);
 					response.flushBuffer();
 
-					return;
+					return;*/				
 				}
 				//System.out.println("added" + url);
 				fountainSet.add(url);
@@ -93,10 +103,11 @@ public class ResponseUtilBinHP {
 				//System.out.println("added" + fountains[i]);
 				if(!SiteMap.TABLE_MAP.containsKey(fountains[i]))
 				{
-					response.getWriter().append("Invalid fountain url " + fountains[i]);
+					continue;
+					/*response.getWriter().append("Invalid fountain url " + fountains[i]);
 					response.flushBuffer();
 
-					return;
+					return;*/				
 				}
 				fountainSet.add(fountains[i]);
 			}

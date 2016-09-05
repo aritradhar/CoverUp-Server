@@ -1,77 +1,3 @@
-Aug 11, 2016 3:12:10 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 26999453 ns
-Aug 11, 2016 3:12:15 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 1582329 ns
-Aug 11, 2016 3:12:15 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 1168524 ns
-Aug 11, 2016 3:19:12 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
-INFO: Droplet Bin : 5645523 ns
-Aug 11, 2016 3:27:11 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 4929297 ns
-Aug 11, 2016 3:28:14 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 5078539 ns
-Aug 11, 2016 3:30:12 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 4820099 ns
-Aug 11, 2016 3:31:03 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 3660321 ns
-Aug 11, 2016 3:31:50 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 3433973 ns
-Aug 11, 2016 3:33:32 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2222517 ns
-Aug 11, 2016 3:34:07 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 3177382 ns
-Aug 11, 2016 3:35:17 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 3313036 ns
-Aug 11, 2016 3:36:31 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2829853 ns
-Aug 11, 2016 3:39:46 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2433587 ns
-Aug 11, 2016 3:39:57 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2114591 ns
-Aug 11, 2016 3:40:13 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2648995 ns
-Aug 11, 2016 3:40:17 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2367289 ns
-Aug 11, 2016 3:40:21 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2254237 ns
-Aug 11, 2016 3:40:24 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1794442 ns
-Aug 11, 2016 3:40:25 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2226548 ns
-Aug 11, 2016 3:40:25 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2187152 ns
-Aug 11, 2016 3:40:25 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2252597 ns
-Aug 11, 2016 3:40:25 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2282310 ns
-Aug 11, 2016 3:40:26 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2584162 ns
-Aug 11, 2016 3:40:26 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2239451 ns
-Aug 11, 2016 3:40:59 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2451675 ns
-Aug 11, 2016 3:41:23 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1898308 ns
-Aug 11, 2016 4:38:15 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1740562 ns
-Aug 11, 2016 4:38:19 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1573473 ns
-Aug 11, 2016 4:38:19 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1425742 ns
-Aug 11, 2016 4:38:20 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2001994 ns
-Aug 11, 2016 4:38:20 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1421274 ns
-Aug 11, 2016 4:38:20 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1488874 ns
-Aug 11, 2016 4:38:20 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1481620 ns
-Aug 11, 2016 4:38:20 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1406190 ns
-Aug 11, 2016 4:39:26 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 1669788 ns
-Aug 11, 2016 4:42:04 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2145969 ns
 Aug 11, 2016 4:42:09 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2680219 ns
 Aug 11, 2016 4:43:15 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -100,8 +26,6 @@ Aug 11, 2016 4:43:28 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1728654 ns
 Aug 11, 2016 4:44:09 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1523556 ns
-Aug 11, 2016 4:44:16 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntrBin
-INFO: Droplet Bin HP : 2539526 ns
 Aug 11, 2016 4:48:27 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2042600 ns
 Aug 11, 2016 5:39:02 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -926,22 +850,12 @@ Aug 11, 2016 11:38:52 PM com.ethz.ugs.server.ResponseUtilBinHP dropletPleaseIntr
 INFO: Droplet Bin HP : 1921519 ns
 Aug 15, 2016 12:56:16 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2800391 ns
-Aug 15, 2016 12:56:17 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 708958 ns
 Aug 15, 2016 1:33:11 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2618709 ns
-Aug 15, 2016 1:33:13 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 791321 ns
 Aug 15, 2016 8:36:33 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2362597 ns
-Aug 15, 2016 9:00:17 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 994455 ns
 Aug 15, 2016 11:46:19 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2624041 ns
-Aug 15, 2016 11:50:18 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 968850 ns
-Aug 16, 2016 6:06:13 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 969374 ns
 Aug 16, 2016 6:14:38 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1722017 ns
 Aug 16, 2016 5:44:51 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -956,8 +870,6 @@ Aug 22, 2016 9:35:19 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2460007 ns
 Aug 22, 2016 9:35:19 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2397144 ns
-Aug 22, 2016 9:46:37 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 1055501 ns
 Aug 22, 2016 1:13:20 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2409147 ns
 Aug 22, 2016 1:13:21 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -3190,8 +3102,6 @@ Aug 22, 2016 1:13:51 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 50581551 ns
 Aug 22, 2016 1:13:51 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1693283 ns
-Aug 22, 2016 5:18:54 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 573069 ns
 Aug 22, 2016 5:18:54 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2617934 ns
 Aug 22, 2016 5:18:54 PM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
@@ -3212,8 +3122,6 @@ Aug 23, 2016 9:17:35 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2169276 ns
 Aug 23, 2016 9:17:36 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2123280 ns
-Aug 24, 2016 9:44:13 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 946844 ns
 Aug 24, 2016 9:44:13 AM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 2432889 ns
 Aug 24, 2016 9:44:13 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -3242,8 +3150,6 @@ Aug 24, 2016 3:49:02 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2255747 ns
 Aug 24, 2016 3:49:04 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2280610 ns
-Aug 25, 2016 10:01:01 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 700394 ns
 Aug 25, 2016 10:01:16 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2597341 ns
 Aug 25, 2016 10:01:18 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -3256,8 +3162,6 @@ Aug 26, 2016 10:42:44 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2164534 ns
 Aug 26, 2016 4:44:42 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2063704 ns
-Aug 27, 2016 11:20:43 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 630987 ns
 Aug 27, 2016 5:16:07 PM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 1363202 ns
 Aug 27, 2016 5:16:07 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -3268,16 +3172,12 @@ Aug 27, 2016 5:16:25 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1182721 ns
 Aug 28, 2016 2:13:29 PM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 2400353 ns
-Aug 28, 2016 2:13:29 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 786983 ns
 Aug 28, 2016 2:14:39 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2411121 ns
 Aug 28, 2016 2:14:51 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1378665 ns
 Aug 28, 2016 2:14:52 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2167171 ns
-Aug 29, 2016 10:00:48 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 902724 ns
 Aug 29, 2016 10:00:48 AM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 1339712 ns
 Aug 29, 2016 10:00:48 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -3290,8 +3190,6 @@ Aug 29, 2016 10:12:59 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1388157 ns
 Aug 29, 2016 10:13:03 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1137217 ns
-Aug 30, 2016 9:14:02 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 942157 ns
 Aug 30, 2016 9:14:02 AM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 2234609 ns
 Aug 30, 2016 9:14:02 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -3300,8 +3198,6 @@ Aug 30, 2016 9:14:19 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 3024763 ns
 Aug 30, 2016 9:14:22 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1304116 ns
-Aug 31, 2016 9:30:47 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 557956 ns
 Aug 31, 2016 9:30:47 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1577898 ns
 Aug 31, 2016 9:30:47 AM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
@@ -47690,8 +47586,6 @@ Aug 31, 2016 5:52:21 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1036294 ns
 Aug 31, 2016 5:52:21 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 995677 ns
-Sep 02, 2016 9:47:53 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 643276 ns
 Sep 02, 2016 9:47:53 AM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 1255737 ns
 Sep 02, 2016 9:47:53 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -54850,8 +54744,6 @@ Sep 02, 2016 5:01:55 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2029421 ns
 Sep 02, 2016 5:01:55 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1852216 ns
-Sep 02, 2016 8:30:54 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 559429 ns
 Sep 02, 2016 8:30:54 PM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 2256914 ns
 Sep 02, 2016 8:30:54 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
@@ -68084,14 +67976,10 @@ Sep 03, 2016 1:31:17 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 2075290 ns
 Sep 03, 2016 1:31:17 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1849495 ns
-Sep 03, 2016 9:33:37 PM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 489703 ns
 Sep 03, 2016 9:33:37 PM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 2295853 ns
 Sep 03, 2016 9:33:37 PM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin
 INFO: Droplet Bin : 1133134 ns
-Sep 05, 2016 10:22:46 AM com.ethz.ugs.server.ResponseUtilBin tablePleaseBin
-INFO: Table : 527952 ns
 Sep 05, 2016 10:22:46 AM com.ethz.ugs.server.ResponseUtilBinHP slicePleaseBin
 INFO: Droplet Bin HP : 1192308 ns
 Sep 05, 2016 10:22:46 AM com.ethz.ugs.server.ResponseUtilBin dropletPleaseBin

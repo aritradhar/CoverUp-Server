@@ -10,21 +10,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -32,6 +26,8 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
 
@@ -61,6 +57,8 @@ public class GraphPanel extends JPanel {
     
     public GraphPanel(List<Double> scores1) {
         this.scores1 = scores1;
+        
+
     }
 
     @Override
@@ -202,7 +200,7 @@ public class GraphPanel extends JPanel {
     private static void createAndShowGui() throws NumberFormatException, IOException, DocumentException {
         List<Long> scores1 = new ArrayList<>();
         
-        BufferedReader br = new BufferedReader(new FileReader("Traces\\MainServer.log.14"));
+        BufferedReader br = new BufferedReader(new FileReader("Traces\\MainServer.log.16"));
 	
 		String st = null;
 		long k = 0;
@@ -233,7 +231,7 @@ public class GraphPanel extends JPanel {
 				max = i;
 		}
 	
-			
+		System.out.println(min);
 		int bucketCount = (int) (((max - min) % bucketLen == 0) ? ((max - min) / bucketLen) : ((max - min) / bucketLen) + 1);
 		
 		//System.out.println(bucketCount);
@@ -267,7 +265,7 @@ public class GraphPanel extends JPanel {
 		
 		//Collections.shuffle(scores1, new SecureRandom());
 		//take a random sample
-		int sampleSize = 3500;
+		int sampleSize = 5000;
 		/*List<Long> _scores1 = null;
 		
 		try
@@ -289,31 +287,35 @@ public class GraphPanel extends JPanel {
 		{
 			subScore = scores_n;
 		}
+		
 		GraphPanel mainPanel = new GraphPanel(subScore);
-        
-        mainPanel.setPreferredSize(new Dimension(2560, 1440));
-        JFrame frame = new JFrame("DrawGraph");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainPanel.setPreferredSize(new Dimension(2560, 1440));
+	    JFrame frame = new JFrame("DrawGraph");
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+     
         frame.getContentPane().add(mainPanel);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         
-        BufferedImage bi = new BufferedImage(frame.getSize().width, frame.getSize().height, BufferedImage.TYPE_INT_ARGB); 
+        /*BufferedImage bi = new BufferedImage(frame.getSize().width, frame.getSize().height, BufferedImage.TYPE_INT_ARGB); 
         Graphics g = bi.createGraphics();
         frame.paint(g);  //this == JComponent
         g.dispose();
-        try{ImageIO.write(bi,"png",new File("test.png"));}catch (Exception e) {}
+        try{ImageIO.write(bi,"png",new File("test.png"));}catch (Exception e) {}*/
+        
         
         Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\GraphOut.pdf"));
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\GraphOut.pdf"));   
         document.open();
         PdfContentByte cb = writer.getDirectContent();
+      
         Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
-    	//g2.setFont(new Font("Courier New", Font.BOLD, 25)); 
         frame.paint(g2);
         g2.dispose();
         document.close();
+        
+		
         
         //JOptionPane.showMessageDialog(frame, "Graph saved in png and pdf format!");
     }
