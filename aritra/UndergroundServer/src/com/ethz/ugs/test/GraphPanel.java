@@ -59,6 +59,7 @@ public class GraphPanel extends JPanel {
 	private int numberYDivisions = 20;
 	private List<Double> scores1;
 
+	public boolean line;
 	public String fileName;
 	public String desc;
 	public int sampleSize;
@@ -67,12 +68,19 @@ public class GraphPanel extends JPanel {
 	//bucket length in ns
 	public static long bucketLen = 500;
 	///
-
-	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize) {
+		
+	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize, boolean line) {
 		this.scores1 = scores1;
 		this.fileName = fileName;
 		this.desc = desc;
 		this.sampleSize = sampleSize;
+		this.line = line;
+	}
+	
+	public double[] xAxis;
+	public void addCustomX(double[] xAxis)
+	{
+		this.xAxis = xAxis;
 	}
 
 	@Override
@@ -121,8 +129,8 @@ public class GraphPanel extends JPanel {
 				g2.setColor(gridColor);
 				g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
 				g2.setColor(Color.BLACK);
- 
 				String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
+							
 				FontMetrics metrics = g2.getFontMetrics();
 				int labelWidth = metrics.stringWidth(yLabel);
 				g2.drawString(yLabel, x0 - labelWidth - 10, y0 + (metrics.getHeight() / 2) - 3);
@@ -144,7 +152,13 @@ public class GraphPanel extends JPanel {
 					g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
 					g2.setColor(Color.BLACK);
 
-					String xLabel = String.format("%.3f", (float)(min + bucketLen * i)/ 1000000);
+					String xLabel = ""; 
+					
+					if(xAxis == null)
+						xLabel = String.format("%.3f", (float)(min + bucketLen * i)/ 1000000);
+					else
+						xLabel = xAxis[i] + "";
+					
 					FontMetrics metrics = g2.getFontMetrics();
 					int labelWidth = metrics.stringWidth(xLabel);
 					g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 10);
@@ -168,8 +182,11 @@ public class GraphPanel extends JPanel {
 			int y1 = graphPoints.get(i).y;
 			int x2 = graphPoints.get(i + 1).x;
 			int y2 = graphPoints.get(i + 1).y;
-			//g2.drawLine(x1, y1, x2, y2); // for line :D
-			g2.drawLine(x1, y1, x1, _y0);
+			
+			if(this.line)
+				g2.drawLine(x1, y1, x2, y2); // for line
+			else
+				g2.drawLine(x1, y1, x1, _y0); //for bar
 		}
 
 		g2.setStroke(oldStroke);
@@ -323,7 +340,7 @@ public class GraphPanel extends JPanel {
 				subScore = scores_n;
 			}
 
-			GraphPanel mainPanel = new GraphPanel(subScore, new File(file).getName(), Files[counter + 1], scores1.size());
+			GraphPanel mainPanel = new GraphPanel(subScore, new File(file).getName(), Files[counter + 1], scores1.size(), false);
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("DrawGraph : " + new File(file).getName());
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -378,7 +395,7 @@ public class GraphPanel extends JPanel {
 							"Traces\\MainServer.log.15",
 							"Traces\\MainServer.log.16",
 							*/
-							"Traces\\MainServer.log.18", "Droadcast droplets",
+							"Traces\\MainServer.log.18", "Broadcast droplets",
 							"Traces\\MainServer.log.17", "Interactive droplets"
 					});
 				} catch (NumberFormatException | IOException e) 
