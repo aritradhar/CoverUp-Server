@@ -129,8 +129,13 @@ public class GraphPanel extends JPanel {
 				g2.setColor(gridColor);
 				g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
 				g2.setColor(Color.BLACK);
-				String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
-							
+				
+				String yLabel = "";
+				if(xAxis == null)
+					yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
+				else
+					yLabel = String.format("%.5f",(((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )));
+				
 				FontMetrics metrics = g2.getFontMetrics();
 				int labelWidth = metrics.stringWidth(yLabel);
 				g2.drawString(yLabel, x0 - labelWidth - 10, y0 + (metrics.getHeight() / 2) - 3);
@@ -141,13 +146,17 @@ public class GraphPanel extends JPanel {
 
 		// and for x axis
 		int _x0 = 0, _y0 = 0;
-		for (int i = 0; i < scores1.size(); i++) {
-			if (scores1.size() > 1) {
+		for (int i = 0; i < scores1.size(); i++) 
+		{
+			if (scores1.size() > 1)
+			{
 				int x0 = i * (getWidth() - padding * 2 - labelPadding) / (scores1.size() - 1) + padding + labelPadding;
 				int x1 = x0;
 				int y0 = getHeight() - padding - labelPadding;
 				int y1 = y0 - pointWidth;
-				if ((i % ((int) ((scores1.size() / 20.0)) + 1)) == 0) {
+				
+				if ((i % ((int) ((scores1.size() / 20.0)) + 1)) == 0) 
+				{
 					g2.setColor(gridColor);
 					g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
 					g2.setColor(Color.BLACK);
@@ -177,7 +186,9 @@ public class GraphPanel extends JPanel {
 		Stroke oldStroke = g2.getStroke();
 		g2.setColor(lineColor);
 		g2.setStroke(GRAPH_STROKE);
-		for (int i = 0; i < graphPoints.size() - 1; i++) {
+		
+		for (int i = 0; i < graphPoints.size() - 1; i++) 
+		{
 			int x1 = graphPoints.get(i).x;
 			int y1 = graphPoints.get(i).y;
 			int x2 = graphPoints.get(i + 1).x;
@@ -191,7 +202,9 @@ public class GraphPanel extends JPanel {
 
 		g2.setStroke(oldStroke);
 		g2.setColor(pointColor);
-		for (int i = 0; i < graphPoints.size(); i++) {
+		
+		for (int i = 0; i < graphPoints.size(); i++) 
+		{
 			int x = graphPoints.get(i).x - pointWidth / 2;
 			int y = graphPoints.get(i).y - pointWidth / 2;
 			int ovalW = pointWidth;

@@ -13,8 +13,10 @@
 package com.ethz.ugs.test;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +27,12 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
 
 
 public class ParamCalc 
@@ -98,9 +106,16 @@ public class ParamCalc
 				Double d =  (double) (i/(double)score_max) * 100;
 				scores_relative.add(d);
 			}
+			List<Double> scores_prob = new ArrayList<>();
+			double tot = 0d;
+			for(int i : bucket)
+				tot += i;
 			
-			System.out.println(scores_relative.size());		
-			relativeScoresList.add(scores_relative);
+			for(int i : bucket)
+				scores_prob.add((double)i/tot);
+			
+			System.out.println(scores_prob.size());		
+			relativeScoresList.add(scores_prob);
 		}
 	}
 	
@@ -117,6 +132,9 @@ public class ParamCalc
 		
 		double delta = 0d;
 		
+		if(limit == 0)
+			limit = p1.size() >= p2.size() ? p2.size() : p1.size();
+			
 		for(int i = 0; i < limit; i++)
 		{
 			double p1_t = p1.get(i);
@@ -125,15 +143,12 @@ public class ParamCalc
 			if(p1_t == 0 || p2_t == 0)
 				continue;
 			
-			if((p1_t / p2_t) > exp_epsilon)
-			{
-				//System.out.println(p1_t - exp_epsilon * p2_t);
+			if(p1_t > exp_epsilon *  p2_t)
 				delta += p1_t - exp_epsilon * p2_t;
-			}
-			else if((p2_t / p1_t) > exp_epsilon)
-			{
+			
+			else if(p2_t > exp_epsilon * p1_t)
 				delta += p2_t - exp_epsilon * p1_t;
-			}
+			
 		}
 		
 		System.out.println(epsilon + " : " + delta);
@@ -142,10 +157,10 @@ public class ParamCalc
 	}
 	
 	
-	public static void createAndShowGui() throws NumberFormatException, IOException
+	public static void createAndShowGui() throws NumberFormatException, IOException, DocumentException
 	{
 		
-		int limit = 75000;
+		int limit = 0;
 		
 		load(new String[]{
 				"Traces\\MainServer.log.18",
@@ -154,10 +169,10 @@ public class ParamCalc
 		
 		System.out.println("----------------");
 		
-		double[] epsilons = {10000, 5000, 1000, 500, 100, 50, 10, 5, 3,2.5, 2.4, 2.3, 2.2, 2.1, 2, 1.997, 1.995,
+		double[] epsilons = {10000, 5000, 1000, 500, 100, 50, 10, 5, 3, 2.8,  2.7,  2.6, 2.5, 2.4, 2.3, 2.2, 2.1, 2, 1.997, 1.995,
 				1.99, 1.989, 1.986, 1.982, 1.98,1.789, 1.786, 1.782, 1.97, 1.96, 1.95, 1.92, 1.9, 1.89, 1.88, 1.85, 1.8, 1.75, 1.7, 1.65, 
 				1.6, 1.55, 1.5, 1.45, 1.4, 1.35, 1.3, 1.25, 1.2, 1.15, 1.1, 1.05, 
-				1 , .9, .8, .7, .6, .5, .4, .3, .2, .1, 0};
+				1 , .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, 0};// -999999};
 		
 		List<Double> deltas = new ArrayList<>();
 		for(double epsilon : epsilons)
@@ -183,6 +198,16 @@ public class ParamCalc
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\DeltaVEpsilon.pdf"));   
+		document.open();
+		PdfContentByte cb = writer.getDirectContent();
+
+		Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
+		frame.paint(g2);
+		g2.dispose();
+		document.close();
 	}
 	
 	public static void main(String[] args) throws NumberFormatException, IOException 
