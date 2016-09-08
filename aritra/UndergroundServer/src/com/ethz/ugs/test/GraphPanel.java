@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.geom.QuadCurve2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -189,15 +190,27 @@ public class GraphPanel extends JPanel {
 		
 		for (int i = 0; i < graphPoints.size() - 1; i++) 
 		{
+
 			int x1 = graphPoints.get(i).x;
 			int y1 = graphPoints.get(i).y;
 			int x2 = graphPoints.get(i + 1).x;
 			int y2 = graphPoints.get(i + 1).y;
+			//int x3 = graphPoints.get(i + 2).x;
+			//int y3 = graphPoints.get(i + 2).y;
 			
 			if(this.line)
+			{
 				g2.drawLine(x1, y1, x2, y2); // for line
+				
+				/*Curve fitting
+				 * QuadCurve2D q = new QuadCurve2D.Float();
+				q.setCurve(x1, y1, x2, y2, x3, y3);
+				g2.draw(q);*/
+			}
+				
 			else
 				g2.drawLine(x1, y1, x1, _y0); //for bar
+			
 		}
 
 		g2.setStroke(oldStroke);
@@ -411,6 +424,17 @@ public class GraphPanel extends JPanel {
 							"Traces\\MainServer.log.18", "Broadcast droplets",
 							"Traces\\MainServer.log.17", "Interactive droplets"
 					});
+					
+					List<InputStream> pdfs = new ArrayList<InputStream>();
+					
+					for(File file : loc.listFiles())
+					{
+						pdfs.add(new FileInputStream(file));
+					}
+					new File("Traces\\combinedOutput.pdf").delete();
+					OutputStream output = new FileOutputStream("Traces\\combinedOutput.pdf");
+					concatPDFs(pdfs, output, true);
+					
 				} catch (NumberFormatException | IOException e) 
 				{	e.printStackTrace();
 				} catch (DocumentException e) {
@@ -419,17 +443,9 @@ public class GraphPanel extends JPanel {
 			}
 		});
 		
-		Thread.sleep(1000);
+		//Thread.sleep(1000);
 		
-		List<InputStream> pdfs = new ArrayList<InputStream>();
 		
-		for(File file : loc.listFiles())
-		{
-			pdfs.add(new FileInputStream(file));
-		}
-		new File("Traces\\combinedOutput.pdf").delete();
-		OutputStream output = new FileOutputStream("Traces\\combinedOutput.pdf");
-		concatPDFs(pdfs, output, true);
 	}
 	
 	
