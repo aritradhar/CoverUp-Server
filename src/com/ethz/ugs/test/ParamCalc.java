@@ -88,9 +88,10 @@ public class ParamCalc
 		//System.out.println();
 	}
 
-	public static void load(long bucketLen, String...Files) throws NumberFormatException, IOException
+	public static int load(long bucketLen, String...Files) throws NumberFormatException, IOException
 	{
 		long min, max = 0;
+		List<Integer> buckC = new ArrayList<>();
 		for(String file : Files)
 		{
 			List<Long> scores1 = new ArrayList<>();
@@ -125,7 +126,8 @@ public class ParamCalc
 					max = i;
 			}
 			int bucketCount = (int) (((max - min) % bucketLen == 0) ? ((max - min) / bucketLen) : ((max - min) / bucketLen) + 1);
-
+			buckC.add(bucketCount);
+			
 			int[] bucket = new int[bucketCount + 1];
 			for(long i : scores1)
 			{
@@ -168,6 +170,8 @@ public class ParamCalc
 			//System.out.println(scores_prob.size());		
 			relativeScoresList.add(scores_prob);
 		}
+		Collections.sort(buckC);
+		return buckC.get(0);
 	}
 
 	
@@ -205,23 +209,27 @@ public class ParamCalc
 		return delta;
 	}
 	
-	public static double chiSqd(int limit)
+	public static double[] chiSqd(int limit)
 	{
 		List<Double> p1 = relativeScoresList.get(0);
 		List<Double> p2 = relativeScoresList.get(1);
 		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
 
 		double chiSqd = 0.0d;
+		double N = 0d;
 		for(int i = 0; i < limit; i++)
 		{
 			double p1_t = p1.get(i);
 			double p2_t = p2.get(i);
 			
 			if(p1_t > 0)
-				chiSqd += Math.pow((p2_t - p1_t), 2) / p1_t;
+			{
+				chiSqd += ((p2_t - p1_t) * (p2_t - p1_t)) / p1_t;
+				N++;
+			}
 		}
 		
-		return chiSqd;
+		return new double[]{chiSqd, N};
 	}
 
 
@@ -241,7 +249,7 @@ public class ParamCalc
 			scoresList.clear();
 			relativeScoresList.clear();
 
-			load(bucketLen, new String[]{
+			int minBucketCount = load(bucketLen, new String[]{
 					"Traces\\MainServer.log.18",
 					"Traces\\MainServer.log.17"
 			});
@@ -266,8 +274,11 @@ public class ParamCalc
 				epsilons[i] = epsilons[epsilons.length - i - 1];
 				epsilons[epsilons.length - i - 1] = temp;
 			}
-
-			chiSq.add(chiSqd(0));
+			double[] chiSArr = chiSqd(0);
+			double chiS = chiSArr[0];
+			System.out.println(chiSArr[1] + " : " + chiS);
+			chiSq.add(chiS);
+			
 			GraphPanel mainPanel = new GraphPanel(deltas, "", "bucket len: " + bucketLen + " ns", deltas.size(), true);
 			mainPanel.addCustomX(epsilons);
 			mainPanel.setPreferredSize(new Dimension(w, h));
