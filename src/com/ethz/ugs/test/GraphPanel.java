@@ -83,6 +83,13 @@ public class GraphPanel extends JPanel {
 	{
 		this.xAxis = xAxis;
 	}
+	public void addCustomX(Long[] xAxis)
+	{
+		this.xAxis = new double[xAxis.length];
+		for(int i = 0; i < xAxis.length; i++)
+			this.xAxis[i] = xAxis[i];
+		
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -133,7 +140,8 @@ public class GraphPanel extends JPanel {
 				
 				String yLabel = "";
 				if(xAxis == null)
-					yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
+					//yLabel = ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
+					yLabel =  String.format("%.5f", ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0);
 				else
 					yLabel = String.format("%.5f",(((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )));
 				
@@ -330,6 +338,22 @@ public class GraphPanel extends JPanel {
 					score_max = i;
 				scores_n.add((double) i);		
 			}
+			List<Double> scores_prob = new ArrayList<>();
+			double tot = 0d;
+			for(int i : bucket)
+				tot += i;
+
+			for(int i : bucket)
+				scores_prob.add((double)i/tot);
+			
+			List<Double> scores_cumulative = new ArrayList<>();
+			double cumul = 0.0;
+			for(double sc_pr : scores_prob)
+			{
+				cumul += sc_pr;
+				scores_cumulative.add(cumul);
+			}
+				
 			//percentage
 			List<Double> scores_relative = new ArrayList<>();
 
@@ -447,7 +471,6 @@ public class GraphPanel extends JPanel {
 		
 		
 	}
-	
 	
 	//pdf utils
 	
