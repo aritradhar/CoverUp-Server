@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -83,7 +85,7 @@ public class ParamCalc
 			c++;
 		}
 
-		System.out.println();
+		//System.out.println();
 	}
 
 	public static void load(long bucketLen, String...Files) throws NumberFormatException, IOException
@@ -111,7 +113,7 @@ public class ParamCalc
 			}
 			br.close();
 
-			System.out.println("Sample size : " + scores1.size());
+			//System.out.println("Sample size : " + scores1.size());
 			min = scores1.get(0);
 			max = 0;
 			for(long i : scores1)
@@ -131,6 +133,12 @@ public class ParamCalc
 				int pos = (int) ((diff % bucketLen == 0) ? (diff / bucketLen) : (diff / bucketLen) + 1);
 				bucket[pos]++;
 			}
+			//System.out.println("Bucket count : " + bucketCount);
+			int nzb = 0;
+			for(int buck : bucket)
+				if(buck > 0)
+					nzb++;
+			//System.out.println("non zero Bucket count : " + nzb);
 
 			List<Double> scores_n = new ArrayList<>();
 			int score_max = 0;
@@ -157,12 +165,12 @@ public class ParamCalc
 			for(int i : bucket)
 				scores_prob.add((double)i/tot);
 
-			System.out.println(scores_prob.size());		
+			//System.out.println(scores_prob.size());		
 			relativeScoresList.add(scores_prob);
 		}
 	}
 
-
+	
 	public static double ratioCalc(double epsilon, int limit)
 	{
 		//int limit = 75000;
@@ -175,28 +183,45 @@ public class ParamCalc
 
 		double delta = 0d;
 
-		if(limit == 0)
-			limit = p1.size() >= p2.size() ? p2.size() : p1.size();
+		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
+	
+		for(int i = 0; i < limit; i++)
+		{
+			double p1_t = p1.get(i);
+			double p2_t = p2.get(i);		
+			if(p1_t == 0 || p2_t == 0)
+				continue;
 
-			for(int i = 0; i < limit; i++)
-			{
-				double p1_t = p1.get(i);
-				double p2_t = p2.get(i);
+			if(p1_t > exp_epsilon *  p2_t)
+				delta += p1_t - exp_epsilon * p2_t;
 
-				if(p1_t == 0 || p2_t == 0)
-					continue;
+			/*else if(p2_t > exp_epsilon * p1_t)
+					delta += p2_t - exp_epsilon * p1_t;
+			 */
+		}
+		//System.out.println("chi sqd : " + chiSqd);
+		//System.out.println(epsilon + " : " + String.format("%.18f", delta));
 
-				if(p1_t > exp_epsilon *  p2_t)
-					delta += p1_t - exp_epsilon * p2_t;
+		return delta;
+	}
+	
+	public static double chiSqd(int limit)
+	{
+		List<Double> p1 = relativeScoresList.get(0);
+		List<Double> p2 = relativeScoresList.get(1);
+		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
 
-				//else if(p2_t > exp_epsilon * p1_t)
-				//	delta += p2_t - exp_epsilon * p1_t;
-
-			}
-
-			System.out.println(epsilon + " : " + String.format("%.18f", delta));
-
-			return delta;
+		double chiSqd = 0.0d;
+		for(int i = 0; i < limit; i++)
+		{
+			double p1_t = p1.get(i);
+			double p2_t = p2.get(i);
+			
+			if(p1_t > 0)
+				chiSqd += Math.pow((p2_t - p1_t), 2) / p1_t;
+		}
+		
+		return chiSqd;
 	}
 
 
@@ -205,15 +230,17 @@ public class ParamCalc
 
 		int limit = 0;
 		int i1 = 0;
-		List<Long> bucketLenArr = Arrays.asList(new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
-				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L});
+		Long[] arr = new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
+				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L}; 
+		List<Long> bucketLenArr = Arrays.asList(arr);
 
+		List<Double> chiSq = new ArrayList<>();
 		Collections.sort(bucketLenArr);
 		for(long bucketLen : bucketLenArr)
 		{
 			scoresList.clear();
 			relativeScoresList.clear();
-			
+
 			load(bucketLen, new String[]{
 					"Traces\\MainServer.log.18",
 					"Traces\\MainServer.log.17"
@@ -228,8 +255,7 @@ public class ParamCalc
 
 			List<Double> deltas = new ArrayList<>();
 			for(double epsilon : epsilons)
-				deltas.add(ratioCalc(epsilon, limit));
-
+				deltas.add(ratioCalc(epsilon, limit));			
 			//peakDetect();
 
 			Collections.reverse(deltas);
@@ -241,6 +267,7 @@ public class ParamCalc
 				epsilons[epsilons.length - i - 1] = temp;
 			}
 
+			chiSq.add(chiSqd(0));
 			GraphPanel mainPanel = new GraphPanel(deltas, "", "bucket len: " + bucketLen + " ns", deltas.size(), true);
 			mainPanel.addCustomX(epsilons);
 			mainPanel.setPreferredSize(new Dimension(w, h));
@@ -262,40 +289,57 @@ public class ParamCalc
 			g2.dispose();
 			document.close();
 		}
+		GraphPanel mainPanel = new GraphPanel(chiSq, "", "chi sq vs bucket len", chiSq.size(), true);
+		mainPanel.addCustomX(arr);
+		mainPanel.setPreferredSize(new Dimension(w, h));
+		JFrame frame = new JFrame("chi sq vs bucket len");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(mainPanel);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+
+		Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\dve\\dve_" + (i1++) + ".pdf"));   
+		document.open();
+		PdfContentByte cb = writer.getDirectContent();
+
+		Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
+		frame.paint(g2);
+		g2.dispose();
+		document.close();
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException 
 	{
 
 		File loc = new File("Traces\\dve");
-		
+
 		for(File file : loc.listFiles())
 		{
 			file.delete();
 		}
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			public void run() {
 				try {
 					createAndShowGui();
-					
+
 					List<InputStream> pdfs = new ArrayList<InputStream>();
-					
+
 					for(int i = 0; i < loc.listFiles().length; i++)
 						pdfs.add(new FileInputStream("Traces\\dve\\dve_" + i + ".pdf"));
-					
+
 					new File("Traces\\DeltaVEpsilon.pdf").delete();
 					OutputStream output = new FileOutputStream("Traces\\DeltaVEpsilon.pdf");
 					GraphPanel.concatPDFs(pdfs, output, true);
-					
+
 				}
 				catch(Exception ex)
 				{
 					ex.printStackTrace();
 				}
-			}});
+			}});		
 	}
-
-
 }
