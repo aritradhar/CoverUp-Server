@@ -88,6 +88,33 @@ public class ParamCalc
 		//System.out.println();
 	}
 
+	public static double corr()
+	{
+		List<Double> p1 = scoresList.get(0);
+		List<Double> p2 = scoresList.get(1);
+
+		int len = (p1.size() <= p2.size()) ? p1.size() : p2.size();
+
+		double sum_xi_yi = 0d, sum_xi =0d, sum_yi = 0, sum_xi_sqd = 0d, sum_yi_sqd = 0d;
+		for(int i = 0; i < len; i++)
+		{
+			double xi = p1.get(i);
+			double yi = p2.get(i);
+
+			sum_xi += xi;
+			sum_yi += yi;
+
+			double xi_yi = xi * yi;
+			sum_xi_yi += xi_yi;
+
+			sum_xi_sqd += xi * xi;
+			sum_yi_sqd += yi * yi;
+		}
+
+		return ((len * sum_xi_yi) - sum_xi * sum_yi) / (Math.sqrt(len * sum_xi_sqd - sum_xi * sum_xi) * Math.sqrt(len * sum_yi_sqd - sum_yi * sum_yi));
+
+	}
+
 	public static int load(long bucketLen, String...Files) throws NumberFormatException, IOException
 	{
 		long min, max = 0;
@@ -127,7 +154,7 @@ public class ParamCalc
 			}
 			int bucketCount = (int) (((max - min) % bucketLen == 0) ? ((max - min) / bucketLen) : ((max - min) / bucketLen) + 1);
 			buckC.add(bucketCount);
-			
+
 			int[] bucket = new int[bucketCount + 1];
 			for(long i : scores1)
 			{
@@ -174,7 +201,7 @@ public class ParamCalc
 		return buckC.get(0);
 	}
 
-	
+
 	public static double ratioCalc(double epsilon, int limit)
 	{
 		//int limit = 75000;
@@ -188,7 +215,7 @@ public class ParamCalc
 		double delta = 0d;
 
 		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
-	
+
 		for(int i = 0; i < limit; i++)
 		{
 			double p1_t = p1.get(i);
@@ -208,7 +235,7 @@ public class ParamCalc
 
 		return delta;
 	}
-	
+
 	public static double[] chiSqd(int limit)
 	{
 		List<Double> p1 = relativeScoresList.get(0);
@@ -221,14 +248,14 @@ public class ParamCalc
 		{
 			double p1_t = p1.get(i);
 			double p2_t = p2.get(i);
-			
+
 			if(p1_t > 0)
 			{
 				chiSqd += ((p2_t - p1_t) * (p2_t - p1_t)) / p1_t;
 				N++;
 			}
 		}
-		
+
 		return new double[]{chiSqd, N};
 	}
 
@@ -243,13 +270,14 @@ public class ParamCalc
 		List<Long> bucketLenArr = Arrays.asList(arr);
 
 		List<Double> chiSq = new ArrayList<>();
+		List<Double> corr = new ArrayList<>();
 		Collections.sort(bucketLenArr);
 		for(long bucketLen : bucketLenArr)
 		{
 			scoresList.clear();
 			relativeScoresList.clear();
 
-			int minBucketCount = load(bucketLen, new String[]{
+			load(bucketLen, new String[]{
 					"Traces\\MainServer.log.18",
 					"Traces\\MainServer.log.17"
 			});
@@ -274,11 +302,15 @@ public class ParamCalc
 				epsilons[i] = epsilons[epsilons.length - i - 1];
 				epsilons[epsilons.length - i - 1] = temp;
 			}
+
+			//corr
+			//System.out.println("Corr : " + corr());
+			corr.add( corr());
 			double[] chiSArr = chiSqd(0);
 			double chiS = chiSArr[0];
 			System.out.println(chiSArr[1] + " : " + chiS);
 			chiSq.add(chiS);
-			
+
 			GraphPanel mainPanel = new GraphPanel(deltas, "", "bucket len: " + bucketLen + " ns", deltas.size(), true);
 			mainPanel.addCustomX(epsilons);
 			mainPanel.setPreferredSize(new Dimension(w, h));
@@ -300,25 +332,50 @@ public class ParamCalc
 			g2.dispose();
 			document.close();
 		}
-		GraphPanel mainPanel = new GraphPanel(chiSq, "", "chi sq vs bucket len", chiSq.size(), true);
-		mainPanel.addCustomX(arr);
-		mainPanel.setPreferredSize(new Dimension(w, h));
-		JFrame frame = new JFrame("chi sq vs bucket len");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(mainPanel);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		{
+			GraphPanel mainPanel = new GraphPanel(chiSq, "", "chi sq vs bucket len", chiSq.size(), true);
+			mainPanel.addCustomX(arr);
+			mainPanel.setPreferredSize(new Dimension(w, h));
+			JFrame frame = new JFrame("chi sq vs bucket len");
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.getContentPane().add(mainPanel);
+			frame.pack();
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
 
-		Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\dve\\dve_" + (i1++) + ".pdf"));   
-		document.open();
-		PdfContentByte cb = writer.getDirectContent();
+			Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\dve\\dve_" + (i1++) + ".pdf"));   
+			document.open();
+			PdfContentByte cb = writer.getDirectContent();
 
-		Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
-		frame.paint(g2);
-		g2.dispose();
-		document.close();
+			Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
+			frame.paint(g2);
+			g2.dispose();
+			document.close();
+		}
+		
+		{
+			GraphPanel mainPanel = new GraphPanel(corr, "", "correlation vs bucket len", corr.size(), true);
+			mainPanel.addCustomX(arr);
+			mainPanel.setPreferredSize(new Dimension(w, h));
+			JFrame frame = new JFrame("correlation vs bucket len");
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.getContentPane().add(mainPanel);
+			frame.pack();
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
+
+			Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\dve\\dve_" + (i1++) + ".pdf"));   
+			document.open();
+			PdfContentByte cb = writer.getDirectContent();
+
+			Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
+			frame.paint(g2);
+			g2.dispose();
+			document.close();
+		}
+
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException 
@@ -345,12 +402,11 @@ public class ParamCalc
 					new File("Traces\\DeltaVEpsilon.pdf").delete();
 					OutputStream output = new FileOutputStream("Traces\\DeltaVEpsilon.pdf");
 					GraphPanel.concatPDFs(pdfs, output, true);
-
 				}
 				catch(Exception ex)
 				{
 					ex.printStackTrace();
 				}
-			}});		
+			}});
 	}
 }
