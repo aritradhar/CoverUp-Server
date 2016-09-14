@@ -21,8 +21,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -35,6 +38,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -418,7 +426,7 @@ public class MainServer extends HttpServlet {
 				ResponseUtilBin.dropletPleaseBin(request, response, this.privateKey, false);
 
 			else if(postBody.startsWith("1"))
-				ResponseUtilBinHP.dropletPleaseIntrBin(request, response, this.privateKey,postBody);
+				ResponseUtilBinHP.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
 
 			else
 			{
@@ -457,7 +465,64 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 			//System.out.println(3);
 		}
+		
+		
+		else if(flag.equals("dropletPleaseBinNew"))
+		{
+			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
 
+			String st = new String();
+			StringBuffer stb = new StringBuffer("");
+
+			while((st = payloadReader.readLine())!= null)
+				stb.append(st);
+
+			byte[] randAESkey = new byte[16];
+			byte[] randAESiv = new byte[16];
+			SecureRandom rand = new SecureRandom();
+			rand.nextBytes(randAESkey);
+			rand.nextBytes(randAESiv);
+			
+			
+			String postBody = stb.toString();
+			if(postBody == null || postBody.length() == 0)
+			{
+				try
+				{
+					ResponseUtilBinProb.dropletPleaseBin(request, response, this.privateKey, randAESkey, randAESiv);
+				}
+				catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
+				{
+					response.getWriter().append(ex.getMessage());
+					response.flushBuffer();
+				}
+			}
+			else if(postBody.startsWith("0"))
+				try {
+					ResponseUtilBinProb.dropletPleaseBin(request, response, this.privateKey, randAESkey, randAESiv);
+				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+				}
+			else if(postBody.startsWith("1"))
+				try {
+					ResponseUtilBinProb.dropletPleaseIntrBin(request, response, this.privateKey, randAESkey, randAESiv, postBody);
+					
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+				}
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
+			//System.out.println(1);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+		}
 
 		else if(flag.equals("end"))
 		{

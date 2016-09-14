@@ -54,6 +54,7 @@ public class ENV {
 	
 	public static final boolean UNIFIED_ACCESS = true;
 	
+	public static final double PROB_THRESHOLD = 0.1d;
 	static
 	{
 		String OS = System.getProperty("os.name");

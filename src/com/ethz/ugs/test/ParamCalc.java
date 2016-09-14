@@ -282,7 +282,7 @@ public class ParamCalc
 					"Traces\\MainServer.log.17"
 			});
 
-			System.out.println("----------------");
+			//System.out.println("----------------");
 
 			double[] epsilons = {10000, 5000, 1000, 500, 100, 50, 10, 5, 3, 2.8,  2.7,  2.6, 2.5, 2.4, 2.3, 2.2, 2.1, 2, 1.997, 1.995,
 					1.99, 1.989, 1.986, 1.982, 1.98,1.987, 1.986, 1.982, 1.97, 1.96, 1.95, 1.92, 1.9, 1.89, 1.88, 1.85, 1.8, 1.75, 1.7, 1.65, 
@@ -304,14 +304,14 @@ public class ParamCalc
 			}
 
 			//corr
-			//System.out.println("Corr : " + corr());
+			System.out.println(bucketLen + "," + corr());
 			corr.add( corr());
 			double[] chiSArr = chiSqd(0);
 			double chiS = chiSArr[0];
-			System.out.println(chiSArr[1] + " : " + chiS);
+			//System.out.println(chiSArr[1] + " : " + chiS);
 			chiSq.add(chiS);
 
-			GraphPanel mainPanel = new GraphPanel(deltas, "", "bucket len: " + bucketLen + " ns", deltas.size(), true);
+			GraphPanel mainPanel = new GraphPanel(deltas, "", "bucket len: " + bucketLen + " ns", deltas.size(), "line");
 			mainPanel.addCustomX(epsilons);
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("Delta vs Epsilon");
@@ -333,7 +333,7 @@ public class ParamCalc
 			document.close();
 		}
 		{
-			GraphPanel mainPanel = new GraphPanel(chiSq, "", "chi sq vs bucket len", chiSq.size(), true);
+			GraphPanel mainPanel = new GraphPanel(chiSq, "", "chi sq vs bucket len", chiSq.size(), "line");
 			mainPanel.addCustomX(arr);
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("chi sq vs bucket len");
@@ -355,7 +355,7 @@ public class ParamCalc
 		}
 		
 		{
-			GraphPanel mainPanel = new GraphPanel(corr, "", "correlation vs bucket len", corr.size(), true);
+			GraphPanel mainPanel = new GraphPanel(corr, "", "correlation vs bucket len", corr.size(), "line");
 			mainPanel.addCustomX(arr);
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("correlation vs bucket len");
