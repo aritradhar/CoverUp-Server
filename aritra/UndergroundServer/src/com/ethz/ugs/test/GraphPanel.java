@@ -60,7 +60,7 @@ public class GraphPanel extends JPanel {
 	private int numberYDivisions = 20;
 	private List<Double> scores1;
 
-	public boolean line;
+	public String lineType;
 	public String fileName;
 	public String desc;
 	public int sampleSize;
@@ -70,12 +70,12 @@ public class GraphPanel extends JPanel {
 	public static long bucketLen = 500;
 	///
 		
-	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize, boolean line) {
+	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize, String lineType) {
 		this.scores1 = scores1;
 		this.fileName = fileName;
 		this.desc = desc;
 		this.sampleSize = sampleSize;
-		this.line = line;
+		this.lineType = lineType;
 	}
 	
 	public double[] xAxis;
@@ -206,7 +206,7 @@ public class GraphPanel extends JPanel {
 			//int x3 = graphPoints.get(i + 2).x;
 			//int y3 = graphPoints.get(i + 2).y;
 			
-			if(this.line)
+			if(this.lineType.equalsIgnoreCase("line"))
 			{
 				g2.drawLine(x1, y1, x2, y2); // for line
 				
@@ -216,7 +216,7 @@ public class GraphPanel extends JPanel {
 				g2.draw(q);*/
 			}
 				
-			else
+			if(this.lineType.equalsIgnoreCase("bar"))
 				g2.drawLine(x1, y1, x1, _y0); //for bar
 			
 		}
@@ -390,7 +390,7 @@ public class GraphPanel extends JPanel {
 				subScore = scores_n;
 			}
 
-			GraphPanel mainPanel = new GraphPanel(subScore, new File(file).getName(), Files[counter + 1], scores1.size(), false);
+			GraphPanel mainPanel = new GraphPanel(subScore, new File(file).getName(), Files[counter + 1], scores1.size(), "bar");
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("DrawGraph : " + new File(file).getName());
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
