@@ -113,11 +113,20 @@ public class ResponseUtilBinProb {
 	    {
 	    	byte[] toSend = getEncSlice(postBody);
 	    	
-	    	OutputStream out = response.getOutputStream();
-			out.write(toSend);
-			out.flush();
-			out.close();
-			
+	    	if(toSend == null)
+	    	{
+	    		OutputStream out = response.getOutputStream();
+				out.write(cipherText);
+				out.flush();
+				out.close();
+	    	}
+	    	else
+	    	{
+	    		OutputStream out = response.getOutputStream();
+	    		out.write(toSend);
+	    		out.flush();
+	    		out.close();
+	    	}
 	    	long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Intr Prob : " + (end - start)  + " ns");
 			response.flushBuffer();
@@ -136,13 +145,6 @@ public class ResponseUtilBinProb {
 		int sliceIndex = Integer.parseInt(fountains[1]);
 		//3rd element is the requested id
 		String intrSliceId = fountains[2];
-		//4th element is the AES key
-		byte[] aesKeyByte = Base64.getDecoder().decode(fountains[3]);
-		byte[] iv = new byte[16];	  
-		//bad idea
-		Arrays.fill(iv, (byte)0x00);
-		SecretKeySpec aesKey = new SecretKeySpec(aesKeyByte, "AES");
-	    IvParameterSpec ivSpec = new IvParameterSpec(iv);
 		
 		
 		String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
@@ -152,11 +154,21 @@ public class ResponseUtilBinProb {
 		{
 			sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
 			Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
+			
+			return null;
 		}
 
 		else
 			sliceDataBytes = Base64.getDecoder().decode(sliceData);
-			
+		
+		//4th element is the AES key
+		byte[] aesKeyByte = Base64.getDecoder().decode(fountains[3]);
+		byte[] iv = new byte[16];	  
+		//bad idea
+		Arrays.fill(iv, (byte)0x00);
+		SecretKeySpec aesKey = new SecretKeySpec(aesKeyByte, "AES");
+	    IvParameterSpec ivSpec = new IvParameterSpec(iv);
+					
 		byte[] sliceIndeBytes = java.nio.ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
 		byte[] sliceidBytes = intrSliceId.getBytes();
 		
