@@ -531,5 +531,11 @@ public class MainServer extends HttpServlet {
 			response.getWriter().append("Connection terminated");
 			response.flushBuffer();
 		}
+		
+		else
+		{
+			response.getWriter().append("Wrong url");
+			response.flushBuffer();
+		}
 	}
 }
