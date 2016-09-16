@@ -177,10 +177,13 @@ public class ResponseUtilBinProb {
         byte[] cipherText = cipher.doFinal(sliceDataBytes);      
         
         
-        byte[] toSendWOpadding = new byte[sliceIndeBytes.length + sliceidBytes.length + cipherText.length];
-        System.arraycopy(sliceidBytes, 0, toSendWOpadding, 0, sliceidBytes.length);
-        System.arraycopy(sliceIndeBytes, 0, toSendWOpadding, sliceidBytes.length, sliceIndeBytes.length);
-        System.arraycopy(cipherText, 0, toSendWOpadding, sliceidBytes.length + sliceIndeBytes.length, cipherText.length);
+        byte[] toSendWOpadding = new byte[ENV.INTR_MARKER_LEN + sliceIndeBytes.length + sliceidBytes.length + cipherText.length];
+        byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
+        Arrays.fill(magicBytes, ENV.INTR_MARKER);
+        System.arraycopy(magicBytes, 0, toSendWOpadding, 0, magicBytes.length);
+        System.arraycopy(sliceidBytes, 0, toSendWOpadding, magicBytes.length, sliceidBytes.length);
+        System.arraycopy(sliceIndeBytes, 0, toSendWOpadding, magicBytes.length + sliceidBytes.length, sliceIndeBytes.length);
+        System.arraycopy(cipherText, 0, toSendWOpadding, magicBytes.length + sliceidBytes.length + sliceIndeBytes.length, cipherText.length);
         
         byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - toSendWOpadding.length];
         if(ENV.RANDOM_PADDING)
