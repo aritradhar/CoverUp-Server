@@ -15,12 +15,16 @@ package com.ethz.ugs.server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -42,6 +46,10 @@ public class ResponseUtilBinProb {
 
 	public static SecureRandom rand = new SecureRandom();
 	
+	//Client SSL session id -> AES key
+	public static Map<String, byte[]> CLIENT_KEY_MAP = new HashMap<>();
+	public static Map<String, SliceIdIndexPair> CLIENT_PAIR_MAP = new HashMap<>();
+	
 	
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, byte[] key, byte[] iv) 
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
@@ -60,11 +68,35 @@ public class ResponseUtilBinProb {
         
 	    if( Math.random() <= ENV.PROB_THRESHOLD )
 	    {
+	    	
+	    	String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			if(CLIENT_KEY_MAP.containsKey(sslId))
+			{
+				byte[] toSend = getEncSlice(request, null);
+		    	
+		    	if(toSend == null)
+		    	{
+		    		OutputStream out = response.getOutputStream();
+					out.write(cipherText);
+					out.flush();
+					out.close();
+		    	}
+		    	else
+		    	{
+		    		OutputStream out = response.getOutputStream();
+		    		out.write(toSend);
+		    		out.flush();
+		    		out.close();
+		    	}
+			}
+			
+			else
+			{
 	    	OutputStream out = response.getOutputStream();
 			out.write(cipherText);
 			out.flush();
 			out.close();
-			
+			}
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
 			response.flushBuffer();
@@ -110,7 +142,7 @@ public class ResponseUtilBinProb {
 	    }
 	    else
 	    {
-	    	byte[] toSend = getEncSlice(postBody);
+	    	byte[] toSend = getEncSlice(request, postBody);
 	    	
 	    	if(toSend == null)
 	    	{
@@ -132,36 +164,60 @@ public class ResponseUtilBinProb {
 	    }
 	}
 	
-	public static byte[] getEncSlice(String postBody) throws InvalidKeyException, InvalidAlgorithmParameterException, 
+	public static byte[] getEncSlice(HttpServletRequest request, String postBody) throws InvalidKeyException, InvalidAlgorithmParameterException, 
 	IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
 	{
 		long start = System.nanoTime();
 
+		boolean flag = false;
 		//0/1,slice_index, slice_id, key:padding
-		String fountainIdString = postBody.split(":")[0];
-		String[] fountains = fountainIdString.split(",");
+		String fountainIdString = null;
+		String[] fountains = null;
+		int sliceIndex = -1;
+		String intrSliceId = null;
+		byte[] aesKeyByte = null;
+		
+		String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+		
+		if(postBody == null && CLIENT_PAIR_MAP.containsKey(sslId) && CLIENT_KEY_MAP.containsKey(sslId))
+		{
+			SliceIdIndexPair pair = CLIENT_PAIR_MAP.get(sslId);
+			intrSliceId = pair.sliceid;
+			sliceIndex = pair.sliceIndex;
+			aesKeyByte = CLIENT_KEY_MAP.get(sslId);
+			flag = true;
+		}
+		else
+		{
+			//0/1,slice_index, slice_id, key:padding
+			fountainIdString = postBody.split(":")[0];
+			fountains = fountainIdString.split(",");
 
-		int sliceIndex = Integer.parseInt(fountains[1]);
-		//3rd element is the requested id
-		String intrSliceId = fountains[2];
-		
-		
+			 sliceIndex = Integer.parseInt(fountains[1]);
+			//3rd element is the requested id
+			intrSliceId = fountains[2];
+			//4th element is the AES key
+			aesKeyByte = Base64.getDecoder().decode(fountains[3]);
+			
+			//does not matter if the ssl id is already in the map or not. This is handled as a new connection
+			CLIENT_KEY_MAP.put(sslId, aesKeyByte);
+			CLIENT_PAIR_MAP.put(sslId, new SliceIdIndexPair(intrSliceId, sliceIndex));
+		}
+				
 		String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+								
 		byte[] sliceDataBytes = null;
 
 		if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 		{
 			sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
 			Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
-			
 			return null;
 		}
 
 		else
 			sliceDataBytes = Base64.getDecoder().decode(sliceData);
 		
-		//4th element is the AES key
-		byte[] aesKeyByte = Base64.getDecoder().decode(fountains[3]);
 		byte[] iv = new byte[16];	  
 		//bad idea
 		Arrays.fill(iv, (byte)0x00);
@@ -169,7 +225,7 @@ public class ResponseUtilBinProb {
 	    IvParameterSpec ivSpec = new IvParameterSpec(iv);
 					
 		byte[] sliceIndeBytes = java.nio.ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
-		byte[] sliceidBytes = intrSliceId.getBytes();
+		byte[] sliceidBytes = intrSliceId.getBytes(StandardCharsets.UTF_8);
 		
 		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
         cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
@@ -204,8 +260,26 @@ public class ResponseUtilBinProb {
         System.arraycopy(toSendWOpadding, 0, toSend, 0, toSendWOpadding.length);
         System.arraycopy(padding, 0, toSend, toSendWOpadding.length, padding.length);
         
+        
+        //increase slice index by 1
+        if(flag)
+        	CLIENT_PAIR_MAP.put(sslId, new SliceIdIndexPair(intrSliceId, sliceIndex + 1));
+        flag = false;
+        
 		long end = System.nanoTime();
 		MainServer.logger.info("get slice prob : " + (end - start)  + " ns");
 		return toSend;
+	}
+}
+
+class SliceIdIndexPair
+{
+	public String sliceid;
+	public int sliceIndex;
+	
+	public SliceIdIndexPair(String sliceid, int sliceIndex)
+	{
+		this.sliceid = sliceid;
+		this.sliceIndex = sliceIndex;
 	}
 }

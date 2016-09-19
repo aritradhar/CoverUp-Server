@@ -48,7 +48,7 @@ public class ResponseUtilBin {
 	/**
 	 * P = fixed packet size
 	 * <p>
-	 * table-> P (4) | table_len (4) | table (n) | signature (64) | padding (P - 72 - n) |</p><p>
+	 * table-> P (4) | table_len (4) | table (n) | signature (64) | slice_table_len(4) | slice_table(n) | signature(64) | padding (P - 72 - n) |</p><p>
 	 * signature is on table
 	 * @param request HttpServletRequest
 	 * @param response HttpServletResponse
@@ -62,10 +62,12 @@ public class ResponseUtilBin {
 		long start = System.nanoTime();
 		response.addHeader("x-flag", "0");
 
-		String theTable = SiteMap.getTable();
-
+		//get the fountain table
+		String fountainTable = SiteMap.getTable();
+		//get the slice tabel
+		
 		byte[] fixedPacketSizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_BASE_SIZE).array();
-		byte[] theTableBytes = theTable.getBytes(StandardCharsets.UTF_8);
+		byte[] theTableBytes = fountainTable.getBytes(StandardCharsets.UTF_8);
 		//System.out.println("HT : " + Base64.getUrlEncoder().encodeToString(theTableBytes));
 		byte[] signatureBytes = null;
 
@@ -84,13 +86,33 @@ public class ResponseUtilBin {
 		}
 
 		//P = fixed packet size
-		//table-> table_len | table | signature | padding |
-		//			4			x		64		  P-(68+x)
+		//table-> table_len | table | signature | slice_table_len | slice_table | signature | padding |
+		//			4			x		64		  		4       		y		 	  64     P-(136+x+y)
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-		byte[] tableLen = ByteBuffer.allocate(Integer.BYTES).putInt(theTableBytes.length).array();
-		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - 
-		                          fixedPacketSizeBytes.length - 
-		                          tableLen.length - theTableBytes.length - signatureBytes.length];
+		byte[] tableLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(theTableBytes.length).array();
+		
+		String sliceTable = InitialGen.sdm.getSlcieTableAsJson();
+		byte[] sliceTableBytes = sliceTable.getBytes(StandardCharsets.UTF_8);
+		byte[] sliceTableLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceTableBytes.length).array();
+		
+		byte[] sliceSignatureBytes = null;
+		try 
+		{
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hashtableBytes = md.digest(sliceTableBytes);
+			sliceSignatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
+		} 
+
+		catch (NoSuchAlgorithmException e) 
+		{
+			e.printStackTrace();
+			response.getWriter().append("Exception happed in crypto part 2 !!");
+			response.flushBuffer();
+		}
+		
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - fixedPacketSizeBytes.length - 
+		                          tableLenBytes.length - theTableBytes.length - signatureBytes.length -
+		                          sliceTableLenBytes.length - sliceTableBytes.length - sliceSignatureBytes.length];
 
 		if(ENV.RANDOM_PADDING)
 			rand.nextBytes(padding);
@@ -100,10 +122,17 @@ public class ResponseUtilBin {
 		//System.out.println("table len " + theTableBytes.length);
 
 		System.arraycopy(fixedPacketSizeBytes, 0, packetToSend, 0, fixedPacketSizeBytes.length);
-		System.arraycopy(tableLen, 0, packetToSend, fixedPacketSizeBytes.length, tableLen.length);
-		System.arraycopy(theTableBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length, theTableBytes.length);
-		System.arraycopy(signatureBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length + theTableBytes.length, signatureBytes.length);
-		System.arraycopy(padding, 0, packetToSend, fixedPacketSizeBytes.length + tableLen.length + theTableBytes.length + signatureBytes.length, padding.length);
+		System.arraycopy(tableLenBytes, 0, packetToSend, fixedPacketSizeBytes.length, tableLenBytes.length);
+		System.arraycopy(theTableBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLenBytes.length, theTableBytes.length);
+		System.arraycopy(signatureBytes, 0, packetToSend, fixedPacketSizeBytes.length + tableLenBytes.length + theTableBytes.length, signatureBytes.length);
+		int tillNow = fixedPacketSizeBytes.length + tableLenBytes.length + theTableBytes.length + signatureBytes.length;
+		System.arraycopy(sliceTableLenBytes, 0, packetToSend, tillNow, sliceTableLenBytes.length);
+		tillNow += sliceTableLenBytes.length;
+		System.arraycopy(sliceTableBytes, 0, packetToSend, tillNow, sliceTableBytes.length);
+		tillNow += sliceTableBytes.length;
+		System.arraycopy(sliceSignatureBytes, 0, packetToSend, tillNow, sliceSignatureBytes.length);
+		tillNow += sliceSignatureBytes.length;
+		System.arraycopy(padding, 0, packetToSend, tillNow, padding.length);
 
 
 		OutputStream out = response.getOutputStream();

@@ -15,6 +15,7 @@ package com.ethz.ugs.dataStructures;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -103,7 +104,8 @@ public class SliceManager
 	}
 	
 	/**
-	 * Fetch a slice specific to a url and slice index
+	 * Fetch a slice specific to a url and slice index.
+	 * Index starts from 0
 	 * @param url Slice url
 	 * @param index Index of the Specific slice
 	 * @return
@@ -148,6 +150,16 @@ public class SliceManager
 			return INVALID_SLICE_ERROR;
 		}
 	}
+	public int getSliceCount(String url)
+	{
+		Long sliceId = SLICE_MAP.get(url);
+		if(sliceId == null)
+			return -1;
+		else
+			return new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId.toString()).listFiles().length;
+		
+	}
+	
 	/**
 	 * Give a slice from the first available slice. This is to increase the normal droplet response.
 	 * @return
@@ -233,4 +245,25 @@ public class SliceManager
 		return true;
 	}
 	
+	/**
+	 * Fetch the slice table to be sent in the table please response
+	 * @return Slice table in JSOn key value pair
+	 * @throws IOException
+	 */
+	public String getSlcieTableAsJson() throws IOException
+	{
+		if(!new File(ENV.SLICS_TABLE_LOC).exists())
+			return null;
+		
+		BufferedReader br = new BufferedReader(new FileReader(ENV.SLICS_TABLE_LOC));
+		StringBuffer stb = new StringBuffer();
+		String str = null;
+		
+		while((str = br.readLine()) != null)
+			stb.append(str);
+		
+		br.close();
+		
+		return stb.toString();
+	}
 }
