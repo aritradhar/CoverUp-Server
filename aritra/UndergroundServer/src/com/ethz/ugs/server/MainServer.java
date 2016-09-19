@@ -26,8 +26,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import javax.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,8 +43,6 @@ import java.util.logging.SimpleFormatter;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -128,7 +128,7 @@ public class MainServer extends HttpServlet {
 		{
 			ex.printStackTrace();
 			System.err.println("Fatal error..");
-			System.exit(1);
+			//System.exit(1);
 		}
 		logger.log(Level.ALL, "bla", "");
 		System.out.println("Started...");
@@ -204,7 +204,7 @@ public class MainServer extends HttpServlet {
 
 
 	/**
-	 * Post. Defalt
+	 * Post. Default
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{	
@@ -214,6 +214,24 @@ public class MainServer extends HttpServlet {
 			C %= 4;
 		}
 		
+
+		Enumeration<String> Strs = request.getAttributeNames();
+		while(Strs.hasMoreElements())
+		{
+			String attr = Strs.nextElement();
+			System.out.println(attr + " : " + request.getAttribute(attr));
+		}
+		System.out.println("-----");
+		
+		
+		/*StringBuilder stringBuilder = new StringBuilder(  );
+	    X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+	    for (X509Certificate cert: certs) {
+	        stringBuilder.append(cert.toString());
+	    }*/
+	    
+	   // System.out.println(stringBuilder);
+	    
 		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 
 		String flag = request.getParameter("flag");
@@ -482,7 +500,6 @@ public class MainServer extends HttpServlet {
 			SecureRandom rand = new SecureRandom();
 			rand.nextBytes(randAESkey);
 			rand.nextBytes(randAESiv);
-			
 			
 			String postBody = stb.toString();
 			if(postBody == null || postBody.length() == 0)
