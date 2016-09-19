@@ -82,6 +82,28 @@ public class ResponseUtil
 		jObject.put("table", theTable);
 		jObject.put("signature", signatureBase64);
 
+		String sliceTable = InitialGen.sdm.getSlcieTableAsJson();
+		byte[] sliceTableBytes = sliceTable.getBytes(StandardCharsets.UTF_8);
+		
+		byte[] sliceSignatureBytes = null;
+		String sliceSignatureBase64 = null;
+		try 
+		{
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hashtableBytes = md.digest(sliceTableBytes);
+			sliceSignatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
+			sliceSignatureBase64 = Base64.getUrlEncoder().encodeToString(sliceSignatureBytes);
+		} 
+
+		catch (NoSuchAlgorithmException e) 
+		{
+			e.printStackTrace();
+			response.getWriter().append("Exception happed in crypto part 2 !!");
+			response.flushBuffer();
+		}
+		jObject.put("sliceTable", sliceTable);
+		jObject.put("sliceTableSignature", sliceSignatureBase64);
+		
 		String responseString = jObject.toString();
 
 		if(ENV.PADDING_ENABLE)
