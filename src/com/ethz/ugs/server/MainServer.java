@@ -214,7 +214,7 @@ public class MainServer extends HttpServlet {
 			C %= 4;
 		}
 		
-
+		/*
 		Enumeration<String> Strs = request.getAttributeNames();
 		while(Strs.hasMoreElements())
 		{
@@ -222,15 +222,9 @@ public class MainServer extends HttpServlet {
 			System.out.println(attr + " : " + request.getAttribute(attr));
 		}
 		System.out.println("-----");
+		*/
 		
-		
-		/*StringBuilder stringBuilder = new StringBuilder(  );
-	    X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
-	    for (X509Certificate cert: certs) {
-	        stringBuilder.append(cert.toString());
-	    }*/
-	    
-	   // System.out.println(stringBuilder);
+
 	    
 		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 
