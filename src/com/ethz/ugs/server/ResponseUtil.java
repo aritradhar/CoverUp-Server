@@ -79,9 +79,6 @@ public class ResponseUtil
 			response.flushBuffer();
 		}
 
-		jObject.put("table", theTable);
-		jObject.put("signature", signatureBase64);
-
 		String sliceTable = InitialGen.sdm.getSlcieTableAsJson();
 		byte[] sliceTableBytes = sliceTable.getBytes(StandardCharsets.UTF_8);
 		
@@ -101,6 +98,10 @@ public class ResponseUtil
 			response.getWriter().append("Exception happed in crypto part 2 !!");
 			response.flushBuffer();
 		}
+		
+
+		jObject.put("table", theTable);
+		jObject.put("signature", signatureBase64);
 		jObject.put("sliceTable", sliceTable);
 		jObject.put("sliceTableSignature", sliceSignatureBase64);
 		
@@ -115,6 +116,7 @@ public class ResponseUtil
 				stringPadding = ServerUtil.randomString(padLen);
 			else
 				stringPadding = ServerUtil.deterministicString(padLen);
+			
 			jObject.put("pad", stringPadding);
 		}
 
