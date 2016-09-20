@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
@@ -482,6 +483,63 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("dropletPleaseBinNew"))
 		{
 			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+			
+			String st = new String();
+			StringBuffer stb = new StringBuffer("");
+
+			while((st = payloadReader.readLine())!= null)
+				stb.append(st);
+
+			byte[] randAESkey = new byte[16];
+			byte[] randAESiv = new byte[16];
+			SecureRandom rand = new SecureRandom();
+			rand.nextBytes(randAESkey);
+			rand.nextBytes(randAESiv);
+			
+			String postBody = stb.toString();
+			if(postBody == null || postBody.length() == 0)
+			{
+				try
+				{
+					ResponseUtilBinProb.dropletPleaseBin(request, response, this.privateKey, randAESkey, randAESiv);
+				}
+				catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
+				{
+					response.getWriter().append(ex.getMessage());
+					response.flushBuffer();
+				}
+			}
+			else if(postBody.startsWith("0"))
+				try {
+					ResponseUtilBinProb.dropletPleaseBin(request, response, this.privateKey, randAESkey, randAESiv);
+				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+				}
+			else if(postBody.startsWith("1"))
+				try {
+					ResponseUtilBinProb.dropletPleaseIntrBin(request, response, this.privateKey, randAESkey, randAESiv, postBody);
+					
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+				}
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
+			//System.out.println(1);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+		}
+		
+		
+		else if(flag.equals("dropletPleaseBinProb"))
+		{
+			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
 			
 			String st = new String();
 			StringBuffer stb = new StringBuffer("");
