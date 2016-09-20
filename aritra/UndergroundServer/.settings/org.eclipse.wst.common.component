@@ -17,6 +17,9 @@
         <dependent-module archiveName="fountain2_0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/UndergroundServer/lib/fountain2_0.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="commons-io-2.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/UndergroundServer/lib/commons-io-2.5/commons-io-2.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="UndergroundServer"/>
         <property name="java-output-path" value="/UndergroundServer/build/classes"/>
     </wb-module>
