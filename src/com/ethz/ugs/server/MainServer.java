@@ -482,7 +482,7 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("dropletPleaseBinNew"))
 		{
 			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-
+			
 			String st = new String();
 			StringBuffer stb = new StringBuffer("");
 
