@@ -203,8 +203,18 @@ public class ResponseUtilBinProb {
 			CLIENT_KEY_MAP.put(sslId, aesKeyByte);
 			CLIENT_PAIR_MAP.put(sslId, new SliceIdIndexPair(intrSliceId, sliceIndex));
 		}
-				
-		String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+		
+		String sliceData = null;
+		try
+		{
+			Long sliceID = Long.parseLong(intrSliceId);
+			sliceData = InitialGen.sdm.getSlice(sliceID, sliceIndex);
+		}
+		catch(Exception ex)
+		{
+			sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+		}
+		 
 								
 		byte[] sliceDataBytes = null;
 

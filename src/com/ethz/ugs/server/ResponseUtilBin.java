@@ -473,7 +473,18 @@ public class ResponseUtilBin {
 
 		if(fountainSet.contains(url))
 		{
-			String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			//String sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			String sliceData = null;
+			try
+			{
+				Long sliceID = Long.parseLong(intrSliceId);
+				sliceData = InitialGen.sdm.getSlice(sliceID, sliceIndex);
+			}
+			catch(Exception ex)
+			{
+				sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			}
+			
 			byte[] sliceDataBytes = null;
 
 			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))

@@ -150,6 +150,40 @@ public class SliceManager
 			return INVALID_SLICE_ERROR;
 		}
 	}
+	/**
+	 * Fetch a slice specific to a slice id and slice index.
+	 * Index starts from 0
+	 * @param sliceId Slice id (one to one corresponds with slice url)
+	 * @param index Index of the Specific slice
+	 * @return
+	 */
+	public String getSlice(long sliceId, int index)
+	{
+		if(!new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId).exists())
+			return INVALID_SLICE_URL;
+		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId + ENV.DELIM + index + ".slice");
+		if(!sliceFile.exists())
+			return INVALID_SLICE_FILE;
+		
+		try
+		{
+			BufferedReader br = new BufferedReader(new FileReader(sliceFile));
+			String st = new String();
+			StringBuffer stb = new StringBuffer("");
+
+			while((st = br.readLine()) != null)
+				stb.append(st);
+
+			br.close();
+
+			return stb.toString();
+		}
+		catch(IOException ex)
+		{
+			return INVALID_SLICE_ERROR;
+		}
+	}
+	
 	public int getSliceCount(String url)
 	{
 		Long sliceId = SLICE_MAP.get(url);
