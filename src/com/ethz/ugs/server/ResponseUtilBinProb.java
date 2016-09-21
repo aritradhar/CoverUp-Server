@@ -242,14 +242,17 @@ public class ResponseUtilBinProb {
 
 		byte[] sliceIndeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
 		byte[] sliceidBytes = ByteBuffer.allocate(Long.BYTES).putLong(sliceId).array();
-
+		byte[] sliceDatalenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
 
 		//packet len(4) | seedlen (4) ->0 | Magic (8) | Data | Padding
-		//Data -> slice id (8) | slice index (4) | slice data (n) | padding|
+		//Data -> slice id (8) | slice index (4) | slice_data_len (4) | slice data (n) | padding|
 		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
 
-		byte[] toSendWOpadding = new byte[packetlenBytes.length + seedLenBytes.length + ENV.INTR_MARKER_LEN + sliceIndeBytes.length + sliceidBytes.length + sliceDataBytes.length];
+		byte[] toSendWOpadding = new byte[packetlenBytes.length + seedLenBytes.length + 
+		                                  ENV.INTR_MARKER_LEN + sliceIndeBytes.length + 
+		                                  sliceidBytes.length + sliceDatalenBytes.length + sliceDataBytes.length];
+		
 		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
 		Arrays.fill(magicBytes, ENV.INTR_MARKER);
 		int tillNow = 0;
@@ -263,6 +266,8 @@ public class ResponseUtilBinProb {
 		tillNow += sliceidBytes.length;
 		System.arraycopy(sliceIndeBytes, 0, toSendWOpadding, tillNow, sliceIndeBytes.length);
 		tillNow += sliceIndeBytes.length;
+		System.arraycopy(sliceDatalenBytes, 0, toSendWOpadding, tillNow, sliceDatalenBytes.length);
+		tillNow += sliceDatalenBytes.length;
 		System.arraycopy(sliceDataBytes, 0, toSendWOpadding, tillNow, sliceDataBytes.length);
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - toSendWOpadding.length];
