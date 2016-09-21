@@ -279,7 +279,7 @@ public class ResponseUtilBinProb {
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] encryptedSlicePacket = cipher.doFinal(toSend);      
 		
-		//increase slice index by 1
+		//increase state by 1
 		if(flag)
 			MainServer.clientState.incrementSeate(sslId, sliceId);
 		flag = false;
