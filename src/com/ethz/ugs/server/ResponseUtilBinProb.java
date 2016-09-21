@@ -50,10 +50,6 @@ public class ResponseUtilBinProb {
 
 	public static SecureRandom rand = new SecureRandom();
 
-	//Client SSL session id -> AES key
-	public static Map<String, byte[]> CLIENT_KEY_MAP = new HashMap<>();
-	public static Map<String, SliceIdIndexPair> CLIENT_PAIR_MAP = new HashMap<>();
-
 
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, byte[] key, byte[] iv) 
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
@@ -74,7 +70,7 @@ public class ResponseUtilBinProb {
 		{
 
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
-			if(CLIENT_KEY_MAP.containsKey(sslId))
+			if(MainServer.clientState.containSSLId(sslId))
 			{
 				byte[] postBody = null;
 				byte[] toSend = getEncSlice(request, postBody);
@@ -247,16 +243,13 @@ public class ResponseUtilBinProb {
 		byte[] sliceIndeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
 		byte[] sliceidBytes = ByteBuffer.allocate(Long.BYTES).putLong(sliceId).array();
 
-		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
-		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
-		byte[] cipherText = cipher.doFinal(sliceDataBytes);      
 
-		//packet len(4) | seedlen (4) ->0 | Magic (8) | enc Data | Padding
-		//enc data -> slice id (8) | slice index (4) | slice data (n) | padding|
+		//packet len(4) | seedlen (4) ->0 | Magic (8) | Data | Padding
+		//Data -> slice id (8) | slice index (4) | slice data (n) | padding|
 		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
 
-		byte[] toSendWOpadding = new byte[packetlenBytes.length + seedLenBytes.length + ENV.INTR_MARKER_LEN + sliceIndeBytes.length + sliceidBytes.length + cipherText.length];
+		byte[] toSendWOpadding = new byte[packetlenBytes.length + seedLenBytes.length + ENV.INTR_MARKER_LEN + sliceIndeBytes.length + sliceidBytes.length + sliceDataBytes.length];
 		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
 		Arrays.fill(magicBytes, ENV.INTR_MARKER);
 		int tillNow = 0;
@@ -270,7 +263,7 @@ public class ResponseUtilBinProb {
 		tillNow += sliceidBytes.length;
 		System.arraycopy(sliceIndeBytes, 0, toSendWOpadding, tillNow, sliceIndeBytes.length);
 		tillNow += sliceIndeBytes.length;
-		System.arraycopy(cipherText, 0, toSendWOpadding, tillNow, cipherText.length);
+		System.arraycopy(sliceDataBytes, 0, toSendWOpadding, tillNow, sliceDataBytes.length);
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - toSendWOpadding.length];
 		if(ENV.RANDOM_PADDING)
@@ -282,6 +275,10 @@ public class ResponseUtilBinProb {
 		System.arraycopy(padding, 0, toSend, toSendWOpadding.length, padding.length);
 
 
+		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+		byte[] encryptedSlicePacket = cipher.doFinal(toSend);      
+		
 		//increase slice index by 1
 		if(flag)
 			MainServer.clientState.incrementSeate(sslId, sliceId);
@@ -289,18 +286,6 @@ public class ResponseUtilBinProb {
 
 		long end = System.nanoTime();
 		MainServer.logger.info("get slice prob : " + (end - start)  + " ns");
-		return toSend;
-	}
-}
-
-class SliceIdIndexPair
-{
-	public String sliceid;
-	public int sliceIndex;
-
-	public SliceIdIndexPair(String sliceid, int sliceIndex)
-	{
-		this.sliceid = sliceid;
-		this.sliceIndex = sliceIndex;
+		return encryptedSlicePacket;
 	}
 }
