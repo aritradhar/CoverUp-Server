@@ -235,6 +235,7 @@ public class MainServer extends HttpServlet {
 		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 
 		String flag = request.getParameter("flag");
+		String flag1 = request.getParameter("prob");
 
 		//String remoteAddress = request.getRemoteAddr();
 		//Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
@@ -246,9 +247,17 @@ public class MainServer extends HttpServlet {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 
+		if(flag1 != null)
+		{
+			ENV.PROB_THRESHOLD = Double.parseDouble(flag1);
+			
+			response.getWriter().append("Prob reset");
+			response.flushBuffer();
+		}
 		if(flag == null)
 		{
 			response.getWriter().append("No valid parameter");
+			response.flushBuffer();
 		}
 
 		else if(flag.equals("init"))
@@ -539,7 +548,8 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-
+		
+		
 		else if(flag.equals("end"))
 		{
 			Stats.LIVE_CONNECTIONS--;
