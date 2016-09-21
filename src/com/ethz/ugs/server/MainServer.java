@@ -53,6 +53,7 @@ import org.apache.commons.io.IOUtils;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
+import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.test.InitialGen;
 
 
@@ -82,9 +83,13 @@ public class MainServer extends HttpServlet {
 	public static volatile int C = 0;
 	public static final char[] charC = {'|', '/', '-', '\\'};
 	
+	public static ClientState clientState;
+	
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 
+		MainServer.clientState = new ClientState();
+		
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
 		MainServer.logger.addHandler(fileH);
@@ -540,21 +545,21 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("dropletPleaseBinProb"))
 		{
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
-			
-			String st = new String();
-			StringBuffer stb = new StringBuffer("");
-
-			while((st = payloadReader.readLine())!= null)
-				stb.append(st);
+		
+			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			if(sslId == null)
+			{
+				response.getWriter().append("Non TLS/SSL connection terminated");
+				response.flushBuffer();
+				return;
+			}
 
 			byte[] randAESkey = new byte[16];
 			byte[] randAESiv = new byte[16];
 			SecureRandom rand = new SecureRandom();
 			rand.nextBytes(randAESkey);
-			rand.nextBytes(randAESiv);
 			
-			String postBody = stb.toString();
-			if(postBody == null || postBody.length() == 0)
+			if(postBody == null || postBody.length == 0)
 			{
 				try
 				{
@@ -567,14 +572,14 @@ public class MainServer extends HttpServlet {
 					response.flushBuffer();
 				}
 			}
-			else if(postBody.startsWith("0"))
+			else if(postBody[0] == 0x00)
 				try {
 					ResponseUtilBinProb.dropletPleaseBin(request, response, this.privateKey, randAESkey, randAESiv);
 				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
 				}
-			else if(postBody.startsWith("1"))
+			else if(postBody[0] == 0x01)
 				try {
 					ResponseUtilBinProb.dropletPleaseIntrBin(request, response, this.privateKey, randAESkey, randAESiv, postBody);
 					
