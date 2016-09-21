@@ -381,16 +381,22 @@ public class ResponseUtilBinProb {
 		}
 		
 		String sliceData = null;
+		
+		long sliceId = 0l;
 		try
 		{
-			Long sliceID = Long.parseLong(intrSliceId);
-			sliceData = InitialGen.sdm.getSlice(sliceID, sliceIndex);
+			sliceId = MainServer.clientState.getAState(sslId);
 		}
-		catch(Exception ex)
+		catch(RuntimeException ex)
 		{
-			sliceData = InitialGen.sdm.getSlice(intrSliceId, sliceIndex);
+			//in this case send the garbage
+			if(ex.getMessage() != null && ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_EMPTY_STATE_TABLE))
+			{
+				return null;
+			}
 		}
-		 
+		sliceIndex = MainServer.clientState.getState(sslId, sliceId);
+		sliceData = InitialGen.sdm.getSlice(sliceId, sliceIndex);
 								
 		byte[] sliceDataBytes = null;
 
