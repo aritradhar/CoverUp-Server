@@ -246,14 +246,7 @@ public class MainServer extends HttpServlet {
 		//System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
-
-		if(flag1 != null)
-		{
-			ENV.PROB_THRESHOLD = Double.parseDouble(flag1);
-			
-			response.getWriter().append("Prob reset");
-			response.flushBuffer();
-		}
+		
 		if(flag == null)
 		{
 			response.getWriter().append("No valid parameter");
@@ -549,7 +542,13 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 		}
 		
-		
+		else if(flag.equals("set"))
+		{
+			ENV.PROB_THRESHOLD = Double.parseDouble(flag1);
+			
+			response.getWriter().append("Prob reset");
+			response.flushBuffer();
+		}
 		else if(flag.equals("end"))
 		{
 			Stats.LIVE_CONNECTIONS--;
