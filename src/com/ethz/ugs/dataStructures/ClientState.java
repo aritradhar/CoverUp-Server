@@ -129,6 +129,19 @@ public class ClientState {
 	{
 		if(!this.stateMap.containsKey(sslId))
 			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
+		
+		ClientStateDataStructure cds = this.stateMap.get(sslId);
+		for(long sliceId : sliceIds)
+			cds.removeState(sliceId);
+	}
+	
+	public void removeState(String sslId, long sliceId) throws RuntimeException 
+	{
+		if(!this.stateMap.containsKey(sslId))
+			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
+		
+		ClientStateDataStructure cds = this.stateMap.get(sslId);
+		cds.removeState(sliceId);
 	}
 }
 
