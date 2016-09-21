@@ -53,6 +53,10 @@ public class ENV {
 	public static final byte PADDING_DETERMINISTIC_BYTE = (byte) 0xaa;
 	public static final char PADDING_DETERMINISTIC_STRING = 'A';
 	
+	//exception messages
+	public static String EXCEPTION_MESSAGE_SSL_ID_MISSING = "EXCEPTION_MESSAGE_SSL_ID_MISSING";
+	public static String EXCEPTION_MESSAGE_SLICE_ID_MISSING = "EXCEPTION_MESSAGE_SLICE_ID_MISSING";
+
 	public static final boolean EXPERIMENTAL = false;
 	
 	public static final boolean UNIFIED_ACCESS = true;
