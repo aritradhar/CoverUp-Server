@@ -62,14 +62,13 @@ public class ResponseUtilBinProb {
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 
 		byte[] randMessage = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-		rand.nextBytes(randMessage);
+		Arrays.fill(randMessage, (byte) 0x00);
 		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] cipherText = cipher.doFinal(randMessage);
 
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
-
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 			if(MainServer.clientState.containSSLId(sslId))
 			{
