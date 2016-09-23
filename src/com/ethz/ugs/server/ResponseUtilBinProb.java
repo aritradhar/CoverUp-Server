@@ -41,6 +41,7 @@ import org.eclipse.jdt.internal.compiler.batch.Main;
 
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
+import com.sun.xml.internal.ws.model.RuntimeModelerException;
 
 /**
  * @author Aritra
@@ -286,7 +287,19 @@ public class ResponseUtilBinProb {
 		
 		//increase state by 1
 		if(flag)
-			MainServer.clientState.incrementSeate(sslId, sliceId);
+		{
+			try
+			{
+				MainServer.clientState.incrementSeate(sslId, sliceId);
+			}
+			catch(RuntimeModelerException ex)
+			{
+				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
+						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
+					
+					return null;
+			}
+		}
 		flag = false;
 
 		long end = System.nanoTime();
