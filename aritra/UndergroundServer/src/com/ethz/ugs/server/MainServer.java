@@ -101,17 +101,24 @@ public class MainServer extends HttpServlet {
 
 		BufferedReader br = null;
 
-		if(os.contains("Windows"))
-			br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundClient\\codes.bin"));
-		else
-			br = new BufferedReader(new FileReader("/home/dhara/codes.bin"));
-		String str = "";
-		this.codes = new HashSet<>();
+		try
+		{
+			if(os.contains("Windows"))
+				br = new BufferedReader(new FileReader("C:\\Users\\Aritra\\workspace_Mars\\UndergroundClient\\codes.bin"));
+			else
+				br = new BufferedReader(new FileReader("/home/dhara/codes.bin"));
+			String str = "";
+			this.codes = new HashSet<>();
 
-		while((str = br.readLine()) != null)
-			codes.add(str);
+			while((str = br.readLine()) != null)
+				codes.add(str);
 
-		br.close();
+			br.close();
+		}
+		catch(Exception ex)
+		{
+			System.err.println("Code file unavailable");
+		}
 		if(!Stats.keygen_done)
 		{
 			//System.out.println("No keys. Generating...");
