@@ -10,7 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.geom.QuadCurve2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -282,7 +281,7 @@ public class GraphPanel extends JPanel {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 
 			String st = null;
-			long k = 0;
+			//long k = 0;
 			
 			//TODO dummy to set the min
 			scores1.add(950000L);

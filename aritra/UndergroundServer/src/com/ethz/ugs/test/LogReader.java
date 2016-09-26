@@ -52,7 +52,7 @@ public class LogReader {
 		List<Long> el = new ArrayList<>();
 		
 		String st = null;
-		long counter = 0, k = 0;
+		long k = 0;
 		long tot = 0;
 		while((st = br.readLine()) != null)
 		{
@@ -60,7 +60,6 @@ public class LogReader {
 			if(k == 50000)
 				break;
 			
-			counter++;
 			if(!st.startsWith("INFO"))
 				continue;
 			if(st.length() == 0)
@@ -103,10 +102,8 @@ public class LogReader {
 		}
 		
 		FileWriter fw = new FileWriter("out.txt");
-		int t = 0;
 		for(int i : block)
 		{
-			t += i;
 			fw.append(i + "\n");
 		}	
 		fw.close();
