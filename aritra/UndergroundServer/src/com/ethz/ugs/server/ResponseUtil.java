@@ -374,7 +374,7 @@ public class ResponseUtil
 			
 			//some stupid code here. But I will fix this later
 			
-			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
+			if(sliceData.equals(SliceManager.INVALID_INDEX_OVERFLOW))
 				response.addHeader("x-flag", "2");
 			
 			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))

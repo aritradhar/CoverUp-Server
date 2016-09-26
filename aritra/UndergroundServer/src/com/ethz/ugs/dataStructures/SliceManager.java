@@ -41,7 +41,7 @@ public class SliceManager
 	public static Map<String, Long> SLICE_MAP = new HashMap<>();
 	
 	public static final String INVALID_SLICE_URL = "invalid slice url";
-	public static final String INVALID_SLICE_FILE = "slice index overflow";
+	public static final String INVALID_INDEX_OVERFLOW = "slice index overflow";
 	public static final String INVALID_SLICE_ERROR = "unknown error related to I/O";
 	public long firstSliceId;
 	/**
@@ -129,7 +129,7 @@ public class SliceManager
 		//System.out.println("Slice file loc : " + sliceFile);
 		
 		if(!sliceFile.exists())
-			return INVALID_SLICE_FILE;
+			return INVALID_INDEX_OVERFLOW;
 		
 		try
 		{
@@ -162,7 +162,7 @@ public class SliceManager
 			return INVALID_SLICE_URL;
 		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId + ENV.DELIM + index + ".slice");
 		if(!sliceFile.exists())
-			return INVALID_SLICE_FILE;
+			return INVALID_INDEX_OVERFLOW;
 		
 		try
 		{
@@ -203,7 +203,7 @@ public class SliceManager
 		File sliceFile = new File(ENV.INTR_SLICE_OUTPUT_LOC + ENV.DELIM + sliceId + ENV.DELIM + 0 + ".slice");
 		
 		if(!sliceFile.exists())
-			return INVALID_SLICE_FILE;
+			return INVALID_INDEX_OVERFLOW;
 		
 		try
 		{

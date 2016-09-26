@@ -299,7 +299,7 @@ public class ResponseUtilBin {
 		String sliceData = InitialGen.sdm.getSlice();
 		byte[] sliceDataBytes = null;
 		
-		if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+		if(sliceData.equals(SliceManager.INVALID_INDEX_OVERFLOW) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 		{
 			sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
 			Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
@@ -487,7 +487,7 @@ public class ResponseUtilBin {
 			
 			byte[] sliceDataBytes = null;
 
-			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+			if(sliceData.equals(SliceManager.INVALID_INDEX_OVERFLOW) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 			{
 				sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
 				Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
@@ -497,7 +497,7 @@ public class ResponseUtilBin {
 				sliceDataBytes = Base64.getDecoder().decode(sliceData);
 
 			//for some stupid reason
-			if(sliceData.equals(SliceManager.INVALID_SLICE_FILE))
+			if(sliceData.equals(SliceManager.INVALID_INDEX_OVERFLOW))
 				response.addHeader("x-flag", "2");
 
 			else if(sliceData.equals(SliceManager.INVALID_SLICE_URL))

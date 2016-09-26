@@ -443,7 +443,7 @@ public class MainServer extends HttpServlet {
 
 			String postBody = stb.toString();
 
-			//System.out.println("BODY : " + postBody);
+			System.out.println("BODY : " + postBody);
 
 			if(postBody == null || postBody.length() == 0)
 			{
