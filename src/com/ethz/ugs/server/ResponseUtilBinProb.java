@@ -96,6 +96,7 @@ public class ResponseUtilBinProb {
 			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
 			response.flushBuffer();
 		}
+		
 		else
 		{
 			ResponseUtilBin.dropletPleaseBin(request, response, privateKey, false);
@@ -218,11 +219,11 @@ public class ResponseUtilBinProb {
 
 		byte[] sliceDataBytes = null;
 
-		if(sliceData.equals(SliceManager.INVALID_SLICE_FILE) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+		//in case the slice index is oveflown, remove it from the client state table
+		if(sliceData.equals(SliceManager.INVALID_INDEX_OVERFLOW) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
 		{
-			sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
-			Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
-			return null;
+			MainServer.clientState.removeState(sslId, sliceId);		
+			return sliceDataBytes;
 		}
 
 		else
