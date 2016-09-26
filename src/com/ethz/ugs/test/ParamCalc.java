@@ -24,11 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -163,10 +160,10 @@ public class ParamCalc
 				bucket[pos]++;
 			}
 			//System.out.println("Bucket count : " + bucketCount);
-			int nzb = 0;
+			/*int nzb = 0;
 			for(int buck : bucket)
 				if(buck > 0)
-					nzb++;
+					nzb++;*/
 			//System.out.println("non zero Bucket count : " + nzb);
 
 			List<Double> scores_n = new ArrayList<>();
