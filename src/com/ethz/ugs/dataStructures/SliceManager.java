@@ -283,7 +283,35 @@ public class SliceManager
 	 * @return Slice table in JSOn key value pair
 	 * @throws IOException
 	 */
-	public String getSlcieTableAsJson() throws IOException
+	public String getSliceTableAsJson() throws IOException
+	{
+		/*
+		 * if(!new File(ENV.SLICS_TABLE_LOC).exists())
+			return null;
+		
+		BufferedReader br = new BufferedReader(new FileReader(ENV.SLICS_TABLE_LOC));
+		StringBuffer stb = new StringBuffer();
+		String str = null;
+		
+		while((str = br.readLine()) != null)
+			stb.append(str);
+		
+		br.close();
+		*/
+		
+		JSONObject jObject = new JSONObject(SliceManager.SLICE_MAP);
+		
+		return jObject.toString();
+	}
+	
+	/**
+	 * Fetch the slice table to be sent in the table please response
+	 * in a tree structure. This is to be later parsed in the client
+	 * end in the covert browsing window.
+	 * @return Slice table in JSOn key value pair
+	 * @throws IOException
+	 */
+	public String getSliceTableAsJsonTree() throws IOException
 	{
 		if(!new File(ENV.SLICS_TABLE_LOC).exists())
 			return null;
