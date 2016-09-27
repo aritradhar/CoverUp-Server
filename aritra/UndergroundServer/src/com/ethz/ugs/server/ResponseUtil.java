@@ -79,7 +79,7 @@ public class ResponseUtil
 			response.flushBuffer();
 		}
 
-		String sliceTable = InitialGen.sdm.getSliceTableAsJson();
+		String sliceTable = InitialGen.sdm.getSliceTableAsJsonTree();
 		byte[] sliceTableBytes = sliceTable.getBytes(StandardCharsets.UTF_8);
 		
 		byte[] sliceSignatureBytes = null;

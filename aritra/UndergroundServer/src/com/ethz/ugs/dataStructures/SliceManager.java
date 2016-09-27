@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.ethz.tree.Tree;
 import com.ethz.ugs.compressUtil.SliceData;
 import com.ethz.ugs.server.ENV;
 
@@ -313,7 +314,13 @@ public class SliceManager
 	 */
 	public String getSliceTableAsJsonTree() throws IOException
 	{
-		if(!new File(ENV.SLICS_TABLE_LOC).exists())
+		Tree tree = new Tree();
+		for(String slice : SliceManager.SLICE_MAP.keySet())
+			tree.insert("ROOT", slice, SliceManager.SLICE_MAP.get(slice));
+		
+		return tree.treeToJSON();
+			
+		/*if(!new File(ENV.SLICS_TABLE_LOC).exists())
 			return null;
 		
 		BufferedReader br = new BufferedReader(new FileReader(ENV.SLICS_TABLE_LOC));
@@ -325,6 +332,6 @@ public class SliceManager
 		
 		br.close();
 		
-		return stb.toString();
+		return stb.toString();*/
 	}
 }
