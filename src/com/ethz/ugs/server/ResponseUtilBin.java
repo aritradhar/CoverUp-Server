@@ -91,7 +91,7 @@ public class ResponseUtilBin {
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		byte[] tableLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(theTableBytes.length).array();
 		
-		String sliceTable = InitialGen.sdm.getSliceTableAsJson();
+		String sliceTable = InitialGen.sdm.getSliceTableAsJsonTree();
 		byte[] sliceTableBytes = sliceTable.getBytes(StandardCharsets.UTF_8);
 		byte[] sliceTableLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceTableBytes.length).array();
 		

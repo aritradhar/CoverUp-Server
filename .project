@@ -3,6 +3,7 @@
 	<name>UndergroundServer</name>
 	<comment></comment>
 	<projects>
+		<project>SliceTree</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
