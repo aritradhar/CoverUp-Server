@@ -182,6 +182,7 @@ public class ResponseUtilBinProb {
 		else if(postBody != null)
 		{
 			//0x00/0x01 (1) | reserved (3) | key (16) | len (4) | slice id (8 * n)| 
+			aesKeyByte = new byte[16];
 			System.arraycopy(postBody, 4, aesKeyByte, 0, 16);
 			byte[] lenBytes = new byte[4];
 			System.arraycopy(postBody, 20, lenBytes, 0, 4);
