@@ -187,6 +187,7 @@ public class ResponseUtilBinProb {
 			byte[] lenBytes = new byte[4];
 			System.arraycopy(postBody, 20, lenBytes, 0, 4);
 			int len = ByteBuffer.wrap(lenBytes).getInt();
+			System.out.println("intr len : " + len);
 			int numSliceId = len / 8;
 
 			List<Long> sliceIds = new ArrayList<>();
