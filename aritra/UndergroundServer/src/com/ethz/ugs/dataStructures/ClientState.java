@@ -165,6 +165,7 @@ class ClientStateDataStructure
 	byte[] key;
 	public ClientStateDataStructure(List<Long> sliceIds, byte[] key)
 	{
+		this.clientStateMap = new HashMap<>();
 		if(sliceIds != null)
 		{
 			for(long sliceId : sliceIds)
