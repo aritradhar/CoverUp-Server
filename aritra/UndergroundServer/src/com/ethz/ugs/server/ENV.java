@@ -59,6 +59,11 @@ public class ENV {
 	public static String EXCEPTION_MESSAGE_EMPTY_STATE_TABLE = "EXCEPTION_MESSAGE_EMPTY_STATE_TABLE";
 
 
+	//enc
+	public static final int AES_KEY_SIZE = 16;
+	public static final int AES_IV_SIZE = 16;
+	
+	
 	public static final boolean EXPERIMENTAL = false;
 	
 	public static final boolean UNIFIED_ACCESS = true;

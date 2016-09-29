@@ -83,7 +83,7 @@ public class ResponseUtilBinProb {
 			if(MainServer.clientState.containSSLId(sslId))
 			{
 				byte[] postBody = null;
-				byte[] toSend = getEncSlice(request, postBody);
+				byte[] toSend = getEncSlice(request, postBody, privateKey);
 
 				if(toSend == null)
 				{
@@ -161,7 +161,7 @@ public class ResponseUtilBinProb {
 		//garbage -> interactive droplet
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
-			byte[] toSend = getEncSlice(request, postBody);
+			byte[] toSend = getEncSlice(request, postBody, privateKey);
 
 			if(toSend == null)
 			{
@@ -193,8 +193,19 @@ public class ResponseUtilBinProb {
 		}
 	}
 
-
-	public static byte[] getEncSlice(HttpServletRequest request, byte[] postBody) throws InvalidKeyException, InvalidAlgorithmParameterException, 
+	/**
+	 * Get encrypted slice data with signature :D
+	 * @param request
+	 * @param postBody
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 */
+	public static byte[] getEncSlice(HttpServletRequest request, byte[] postBody, byte[] privateKey) throws InvalidKeyException, InvalidAlgorithmParameterException, 
 	IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
 	{
 		long start = System.nanoTime();
@@ -215,10 +226,10 @@ public class ResponseUtilBinProb {
 		else if(postBody != null)
 		{
 			//0x00/0x01 (1) | reserved (3) | key (16) | len (4) | slice id (8 * n)| 
-			aesKeyByte = new byte[16];
-			System.arraycopy(postBody, 4, aesKeyByte, 0, 16);
+			aesKeyByte = new byte[ENV.AES_KEY_SIZE];
+			System.arraycopy(postBody, 4, aesKeyByte, 0, ENV.AES_KEY_SIZE);
 			byte[] lenBytes = new byte[4];
-			System.arraycopy(postBody, 20, lenBytes, 0, 4);
+			System.arraycopy(postBody, ENV.AES_KEY_SIZE + 4, lenBytes, 0, 4);
 			int len = ByteBuffer.wrap(lenBytes).getInt();
 			System.out.println("intr len : " + len);
 			int numSliceId = len / 8;
@@ -227,7 +238,7 @@ public class ResponseUtilBinProb {
 			for(int i = 0; i < numSliceId; i++)
 			{
 				byte[] sliceIdBytes = new byte[8];
-				System.arraycopy(postBody, 24 + i * 8, sliceIdBytes, 0, 8);
+				System.arraycopy(postBody, ENV.AES_KEY_SIZE + 8 + i * 8, sliceIdBytes, 0, 8);
 				long sliceId = ByteBuffer.wrap(sliceIdBytes).getLong();
 				sliceIds.add(sliceId);
 			}
@@ -236,7 +247,7 @@ public class ResponseUtilBinProb {
 
 		String sliceData = null;
 
-		long sliceId = 0l;
+		long sliceId = 0x00;
 		try
 		{
 			sliceId = MainServer.clientState.getAState(sslId);
@@ -264,9 +275,11 @@ public class ResponseUtilBinProb {
 		else
 			sliceDataBytes = Base64.getDecoder().decode(sliceData);
 
-		byte[] iv = new byte[16];	  
-		//bad idea
-		Arrays.fill(iv, (byte)0x00);
+		byte[] iv = new byte[ENV.AES_IV_SIZE];	  
+		//generate a secure IV
+		//rand.nextBytes(iv);
+		//bad idea but for now
+		Arrays.fill(iv, (byte) 0x00);
 		SecretKeySpec aesKey = new SecretKeySpec(aesKeyByte, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 
@@ -274,11 +287,14 @@ public class ResponseUtilBinProb {
 		byte[] sliceidBytes = ByteBuffer.allocate(Long.BYTES).putLong(sliceId).array();
 		byte[] sliceDatalenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
 
-		//packet len(4) | seedlen (4) ->0 | Magic (8) | Data | Padding
-		//Data -> slice id (8) | slice index (4) | slice_data_len (4) | slice data (n) | padding|
+		//IV (16) | packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
+		//Data -> slice id (8) | slice index (4) | slice_data_len (4) | slice data (n) | signature (64)
+		
 		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
 
+	
+		//TODO old structure. Needs to input signature and IV
 		byte[] toSendWOpadding = new byte[packetlenBytes.length + seedLenBytes.length + 
 		                                  ENV.INTR_MARKER_LEN + sliceIndeBytes.length + 
 		                                  sliceidBytes.length + sliceDatalenBytes.length + sliceDataBytes.length];
