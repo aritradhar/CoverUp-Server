@@ -46,6 +46,21 @@ public class ResponseUtilBinProb {
 	public static SecureRandom rand = new SecureRandom();
 
 
+	/**
+	 * Broadcast
+	 * @param request
+	 * @param response
+	 * @param privateKey
+	 * @param key
+	 * @param iv
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	public static void dropletPleaseBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, byte[] key, byte[] iv) 
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
@@ -61,6 +76,7 @@ public class ResponseUtilBinProb {
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] cipherText = cipher.doFinal(randMessage);
 
+		//garbage
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
@@ -97,6 +113,7 @@ public class ResponseUtilBinProb {
 			response.flushBuffer();
 		}
 		
+		//droplet
 		else
 		{
 			ResponseUtilBin.dropletPleaseBin(request, response, privateKey, false);
@@ -110,6 +127,22 @@ public class ResponseUtilBinProb {
 	}
 
 
+	/**
+	 * Interactive 
+	 * @param request
+	 * @param response
+	 * @param privateKey
+	 * @param key
+	 * @param iv
+	 * @param postBody
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	public static void dropletPleaseIntrBin(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, byte[] key, byte[] iv, byte[] postBody) 
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
@@ -125,18 +158,8 @@ public class ResponseUtilBinProb {
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] cipherText = cipher.doFinal(randMessage);
 
+		//garbage -> interactive droplet
 		if( Math.random() <= ENV.PROB_THRESHOLD )
-		{
-			OutputStream out = response.getOutputStream();
-			out.write(cipherText);
-			out.flush();
-			out.close();
-
-			long end = System.nanoTime();
-			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
-			response.flushBuffer();
-		}
-		else
 		{
 			byte[] toSend = getEncSlice(request, postBody);
 
@@ -154,8 +177,18 @@ public class ResponseUtilBinProb {
 				out.flush();
 				out.close();
 			}
+			
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Intr Prob : " + (end - start)  + " ns");
+			response.flushBuffer();
+		}
+		//normal droplet
+		else
+		{
+			ResponseUtilBin.dropletPleaseBin(request, response, privateKey, false);
+
+			long end = System.nanoTime();
+			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
 			response.flushBuffer();
 		}
 	}
