@@ -581,5 +581,167 @@ public class ResponseUtilBin {
 		response.flushBuffer();		
 	}
 
+	
+	/**This is for the probabilistic droplet serve call. x-flag and logging is removed
+	 * P = fixed packet size
+	 * <br>
+	 * table-> packet_len (4) | droplet (n) | url_len (4) | url (n_1) | f_id (8) | signature (64) | padding (p - 72 - n - n_1) |</br>
+	 * 
+	 * Signature is on  packet_len | droplet | url_len | url | f_id 
+	 * <br>
+	 * droplet -> seedlen (4) | seed(n) | num_chunk (4) | datalen (4) | data (n)
+	 * <br>
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param privateKey Server's Curve 25519 private key 
+	 * @throws IOException
+	 */
+
+	public static void dropletPleaseBinNew(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
+	{
+		String url = request.getParameter("url");
+
+		String[] dropletStr = new String[2];
+		if(url == null)
+		{
+			dropletStr = SiteMap.getRandomDroplet(null);
+			url = dropletStr[1];
+		}	
+		else
+		{
+			System.err.println("Request droplet url : " + url);
+
+			try
+			{
+				int urlId = Integer.parseInt(url);
+				url = FountainTableRow.dropletLocUrlMap.get(urlId);
+
+				if(url == null)
+				{
+					response.getWriter().append("Invalid fountain id");
+					response.flushBuffer();
+
+					return;
+				}
+			}
+			catch(NullPointerException ex)
+			{
+				response.getWriter().append("Invalid fountain id");
+				response.flushBuffer();
+
+				return;
+			}
+			catch(Exception ex)
+			{
+
+			}
+			try
+			{
+				dropletStr = SiteMap.getRandomDroplet(url);
+			}
+			catch(Exception ex)
+			{
+				response.getWriter().append(ex.getMessage());
+				response.flushBuffer();
+
+				return;
+			}
+			//System.out.println(dropletStr[0]);
+		}
+
+		//System.err.println("Fountain served : " + url);
+
+
+		JSONObject jObject2 = new JSONObject(dropletStr[0]);
+		byte[] seedBytes = Base64.getUrlDecoder().decode(jObject2.getString("seed"));
+		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(seedBytes.length).array();
+		byte[] num_chunksBytes = ByteBuffer.allocate(Integer.BYTES).putInt(jObject2.getInt("num_chunks")).array();
+		byte[] data = Base64.getUrlDecoder().decode(jObject2.getString("data"));
+		byte[] dataLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(data.length).array();
+		//System.out.println(dataLenBytes[3] + "," + dataLenBytes[2] + "," + dataLenBytes[1] + "," + dataLenBytes[0]);
+
+
+		byte[] dropletByte = new byte[seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length + data.length];
+
+		System.arraycopy(seedLenBytes, 0, dropletByte, 0, seedLenBytes.length);
+		System.arraycopy(seedBytes, 0, dropletByte, seedLenBytes.length, seedBytes.length);
+		System.arraycopy(num_chunksBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length, num_chunksBytes.length);
+		System.arraycopy(dataLenBytes, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length, dataLenBytes.length);
+		System.arraycopy(data, 0, dropletByte, seedLenBytes.length + seedBytes.length + num_chunksBytes.length + dataLenBytes.length, data.length);
+
+		byte[] fixedPacketLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
+
+		byte[] urlBytes = url.getBytes(StandardCharsets.UTF_8);
+		byte[] urlLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(urlBytes.length).array();
+		byte[] f_idBytes = ByteBuffer.allocate(Long.BYTES).putLong(FountainTableRow.dropletLocUrlMapRev.get(url)).array();
+
+		byte[] dataToSign = new byte[fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length + f_idBytes.length];
+
+		System.arraycopy(fixedPacketLenBytes, 0, dataToSign, 0, fixedPacketLenBytes.length);
+		System.arraycopy(dropletByte, 0, dataToSign, fixedPacketLenBytes.length, dropletByte.length);
+		System.arraycopy(urlLenBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length, urlLenBytes.length);
+		System.arraycopy(urlBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length, urlBytes.length);
+		System.arraycopy(f_idBytes, 0, dataToSign, fixedPacketLenBytes.length + dropletByte.length + urlLenBytes.length + urlBytes.length, f_idBytes.length);
+
+		byte[] signatureBytes = null;
+		try 
+		{
+
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hashtableBytes = md.digest(dataToSign);
+			signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
+		} 
+
+		catch (NoSuchAlgorithmException e) 
+		{
+			OutputStream out = response.getOutputStream();
+			byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+			out.write(packetToSend);
+			out.flush();
+			out.close();
+			response.flushBuffer();
+			return;
+			
+			//response.getWriter().append("Exception in signature calculation!");
+			//response.flushBuffer();
+		}
+
+
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];
+		if(ENV.RANDOM_PADDING)
+			rand.nextBytes(padding);
+		else
+			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
+
+		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Dummy operation for same access pattern as the intr droplet serve
+		String sliceData = InitialGen.sdm.getSlice();
+		byte[] sliceDataBytes = null;
+		
+		if(sliceData.equals(SliceManager.INVALID_INDEX_OVERFLOW) || sliceData.equals(SliceManager.INVALID_SLICE_URL) || sliceData.equals(SliceManager.INVALID_SLICE_ERROR))
+		{
+			sliceDataBytes = new byte[ENV.FOUNTAIN_CHUNK_SIZE];
+			Arrays.fill(sliceDataBytes, ENV.PADDING_DETERMINISTIC_BYTE);
+		}
+		
+		else
+			sliceDataBytes = Base64.getDecoder().decode(sliceData);
+		System.arraycopy(sliceDataBytes, 0, packetToSend, 0, sliceDataBytes.length);
+		//Dummy operation end
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		//dataToSign | signature | padding
+		System.arraycopy(dataToSign, 0, packetToSend, 0, dataToSign.length);
+		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
+		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
+
+		OutputStream out = response.getOutputStream();
+		out.write(packetToSend);
+		out.flush();
+		out.close();
+		response.flushBuffer();
+	}
 
 }
