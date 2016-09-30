@@ -396,7 +396,8 @@ public class ResponseUtilBinProb {
 		sliceIndex = MainServer.clientState.getState(sslId, sliceId);
 		if(sliceIndex > 0)
 			sliceIndex = 0;
-		sliceData = InitialGen.sdm.getSlice(InitialGen.sdm.firstSliceId, sliceIndex);
+		//get the first slice from 0the slice index
+		sliceData = InitialGen.sdm.getSlice();
 
 		byte[] sliceDataBytes = null;
 
