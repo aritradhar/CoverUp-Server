@@ -33,6 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
 import com.sun.xml.internal.ws.model.RuntimeModelerException;
@@ -100,7 +101,6 @@ public class ResponseUtilBinProb {
 					out.close();
 				}
 			}
-
 			else
 			{
 				OutputStream out = response.getOutputStream();
@@ -116,7 +116,8 @@ public class ResponseUtilBinProb {
 		//droplet
 		else
 		{
-			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey);
+			byte[] toSend = getEncSliceDummy(request, privateKey);
+			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey, toSend);
 
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
@@ -128,7 +129,7 @@ public class ResponseUtilBinProb {
 
 
 	/**
-	 * Interactive 
+	 * Probabilistic interactive droplet request. May server droplets, slices or pure garbage.
 	 * @param request
 	 * @param response
 	 * @param privateKey
@@ -187,7 +188,9 @@ public class ResponseUtilBinProb {
 		//normal droplet
 		else
 		{
-			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey);
+			
+			byte[] toSend = getEncSliceDummy(request, privateKey);
+			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey, toSend);
 
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
@@ -333,7 +336,131 @@ public class ResponseUtilBinProb {
 		{
 			try
 			{
-				MainServer.clientState.incrementSeate(sslId, sliceId);
+				MainServer.clientState.incrementState(sslId, sliceId);
+			}
+			catch(RuntimeModelerException ex)
+			{
+				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
+						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
+					
+					return null;
+			}
+		}
+		flag = false;
+		return encryptedSlicePacket;
+	}
+	
+	
+	/**
+	 * Normal droplet dummy operation
+	 * @param request
+	 * @param privateKey
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 */
+	public static byte[] getEncSliceDummy(HttpServletRequest request, byte[] privateKey) throws InvalidKeyException, InvalidAlgorithmParameterException, 
+	IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
+	{
+		boolean flag = false;
+		//0/1,slice_index, slice_id, key:padding
+
+		int sliceIndex = -1;
+		byte[] aesKeyByte = null;
+
+		String sslId = ClientState.dummySSLId;
+		
+		aesKeyByte = MainServer.clientState.getkey(sslId);
+		flag = true;
+
+		String sliceData = null;
+
+		long sliceId = 0x00;
+		try
+		{
+			sliceId = MainServer.clientState.getAState(sslId);
+		}
+		catch(RuntimeException ex)
+		{
+			//in this case send the garbage
+			if(ex.getMessage() != null && ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_EMPTY_STATE_TABLE))
+			{
+				return null;
+			}
+		}
+
+		sliceIndex = MainServer.clientState.getState(sslId, sliceId);
+		if(sliceIndex > 0)
+			sliceIndex = 0;
+		sliceData = InitialGen.sdm.getSlice(InitialGen.sdm.firstSliceId, sliceIndex);
+
+		byte[] sliceDataBytes = null;
+
+		sliceDataBytes = Base64.getDecoder().decode(sliceData);
+
+		byte[] iv = new byte[ENV.AES_IV_SIZE];	  
+		//generate a secure IV
+		//rand.nextBytes(iv);
+		//bad idea but for now
+		Arrays.fill(iv, (byte) 0x00);
+		SecretKeySpec aesKey = new SecretKeySpec(aesKeyByte, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+		byte[] sliceIndexBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
+		byte[] sliceIdBytes = ByteBuffer.allocate(Long.BYTES).putLong(sliceId).array();
+		byte[] sliceDatalenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
+
+		//IV (16) | packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
+		//Data -> slice id (8) | slice index (4) | slice_data_len (4) | slice data (n) | signature (64)
+		
+		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
+		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
+
+	
+		//TODO old structure. Needs to incorporate signature and IV
+		byte[] toSendWOpadding = new byte[24 + ENV.INTR_MARKER_LEN + sliceDataBytes.length];
+		
+		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
+		Arrays.fill(magicBytes, ENV.INTR_MARKER);
+		int tillNow = 0;
+		System.arraycopy(packetlenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(seedLenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(magicBytes, 0, toSendWOpadding, tillNow, magicBytes.length);
+		tillNow += magicBytes.length;
+		System.arraycopy(sliceIdBytes, 0, toSendWOpadding, tillNow, 8);
+		tillNow += 8;
+		System.arraycopy(sliceIndexBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(sliceDatalenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(sliceDataBytes, 0, toSendWOpadding, tillNow, sliceDataBytes.length);
+
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - toSendWOpadding.length];
+		if(ENV.RANDOM_PADDING)
+			rand.nextBytes(padding);
+		else
+			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
+		byte[] toSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+		System.arraycopy(toSendWOpadding, 0, toSend, 0, toSendWOpadding.length);
+		System.arraycopy(padding, 0, toSend, toSendWOpadding.length, padding.length);
+
+
+		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+		byte[] encryptedSlicePacket = cipher.doFinal(toSend);      
+		
+		//increase state by 1
+		if(flag)
+		{
+			try
+			{
+				MainServer.clientState.incrementStateDummy(sslId, sliceId);
 			}
 			catch(RuntimeModelerException ex)
 			{

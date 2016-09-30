@@ -597,8 +597,9 @@ public class ResponseUtilBin {
 	 * @throws IOException
 	 */
 
-	public static void dropletPleaseBinNew(HttpServletRequest request, HttpServletResponse response, byte[] privateKey) throws IOException
+	public static void dropletPleaseBinNew(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, byte[] garbage) throws IOException
 	{
+		Arrays.fill(garbage, (byte) 0xaa);
 		String url = request.getParameter("url");
 
 		String[] dropletStr = new String[2];
