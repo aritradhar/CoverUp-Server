@@ -100,7 +100,7 @@ public class MainServer extends HttpServlet {
 		String os = System.getProperty("os.name");
 		System.out.println(os);
 
-		/*
+		
 		BufferedReader br = null;
 		try
 		{
@@ -126,7 +126,7 @@ public class MainServer extends HttpServlet {
 			keyGeneration();
 		}
 		this.broadCastMessage = this.readBroadcastFile();
-		 */
+		 
 
 		//dummy initialization
 		try
@@ -144,7 +144,6 @@ public class MainServer extends HttpServlet {
 		System.out.println("Default Charset=" + Charset.defaultCharset());    	
 	}
 
-	@SuppressWarnings("unused")
 	private String readBroadcastFile() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(ENV.BROADCAST_LOCATION));
@@ -164,7 +163,6 @@ public class MainServer extends HttpServlet {
 	 * Generate Curve25519 private and public key pairs
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unused")
 	private void keyGeneration() throws IOException
 	{
 		Stats.keygen_done = true;
