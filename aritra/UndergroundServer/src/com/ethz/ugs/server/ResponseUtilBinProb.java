@@ -153,7 +153,8 @@ public class ResponseUtilBinProb {
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
 			byte[] toSend = getEncSlice(request, postBody, privateKey);
-
+			
+			//send garbage
 			if(toSend == null)
 			{
 				SecretKeySpec aesKey = new SecretKeySpec(key, "AES");
@@ -170,6 +171,7 @@ public class ResponseUtilBinProb {
 				out.flush();
 				out.close();
 			}
+			//everything is going great. Send the encrypted slice 
 			else
 			{
 				OutputStream out = response.getOutputStream();
@@ -283,8 +285,8 @@ public class ResponseUtilBinProb {
 		SecretKeySpec aesKey = new SecretKeySpec(aesKeyByte, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 
-		byte[] sliceIndeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
-		byte[] sliceidBytes = ByteBuffer.allocate(Long.BYTES).putLong(sliceId).array();
+		byte[] sliceIndexBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceIndex).array();
+		byte[] sliceIdBytes = ByteBuffer.allocate(Long.BYTES).putLong(sliceId).array();
 		byte[] sliceDatalenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(sliceDataBytes.length).array();
 
 		//IV (16) | packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
@@ -294,26 +296,24 @@ public class ResponseUtilBinProb {
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
 
 	
-		//TODO old structure. Needs to input signature and IV
-		byte[] toSendWOpadding = new byte[packetlenBytes.length + seedLenBytes.length + 
-		                                  ENV.INTR_MARKER_LEN + sliceIndeBytes.length + 
-		                                  sliceidBytes.length + sliceDatalenBytes.length + sliceDataBytes.length];
+		//TODO old structure. Needs to incorporate signature and IV
+		byte[] toSendWOpadding = new byte[24 + ENV.INTR_MARKER_LEN + sliceDataBytes.length];
 		
 		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
 		Arrays.fill(magicBytes, ENV.INTR_MARKER);
 		int tillNow = 0;
-		System.arraycopy(packetlenBytes, 0, toSendWOpadding, tillNow, packetlenBytes.length);
-		tillNow += packetlenBytes.length;
-		System.arraycopy(seedLenBytes, 0, toSendWOpadding, tillNow, seedLenBytes.length);
-		tillNow += seedLenBytes.length;
+		System.arraycopy(packetlenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(seedLenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
 		System.arraycopy(magicBytes, 0, toSendWOpadding, tillNow, magicBytes.length);
 		tillNow += magicBytes.length;
-		System.arraycopy(sliceidBytes, 0, toSendWOpadding, tillNow, sliceidBytes.length);
-		tillNow += sliceidBytes.length;
-		System.arraycopy(sliceIndeBytes, 0, toSendWOpadding, tillNow, sliceIndeBytes.length);
-		tillNow += sliceIndeBytes.length;
-		System.arraycopy(sliceDatalenBytes, 0, toSendWOpadding, tillNow, sliceDatalenBytes.length);
-		tillNow += sliceDatalenBytes.length;
+		System.arraycopy(sliceIdBytes, 0, toSendWOpadding, tillNow, 8);
+		tillNow += 8;
+		System.arraycopy(sliceIndexBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(sliceDatalenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
 		System.arraycopy(sliceDataBytes, 0, toSendWOpadding, tillNow, sliceDataBytes.length);
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - toSendWOpadding.length];
