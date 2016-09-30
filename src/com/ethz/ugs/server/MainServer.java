@@ -87,6 +87,9 @@ public class MainServer extends HttpServlet {
 		super();
 
 		MainServer.clientState = new ClientState();
+		//dummy client state addition
+		MainServer.clientState.addDummyState();
+		System.out.println("Dummy client state added for initializtion");
 		
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
@@ -97,8 +100,8 @@ public class MainServer extends HttpServlet {
 		String os = System.getProperty("os.name");
 		System.out.println(os);
 
+		/*
 		BufferedReader br = null;
-
 		try
 		{
 			if(os.contains("Windows"))
@@ -123,13 +126,8 @@ public class MainServer extends HttpServlet {
 			keyGeneration();
 		}
 		this.broadCastMessage = this.readBroadcastFile();
+		 */
 
-		//System.out.println(this.broadCastMessage);
-
-		//initialize site map
-		//random initialization for testing
-		//SiteMap.randomInitialization(20);
-		//TODO test
 		//dummy initialization
 		try
 		{
@@ -139,14 +137,14 @@ public class MainServer extends HttpServlet {
 		{
 			ex.printStackTrace();
 			System.err.println("Fatal error..");
-			//System.exit(1);
 		}
-		logger.log(Level.ALL, "bla", "");
+		
 		System.out.println("Started...");
 
 		System.out.println("Default Charset=" + Charset.defaultCharset());    	
 	}
 
+	@SuppressWarnings("unused")
 	private String readBroadcastFile() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(ENV.BROADCAST_LOCATION));
@@ -166,6 +164,7 @@ public class MainServer extends HttpServlet {
 	 * Generate Curve25519 private and public key pairs
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private void keyGeneration() throws IOException
 	{
 		Stats.keygen_done = true;
@@ -224,31 +223,11 @@ public class MainServer extends HttpServlet {
 			C += 1;
 			C %= 4;
 		}
-		
-		/*
-		Enumeration<String> Strs = request.getAttributeNames();
-		while(Strs.hasMoreElements())
-		{
-			String attr = Strs.nextElement();
-			System.out.println(attr + " : " + request.getAttribute(attr));
-		}
-		System.out.println("-----");
-		*/
-		
 
-	    
-		//System.out.println(Base64.getUrlEncoder().encodeToString(publicKey));
 
 		String flag = request.getParameter("flag");
 		String flag1 = request.getParameter("prob");
 
-		//String remoteAddress = request.getRemoteAddr();
-		//Stats.UNIQUE_IP_ADDRESSES.add(remoteAddress);
-
-		//System.out.println(flag + "  Request from : " + request.getRemoteAddr());
-
-		//System.err.println("Total connections " + Stats.TOTAL_CONNECTIONS);
-		//System.err.println("Live connection " + Stats.LIVE_CONNECTIONS);
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 

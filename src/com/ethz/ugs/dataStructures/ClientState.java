@@ -12,6 +12,7 @@
 //*************************************************************************************
 package com.ethz.ugs.dataStructures;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,18 @@ public class ClientState {
 	public void addState(String sslId, List<Long> sliceIds, byte[] key)
 	{
 		this.stateMap.put(sslId, new ClientStateDataStructure(sliceIds, key));
+	}
+	
+	public static String dummySSLId = "000-000-0000-000-00000-000-000";
+	public void addDummyState()
+	{
+		List<Long> sliceIds  = new ArrayList<Long>();
+		for(int i = 0; i < 5; i++)
+			sliceIds.add((long) (i + 5000));
+		byte[] key = new byte[ENV.AES_KEY_SIZE];
+		
+		this.addState(dummySSLId, sliceIds, key);
+		
 	}
 	
 	public byte[] getkey(String sslId) throws RuntimeException
@@ -97,7 +110,7 @@ public class ClientState {
 		}
 	}
 
-	public void incrementSeate(String sslId, long sliceId) throws RuntimeException 
+	public void incrementState(String sslId, long sliceId) throws RuntimeException 
 	{
 		if(!this.stateMap.containsKey(sslId))
 			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
@@ -110,7 +123,7 @@ public class ClientState {
 		cds.incrementState(sliceId);
 	}
 	
-	public void incrementSeate(String sslId, List<Long> sliceIds) throws RuntimeException 
+	public void incrementState(String sslId, List<Long> sliceIds) throws RuntimeException 
 	{
 		if(!this.stateMap.containsKey(sslId))
 			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
@@ -123,6 +136,36 @@ public class ClientState {
 			if(state == -1)
 				continue;
 			cds.incrementState(sliceId);
+		}
+	}
+	
+	public void incrementStateDummy(String sslId, long sliceId) throws RuntimeException 
+	{
+		if(!this.stateMap.containsKey(sslId))
+			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
+		
+		ClientStateDataStructure cds = this.stateMap.get(sslId);
+		int state = cds.getState(sliceId);
+		if(state == -1)
+			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SLICE_ID_MISSING);
+		
+		cds.incrementStateDummy(sliceId);
+	}
+	
+	
+	public void incrementStateDummy(String sslId, List<Long> sliceIds) throws RuntimeException 
+	{
+		if(!this.stateMap.containsKey(sslId))
+			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
+		
+		ClientStateDataStructure cds = this.stateMap.get(sslId);
+		
+		for(long sliceId : sliceIds)
+		{
+			int state = cds.getState(sliceId);
+			if(state == -1)
+				continue;
+			cds.incrementStateDummy(sliceId);
 		}
 	}
 	
@@ -193,6 +236,14 @@ class ClientStateDataStructure
 			this.clientStateMap.put(sliceId, 0);
 		else
 			this.clientStateMap.put(sliceId, this.clientStateMap.get(sliceId) + 1);
+	}
+	
+	public void incrementStateDummy(long sliceId)
+	{
+		if(!this.clientStateMap.containsKey(sliceId))
+			this.clientStateMap.put(sliceId, 0);
+		else
+			this.clientStateMap.put(sliceId, (this.clientStateMap.get(sliceId) + 1) % 2);
 	}
 	
 	public void removeState(long sliceId)
