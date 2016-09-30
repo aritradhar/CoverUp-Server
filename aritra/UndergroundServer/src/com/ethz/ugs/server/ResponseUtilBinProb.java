@@ -116,7 +116,7 @@ public class ResponseUtilBinProb {
 		//droplet
 		else
 		{
-			ResponseUtilBin.dropletPleaseBin(request, response, privateKey, false);
+			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey);
 
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
@@ -187,7 +187,7 @@ public class ResponseUtilBinProb {
 		//normal droplet
 		else
 		{
-			ResponseUtilBin.dropletPleaseBin(request, response, privateKey, false);
+			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey);
 
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
@@ -210,8 +210,6 @@ public class ResponseUtilBinProb {
 	public static byte[] getEncSlice(HttpServletRequest request, byte[] postBody, byte[] privateKey) throws InvalidKeyException, InvalidAlgorithmParameterException, 
 	IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
 	{
-		long start = System.nanoTime();
-
 		boolean flag = false;
 		//0/1,slice_index, slice_id, key:padding
 
@@ -346,9 +344,6 @@ public class ResponseUtilBinProb {
 			}
 		}
 		flag = false;
-
-		long end = System.nanoTime();
-		MainServer.logger.info("get slice prob : " + (end - start)  + " ns");
 		return encryptedSlicePacket;
 	}
 }
