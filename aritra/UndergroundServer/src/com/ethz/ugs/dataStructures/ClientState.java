@@ -15,6 +15,7 @@ package com.ethz.ugs.dataStructures;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.ethz.ugs.server.ENV;
 
@@ -28,7 +29,7 @@ public class ClientState {
 	
 	public ClientState()
 	{
-		this.stateMap = new HashMap<>();
+		this.stateMap = new ConcurrentHashMap<>();
 	}
 	
 	public boolean containSSLId(String sslId)
@@ -153,7 +154,7 @@ public class ClientState {
 		if(cds.clientStateMap.size() == 0)
 			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_EMPTY_STATE_TABLE);
 		
-		return (long) cds.clientStateMap.keySet().toArray()[0];
+		return cds.clientStateMap.keySet().iterator().next();
 	}
 }
 

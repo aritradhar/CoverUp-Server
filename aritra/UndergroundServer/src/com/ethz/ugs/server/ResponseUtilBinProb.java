@@ -149,15 +149,6 @@ public class ResponseUtilBinProb {
 	{
 		long start = System.nanoTime();
 
-		SecretKeySpec aesKey = new SecretKeySpec(key, "AES");
-		IvParameterSpec ivSpec = new IvParameterSpec(iv);
-
-		byte[] randMessage = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-		rand.nextBytes(randMessage);
-		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
-		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
-		byte[] cipherText = cipher.doFinal(randMessage);
-
 		//garbage -> interactive droplet
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
@@ -165,6 +156,15 @@ public class ResponseUtilBinProb {
 
 			if(toSend == null)
 			{
+				SecretKeySpec aesKey = new SecretKeySpec(key, "AES");
+				IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+				byte[] randMessage = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+				rand.nextBytes(randMessage);
+				Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+				cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+				byte[] cipherText = cipher.doFinal(randMessage);
+				
 				OutputStream out = response.getOutputStream();
 				out.write(cipherText);
 				out.flush();
