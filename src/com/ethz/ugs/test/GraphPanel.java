@@ -42,10 +42,10 @@ public class GraphPanel extends JPanel {
 	/**
 	 * 
 	 */
-	
+
 	public static final int h = 1440;
 	public static final int w = 2560;
-	
+
 	private static final long serialVersionUID = 3374366456807894314L;
 	//private int width = 800;
 	//private int heigth = 400;
@@ -68,7 +68,7 @@ public class GraphPanel extends JPanel {
 	//bucket length in ns
 	public static long bucketLen = 500;
 	///
-		
+
 	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize, String lineType) {
 		this.scores1 = scores1;
 		this.fileName = fileName;
@@ -76,7 +76,7 @@ public class GraphPanel extends JPanel {
 		this.sampleSize = sampleSize;
 		this.lineType = lineType;
 	}
-	
+
 	public double[] xAxis;
 	public void addCustomX(double[] xAxis)
 	{
@@ -87,7 +87,7 @@ public class GraphPanel extends JPanel {
 		this.xAxis = new double[xAxis.length];
 		for(int i = 0; i < xAxis.length; i++)
 			this.xAxis[i] = xAxis[i];
-		
+
 	}
 
 	@Override
@@ -104,19 +104,19 @@ public class GraphPanel extends JPanel {
 	}
 
 	@SuppressWarnings("unused")
-	private void draw(Graphics2D g2,List<Double> scores1, Color lineColor, Color pointColor) throws FileNotFoundException, DocumentException
+	private void draw(Graphics2D g2,List<Double> scores, Color lineColor, Color pointColor) throws FileNotFoundException, DocumentException
 	{      
 		g2.setFont(new Font("Lucida Console", Font.BOLD, 25)); 
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (scores1.size() - 1);
+		double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (scores.size() - 1);
 		double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (getMaxScore() - getMinScore());
 
 		List<Point> graphPoints = new ArrayList<>();
-		for (int i = 0; i < scores1.size(); i++) {
+		for (int i = 0; i < scores.size(); i++) {
 			int x1 = (int) (i * xScale + padding + labelPadding);
-			int y1 = (int) ((getMaxScore() - scores1.get(i)) * yScale + padding);
+			int y1 = (int) ((getMaxScore() - scores.get(i)) * yScale + padding);
 			graphPoints.add(new Point(x1, y1));
 		}
 
@@ -132,18 +132,18 @@ public class GraphPanel extends JPanel {
 			int x1 = pointWidth + padding + labelPadding;
 			int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
 			int y1 = y0;
-			if (scores1.size() > 0) {
+			if (scores.size() > 0) {
 				g2.setColor(gridColor);
 				g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
 				g2.setColor(Color.BLACK);
-				
+
 				String yLabel = "";
 				if(xAxis == null)
-					//yLabel = ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
-					yLabel =  String.format("%.5f", ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0);
+					yLabel = ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
+				//yLabel =  String.format("%.5f", ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0);
 				else
 					yLabel = String.format("%.5f",(((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )));
-				
+
 				FontMetrics metrics = g2.getFontMetrics();
 				int labelWidth = metrics.stringWidth(yLabel);
 				g2.drawString(yLabel, x0 - labelWidth - 10, y0 + (metrics.getHeight() / 2) - 3);
@@ -154,28 +154,28 @@ public class GraphPanel extends JPanel {
 
 		// and for x axis
 		int _x0 = 0, _y0 = 0;
-		for (int i = 0; i < scores1.size(); i++) 
+		for (int i = 0; i < scores.size(); i++) 
 		{
-			if (scores1.size() > 1)
+			if (scores.size() > 1)
 			{
-				int x0 = i * (getWidth() - padding * 2 - labelPadding) / (scores1.size() - 1) + padding + labelPadding;
+				int x0 = i * (getWidth() - padding * 2 - labelPadding) / (scores.size() - 1) + padding + labelPadding;
 				int x1 = x0;
 				int y0 = getHeight() - padding - labelPadding;
 				int y1 = y0 - pointWidth;
-				
-				if ((i % ((int) ((scores1.size() / 20.0)) + 1)) == 0) 
+
+				if ((i % ((int) ((scores.size() / 20.0)) + 1)) == 0) 
 				{
 					g2.setColor(gridColor);
 					g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
 					g2.setColor(Color.BLACK);
 
 					String xLabel = ""; 
-					
+
 					if(xAxis == null)
 						xLabel = String.format("%.3f", (float)(min + bucketLen * i)/ 1000000);
 					else
 						xLabel = xAxis[i] + "";
-					
+
 					FontMetrics metrics = g2.getFontMetrics();
 					int labelWidth = metrics.stringWidth(xLabel);
 					g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 10);
@@ -194,7 +194,7 @@ public class GraphPanel extends JPanel {
 		Stroke oldStroke = g2.getStroke();
 		g2.setColor(lineColor);
 		g2.setStroke(GRAPH_STROKE);
-		
+
 		for (int i = 0; i < graphPoints.size() - 1; i++) 
 		{
 
@@ -204,25 +204,25 @@ public class GraphPanel extends JPanel {
 			int y2 = graphPoints.get(i + 1).y;
 			//int x3 = graphPoints.get(i + 2).x;
 			//int y3 = graphPoints.get(i + 2).y;
-			
+
 			if(this.lineType.equalsIgnoreCase("line"))
 			{
 				g2.drawLine(x1, y1, x2, y2); // for line
-				
+
 				/*Curve fitting
 				 * QuadCurve2D q = new QuadCurve2D.Float();
 				q.setCurve(x1, y1, x2, y2, x3, y3);
 				g2.draw(q);*/
 			}
-				
+
 			if(this.lineType.equalsIgnoreCase("bar"))
 				g2.drawLine(x1, y1, x1, _y0); //for bar
-			
+
 		}
 
 		g2.setStroke(oldStroke);
 		g2.setColor(pointColor);
-		
+
 		for (int i = 0; i < graphPoints.size(); i++) 
 		{
 			int x = graphPoints.get(i).x - pointWidth / 2;
@@ -231,7 +231,7 @@ public class GraphPanel extends JPanel {
 			int ovalH = pointWidth;
 			g2.fillOval(x, y, ovalW, ovalH);
 		}
-		
+
 	}
 
 
@@ -282,16 +282,16 @@ public class GraphPanel extends JPanel {
 
 			String st = null;
 			//long k = 0;
-			
+
 			//TODO dummy to set the min
-			scores1.add(950000L);
-			
+			//scores1.add(950000L);
+
 			while((st = br.readLine()) != null)
 			{
 				//only consider sample size upto 50k
 				//if(k == 50000)
 				//	break;
-				
+
 				if(!st.startsWith("INFO"))
 					continue;
 				if(st.length() == 0)
@@ -315,10 +315,12 @@ public class GraphPanel extends JPanel {
 					max = i;
 			}
 
-			//System.out.println(min);
+			System.out.println("Min : " + min);
+			System.out.println("Max : " + max);
+
 			int bucketCount = (int) (((max - min) % bucketLen == 0) ? ((max - min) / bucketLen) : ((max - min) / bucketLen) + 1);
 
-			//System.out.println(bucketCount);
+			System.out.println(bucketCount);
 			int[] bucket = new int[bucketCount + 1];
 			for(long i : scores1)
 			{
@@ -344,7 +346,7 @@ public class GraphPanel extends JPanel {
 
 			for(int i : bucket)
 				scores_prob.add((double)i/tot);
-			
+
 			List<Double> scores_cumulative = new ArrayList<>();
 			double cumul = 0.0;
 			for(double sc_pr : scores_prob)
@@ -352,7 +354,7 @@ public class GraphPanel extends JPanel {
 				cumul += sc_pr;
 				scores_cumulative.add(cumul);
 			}
-				
+
 			//percentage
 			List<Double> scores_relative = new ArrayList<>();
 
@@ -366,7 +368,7 @@ public class GraphPanel extends JPanel {
 
 			//Collections.shuffle(scores1, new SecureRandom());
 			//take a random sample
-			int sampleSize = 5000;
+			int sampleSize = 15000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -415,7 +417,7 @@ public class GraphPanel extends JPanel {
 			frame.paint(g2);
 			g2.dispose();
 			document.close();
-			
+
 			counter++;
 		}
 	}
@@ -425,7 +427,7 @@ public class GraphPanel extends JPanel {
 
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		
+
 		File loc = new File("Traces\\pdfs");
 		for(File file : loc.listFiles())
 		{
@@ -443,21 +445,21 @@ public class GraphPanel extends JPanel {
 							"Traces\\MainServer.log.14",
 							"Traces\\MainServer.log.15",
 							"Traces\\MainServer.log.16",
-							*/
-							"Traces\\MainServer.log.18", "Broadcast droplets",
-							"Traces\\MainServer.log.17", "Interactive droplets"
+							 */
+							//"Traces\\MainServer.log.18", "Broadcast droplets",
+							//"Traces\\MainServer.log.17", "Interactive droplets"
+							"Traces\\MainServer.log", "Broadcast droplets",
 					});
-					
+
 					List<InputStream> pdfs = new ArrayList<InputStream>();
-					
+
 					for(File file : loc.listFiles())
-					{
 						pdfs.add(new FileInputStream(file));
-					}
+
 					new File("Traces\\combinedOutput.pdf").delete();
 					OutputStream output = new FileOutputStream("Traces\\combinedOutput.pdf");
 					concatPDFs(pdfs, output, true);
-					
+
 				} catch (NumberFormatException | IOException e) 
 				{	e.printStackTrace();
 				} catch (DocumentException e) {
@@ -465,14 +467,14 @@ public class GraphPanel extends JPanel {
 				}
 			}
 		});
-		
+
 		//Thread.sleep(1000);
-		
-		
+
+
 	}
-	
+
 	//pdf utils
-	
+
 	public static void concatPDFs(List<InputStream> streamOfPDFFiles,
 			OutputStream outputStream, boolean paginate) {
 
@@ -545,5 +547,5 @@ public class GraphPanel extends JPanel {
 			}
 		}
 	}
-	
+
 }
