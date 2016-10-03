@@ -592,12 +592,11 @@ public class ResponseUtilBin {
 	 * droplet -> seedlen (4) | seed(n) | num_chunk (4) | datalen (4) | data (n)
 	 * <br>
 	 * @param request HttpServletRequest
-	 * @param response HttpServletResponse
 	 * @param privateKey Server's Curve 25519 private key 
 	 * @throws IOException
 	 */
 
-	public static void dropletPleaseBinNew(HttpServletRequest request, HttpServletResponse response, byte[] privateKey, byte[] garbage) throws IOException
+	public static byte[] dropletPleaseBinNew(HttpServletRequest request, byte[] privateKey, byte[] garbage) throws IOException
 	{
 		Arrays.fill(garbage, (byte) 0xaa);
 		String url = request.getParameter("url");
@@ -618,23 +617,11 @@ public class ResponseUtilBin {
 				url = FountainTableRow.dropletLocUrlMap.get(urlId);
 
 				if(url == null)
-				{
-					response.getWriter().append("Invalid fountain id");
-					response.flushBuffer();
-
-					return;
-				}
-			}
-			catch(NullPointerException ex)
-			{
-				response.getWriter().append("Invalid fountain id");
-				response.flushBuffer();
-
-				return;
+					return null;
 			}
 			catch(Exception ex)
 			{
-
+				return null;
 			}
 			try
 			{
@@ -642,10 +629,7 @@ public class ResponseUtilBin {
 			}
 			catch(Exception ex)
 			{
-				response.getWriter().append(ex.getMessage());
-				response.flushBuffer();
-
-				return;
+				return null;
 			}
 			//System.out.println(dropletStr[0]);
 		}
@@ -695,18 +679,8 @@ public class ResponseUtilBin {
 
 		catch (NoSuchAlgorithmException e) 
 		{
-			OutputStream out = response.getOutputStream();
-			byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-			out.write(packetToSend);
-			out.flush();
-			out.close();
-			response.flushBuffer();
-			return;
-			
-			//response.getWriter().append("Exception in signature calculation!");
-			//response.flushBuffer();
+			return new byte[ENV.FIXED_PACKET_SIZE_BIN];
 		}
-
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];
 		if(ENV.RANDOM_PADDING)
@@ -738,11 +712,7 @@ public class ResponseUtilBin {
 		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
 
-		OutputStream out = response.getOutputStream();
-		out.write(packetToSend);
-		out.flush();
-		out.close();
-		response.flushBuffer();
+		return packetToSend;
 	}
 
 }
