@@ -77,50 +77,43 @@ public class ResponseUtilBinProb {
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] cipherText = cipher.doFinal(randMessage);
 
+		OutputStream out = response.getOutputStream();
 		//garbage
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			
 			if(MainServer.clientState.containSSLId(sslId))
 			{
 				byte[] postBody = null;
 				byte[] toSend = getEncSlice(request, postBody, privateKey);
 
-				if(toSend == null)
-				{
-					OutputStream out = response.getOutputStream();
+				if(toSend == null)		
 					out.write(cipherText);
-					out.flush();
-					out.close();
-				}
 				else
-				{
-					OutputStream out = response.getOutputStream();
 					out.write(toSend);
-					out.flush();
-					out.close();
-				}
 			}
 			else
-			{
-				OutputStream out = response.getOutputStream();
 				out.write(cipherText);
-				out.flush();
-				out.close();
-			}
+
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
+			out.flush();
+			out.close();
 			response.flushBuffer();
 		}
-		
+
 		//droplet
 		else
 		{
 			byte[] toSend = getEncSliceDummy(request, privateKey);
-			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey, toSend);
+			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, toSend);
 
 			long end = System.nanoTime();
+			out.write(packetToSend);
 			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
+			out.flush();
+			out.close();
 			response.flushBuffer();
 		}
 
@@ -150,11 +143,12 @@ public class ResponseUtilBinProb {
 	{
 		long start = System.nanoTime();
 
+		OutputStream out = response.getOutputStream();
 		//garbage -> interactive droplet
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
 			byte[] toSend = getEncSlice(request, postBody, privateKey);
-			
+	
 			//send garbage
 			if(toSend == null)
 			{
@@ -166,34 +160,33 @@ public class ResponseUtilBinProb {
 				Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
 				cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 				byte[] cipherText = cipher.doFinal(randMessage);
-				
-				OutputStream out = response.getOutputStream();
+
 				out.write(cipherText);
-				out.flush();
-				out.close();
-			}
-			//everything is going great. Send the encrypted slice 
-			else
-			{
-				OutputStream out = response.getOutputStream();
-				out.write(toSend);
-				out.flush();
-				out.close();
 			}
 			
+			//everything is going great. Send the encrypted slice 
+			else	
+				out.write(toSend);
+
+
 			long end = System.nanoTime();
 			MainServer.logger.info("Droplet Bin Intr Prob : " + (end - start)  + " ns");
+			out.flush();
+			out.close();
 			response.flushBuffer();
 		}
 		//normal droplet
 		else
 		{
-			
+
 			byte[] toSend = getEncSliceDummy(request, privateKey);
-			ResponseUtilBin.dropletPleaseBinNew(request, response, privateKey, toSend);
+			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, toSend);
 
 			long end = System.nanoTime();
+			out.write(packetToSend);
 			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
+			out.flush();
+			out.close();
 			response.flushBuffer();
 		}
 	}
@@ -292,14 +285,14 @@ public class ResponseUtilBinProb {
 
 		//IV (16) | packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
 		//Data -> slice id (8) | slice index (4) | slice_data_len (4) | slice data (n) | signature (64)
-		
+
 		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
 
-	
+
 		//TODO old structure. Needs to incorporate signature and IV
 		byte[] toSendWOpadding = new byte[24 + ENV.INTR_MARKER_LEN + sliceDataBytes.length];
-		
+
 		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
 		Arrays.fill(magicBytes, ENV.INTR_MARKER);
 		int tillNow = 0;
@@ -330,7 +323,7 @@ public class ResponseUtilBinProb {
 		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] encryptedSlicePacket = cipher.doFinal(toSend);      
-		
+
 		//increase state by 1
 		if(flag)
 		{
@@ -342,15 +335,15 @@ public class ResponseUtilBinProb {
 			{
 				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
-					
+
 					return null;
 			}
 		}
 		flag = false;
 		return encryptedSlicePacket;
 	}
-	
-	
+
+
 	/**
 	 * Normal droplet dummy operation
 	 * @param request
@@ -373,7 +366,7 @@ public class ResponseUtilBinProb {
 		byte[] aesKeyByte = null;
 
 		String sslId = ClientState.dummySSLId;
-		
+
 		aesKeyByte = MainServer.clientState.getkey(sslId);
 		flag = true;
 
@@ -417,14 +410,14 @@ public class ResponseUtilBinProb {
 
 		//IV (16) | packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
 		//Data -> slice id (8) | slice index (4) | slice_data_len (4) | slice data (n) | signature (64)
-		
+
 		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
 		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
 
-	
+
 		//TODO old structure. Needs to incorporate signature and IV
 		byte[] toSendWOpadding = new byte[24 + ENV.INTR_MARKER_LEN + sliceDataBytes.length];
-		
+
 		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
 		Arrays.fill(magicBytes, ENV.INTR_MARKER);
 		int tillNow = 0;
@@ -455,7 +448,7 @@ public class ResponseUtilBinProb {
 		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] encryptedSlicePacket = cipher.doFinal(toSend);      
-		
+
 		//increase state by 1
 		if(flag)
 		{
@@ -467,7 +460,7 @@ public class ResponseUtilBinProb {
 			{
 				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
-					
+
 					return null;
 			}
 		}

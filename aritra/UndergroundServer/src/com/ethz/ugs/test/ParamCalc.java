@@ -213,20 +213,26 @@ public class ParamCalc
 
 		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
 
+		double d_1 = 0d, d_2 = 0d;
 		for(int i = 0; i < limit; i++)
 		{
 			double p1_t = p1.get(i);
 			double p2_t = p2.get(i);		
-			if(p1_t == 0 || p2_t == 0)
-				continue;
+			//if(p1_t == 0 || p2_t == 0)
+			//	continue;
 
+			
 			if(p1_t > exp_epsilon *  p2_t)
-				delta += p1_t - exp_epsilon * p2_t;
+				d_1 = p1_t - exp_epsilon * p2_t;
+				
 
-			/*else if(p2_t > exp_epsilon * p1_t)
-					delta += p2_t - exp_epsilon * p1_t;
-			 */
+			else if(p2_t > exp_epsilon * p1_t)
+				d_2 += p2_t - exp_epsilon * p1_t;
+			
+
 		}
+		delta = (d_1 >= d_2) ?  d_1 : d_2;
+		
 		//System.out.println("chi sqd : " + chiSqd);
 		//System.out.println(epsilon + " : " + String.format("%.18f", delta));
 
