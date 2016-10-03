@@ -78,11 +78,13 @@ public class ResponseUtilBinProb {
 		byte[] cipherText = cipher.doFinal(randMessage);
 
 		OutputStream out = response.getOutputStream();
+		//dummy operation
+		byte[] toSendDummy = getEncSliceDummy(request, privateKey);
 		//garbage
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
-			
+
 			if(MainServer.clientState.containSSLId(sslId))
 			{
 				byte[] postBody = null;
@@ -97,7 +99,7 @@ public class ResponseUtilBinProb {
 				out.write(cipherText);
 
 			long end = System.nanoTime();
-			MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
+			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -106,12 +108,11 @@ public class ResponseUtilBinProb {
 		//droplet
 		else
 		{
-			byte[] toSend = getEncSliceDummy(request, privateKey);
-			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, toSend);
+			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, toSendDummy);
 
 			long end = System.nanoTime();
 			out.write(packetToSend);
-			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
+			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -144,51 +145,36 @@ public class ResponseUtilBinProb {
 		long start = System.nanoTime();
 
 		OutputStream out = response.getOutputStream();
-		//garbage -> interactive droplet
-		if( Math.random() <= ENV.PROB_THRESHOLD )
+
+		SecretKeySpec aesKey = new SecretKeySpec(key, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(iv);
+		byte[] randMessage = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+		rand.nextBytes(randMessage);
+		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+		byte[] cipherText = cipher.doFinal(randMessage);
+
+
+		//interactive, process first
+		byte[] toSend = getEncSlice(request, postBody, privateKey);
+
+		//garbage
+		if(toSend == null)
 		{
-			byte[] toSend = getEncSlice(request, postBody, privateKey);
-	
-			//send garbage
-			if(toSend == null)
-			{
-				SecretKeySpec aesKey = new SecretKeySpec(key, "AES");
-				IvParameterSpec ivSpec = new IvParameterSpec(iv);
-
-				byte[] randMessage = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-				rand.nextBytes(randMessage);
-				Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
-				cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
-				byte[] cipherText = cipher.doFinal(randMessage);
-
-				out.write(cipherText);
-			}
-			
-			//everything is going great. Send the encrypted slice 
-			else	
-				out.write(toSend);
+			ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
+			out.write(cipherText);
+		}	
+		
+		//enc slice
+		else	
+			out.write(toSend);
 
 
-			long end = System.nanoTime();
-			MainServer.logger.info("Droplet Bin Intr Prob : " + (end - start)  + " ns");
-			out.flush();
-			out.close();
-			response.flushBuffer();
-		}
-		//normal droplet
-		else
-		{
-
-			byte[] toSend = getEncSliceDummy(request, privateKey);
-			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, toSend);
-
-			long end = System.nanoTime();
-			out.write(packetToSend);
-			MainServer.logger.info("Droplet Bin Prob : " + (end - start)  + " ns");
-			out.flush();
-			out.close();
-			response.flushBuffer();
-		}
+		long end = System.nanoTime();
+		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
+		out.flush();
+		out.close();
+		response.flushBuffer();
 	}
 
 	/**
