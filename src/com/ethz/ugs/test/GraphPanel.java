@@ -284,7 +284,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			//scores1.add(950000L);
+			scores1.add(642397L);
 
 			while((st = br.readLine()) != null)
 			{
@@ -449,6 +449,7 @@ public class GraphPanel extends JPanel {
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
 							"Traces\\MainServer.log", "Broadcast droplets",
+							"Traces\\MainServer.log.1", "Interactive droplets",
 					});
 
 					List<InputStream> pdfs = new ArrayList<InputStream>();
