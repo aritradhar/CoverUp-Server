@@ -275,8 +275,10 @@ public class ParamCalc
 			relativeScoresList.clear();
 
 			load(bucketLen, new String[]{
-					"Traces\\MainServer.log",
-					"Traces\\MainServer.log.17"
+					//"Traces\\MainServer.log.18",
+					//"Traces\\MainServer.log.17"
+					"Traces\\MainServer.log.",
+					"Traces\\MainServer.log.1"
 			});
 
 			//System.out.println("----------------");
