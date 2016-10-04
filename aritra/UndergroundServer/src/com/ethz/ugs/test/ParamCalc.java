@@ -131,7 +131,9 @@ public class ParamCalc
 				if(!st.startsWith("INFO"))
 					continue;
 				if(st.length() == 0)
-					continue;		
+					continue;	
+				if(st.contains("garbage"))
+					continue;
 				st = st.split(":")[2].trim().split(" ")[0].trim();
 				long l = Long.parseLong(st);
 				scores1.add(l);
@@ -159,7 +161,7 @@ public class ParamCalc
 				int pos = (int) ((diff % bucketLen == 0) ? (diff / bucketLen) : (diff / bucketLen) + 1);
 				bucket[pos]++;
 			}
-			//System.out.println("Bucket count : " + bucketCount);
+			System.out.println("Bucket count : " + bucketCount);
 			/*int nzb = 0;
 			for(int buck : bucket)
 				if(buck > 0)
@@ -212,8 +214,13 @@ public class ParamCalc
 		double delta = 0d;
 
 		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
+		
+		if(limit > p1.size() || limit > p2.size())
+			limit = p1.size() >= p2.size() ? p2.size() : p1.size();
 
+		
 		double d_1 = 0d, d_2 = 0d;
+		
 		for(int i = 0; i < limit; i++)
 		{
 			double p1_t = p1.get(i);
@@ -231,7 +238,7 @@ public class ParamCalc
 			
 
 		}
-		delta = (d_1 >= d_2) ?  d_1 : d_2;
+		delta = (d_1 > d_2) ?  d_1 : d_2;
 		
 		//System.out.println("chi sqd : " + chiSqd);
 		//System.out.println(epsilon + " : " + String.format("%.18f", delta));
@@ -245,6 +252,9 @@ public class ParamCalc
 		List<Double> p2 = relativeScoresList.get(1);
 		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
 
+		if(limit > p1.size() && limit > p2.size())
+			limit = p1.size() >= p2.size() ? p2.size() : p1.size();
+			
 		double chiSqd = 0.0d;
 		double N = 0d;
 		for(int i = 0; i < limit; i++)
@@ -265,8 +275,9 @@ public class ParamCalc
 
 	public static void createAndShowGui() throws NumberFormatException, IOException, DocumentException
 	{
-
+		//1501904
 		int limit = 0;
+		int bucketLimit = 0;
 		int i1 = 0;
 		Long[] arr = new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
 				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L}; 
@@ -283,8 +294,10 @@ public class ParamCalc
 			load(bucketLen, new String[]{
 					//"Traces\\MainServer.log.18",
 					//"Traces\\MainServer.log.17"
-					"Traces\\MainServer.log.",
-					"Traces\\MainServer.log.1"
+					//"Traces\\MainServer.log.5",
+					//"Traces\\MainServer.log.4"
+					"Traces\\noInt.log",
+					"Traces\\int.log",
 			});
 
 			//System.out.println("----------------");

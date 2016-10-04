@@ -12,6 +12,7 @@
 //*************************************************************************************
 package com.ethz.ugs.dataStructures;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,10 +53,11 @@ public class ClientState {
 	public void addDummyState()
 	{
 		List<Long> sliceIds  = new ArrayList<Long>();
+		//make sure these steps are not optimizable by JVM
 		for(int i = 0; i < 5; i++)
-			sliceIds.add((long) (i + 5000));
+			sliceIds.add((long) (System.currentTimeMillis() + 5000));
 		byte[] key = new byte[ENV.AES_KEY_SIZE];
-		
+		new SecureRandom().nextBytes(key);
 		this.addState(dummySSLId, sliceIds, key);
 		
 	}
@@ -188,7 +190,7 @@ public class ClientState {
 		cds.removeState(sliceId);
 	}
 	
-	public long getAState(String sslId) throws RuntimeException 
+	public long getASliceId(String sslId) throws RuntimeException 
 	{
 		if(!this.stateMap.containsKey(sslId))
 			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
@@ -210,6 +212,7 @@ class ClientStateDataStructure
 	public ClientStateDataStructure(List<Long> sliceIds, byte[] key)
 	{
 		this.clientStateMap = new HashMap<>();
+		//set all initial states as 0x00
 		if(sliceIds != null)
 		{
 			for(long sliceId : sliceIds)

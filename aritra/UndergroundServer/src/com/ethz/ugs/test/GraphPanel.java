@@ -295,7 +295,9 @@ public class GraphPanel extends JPanel {
 				if(!st.startsWith("INFO"))
 					continue;
 				if(st.length() == 0)
-					continue;		
+					continue;	
+				if(st.contains("garbage"))
+					continue;
 				st = st.split(":")[2].trim().split(" ")[0].trim();
 				//k++;
 				long l = Long.parseLong(st);
@@ -326,9 +328,7 @@ public class GraphPanel extends JPanel {
 			{
 				long diff = i - min;
 				int pos = (int) ((diff % bucketLen == 0) ? (diff / bucketLen) : (diff / bucketLen) + 1);
-				//System.out.println(pos);
 				bucket[pos]++;
-				//System.out.println("---" + block[pos]);
 			}
 
 			List<Double> scores_n = new ArrayList<>();
@@ -448,8 +448,9 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\MainServer.log", "Broadcast droplets",
-							"Traces\\MainServer.log.1", "Interactive droplets",
+							"Traces\\noInt.log", "Broadcast droplets",
+							"Traces\\int.log", "Interactive droplets"
+							//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 
 					List<InputStream> pdfs = new ArrayList<InputStream>();
