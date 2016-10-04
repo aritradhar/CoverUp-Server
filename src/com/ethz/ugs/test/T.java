@@ -12,6 +12,9 @@
 //*************************************************************************************
 package com.ethz.ugs.test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import org.json.JSONObject;
 
 /**
@@ -22,11 +25,12 @@ public class T {
 	
 	public static void main(String[] args) {
 		
-		JSONObject j = new JSONObject();
-		j.put("bla", "c:\\a\\m");
+		byte[] b = Base64.getDecoder().decode("MC0CFQCSKaf1VxzqzqwqLScQKj4be/foLAIURkjIjFsu2Jmo8szJiCOULOAQtL4=");
 		
-		System.out.println(j.toString());
-		
+		System.out.println(new String(b, StandardCharsets.UTF_8));
+		System.out.println(new String(b, StandardCharsets.UTF_16));
+		System.out.println(new String(b, StandardCharsets.US_ASCII));
+		System.out.println(new String(b, StandardCharsets.ISO_8859_1));
 	}
 
 }

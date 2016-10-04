@@ -679,7 +679,7 @@ public class ResponseUtilBin {
 
 		catch (NoSuchAlgorithmException e) 
 		{
-			return new byte[ENV.FIXED_PACKET_SIZE_BIN];
+			return Arrays.copyOfRange(garbage, 0, ENV.FIXED_PACKET_SIZE_BIN);
 		}
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];

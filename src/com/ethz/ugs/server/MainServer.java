@@ -87,9 +87,6 @@ public class MainServer extends HttpServlet {
 		super();
 
 		MainServer.clientState = new ClientState();
-		//dummy client state addition
-		MainServer.clientState.addDummyState();
-		System.out.println("Dummy client state added for initializtion");
 		
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
