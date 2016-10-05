@@ -368,7 +368,7 @@ public class GraphPanel extends JPanel {
 
 			//Collections.shuffle(scores1, new SecureRandom());
 			//take a random sample
-			int sampleSize = 15000;
+			int sampleSize = 30000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -448,8 +448,8 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\noInt.log", "Broadcast droplets",
-							"Traces\\int.log", "Interactive droplets"
+							"Traces\\bigTrace\\noInt.log.0", "Broadcast droplets",
+							"Traces\\bigTrace\\int.log.0", "Interactive droplets"
 							//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 

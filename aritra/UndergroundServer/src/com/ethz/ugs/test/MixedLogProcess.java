@@ -24,11 +24,11 @@ public class MixedLogProcess {
 
 	public static void main(String[] args) throws Exception {
 
-		BufferedReader br = new BufferedReader(new FileReader("Traces\\bigTrace\\MainServer.log.m.1"));
+		BufferedReader br = new BufferedReader(new FileReader("Traces\\bigTrace\\MainServer.log.m.7"));
 		String str = null;
 
-		FileWriter fwNI = new FileWriter("Traces\\bigTrace\\noInt.log.1");
-		FileWriter fwI = new FileWriter("Traces\\bigTrace\\int.log.1");
+		FileWriter fwNI = new FileWriter("Traces\\bigTrace\\noInt.log.7");
+		FileWriter fwI = new FileWriter("Traces\\bigTrace\\int.log.7");
 		int counter = 0, i = 0;
 		while((str = br.readLine()) != null)
 		{
