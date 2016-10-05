@@ -296,8 +296,8 @@ public class ParamCalc
 					//"Traces\\MainServer.log.17"
 					//"Traces\\MainServer.log.5",
 					//"Traces\\MainServer.log.4"
-					"Traces\\noInt.log",
-					"Traces\\int.log",
+					"Traces\\bigTrace\\noInt.log.6",
+					"Traces\\bigTrace\\int.log.6",
 			});
 
 			//System.out.println("----------------");
