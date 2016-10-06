@@ -120,6 +120,7 @@ public class ResponseUtilBinConstantTime {
 			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME - (System.nanoTime() - start);
 			try {
 				TimeUnit.NANOSECONDS.sleep(offset);
+				System.out.println("Here : " + offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
