@@ -78,4 +78,7 @@ public class ENV {
 		DELIM = OS_B ? "\\" : "/";
 		BROADCAST_LOCATION = OS_B ? "C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt" : "/home/dhara/broadcast.txt";
 	}
+	
+	public static final long FIXED_REQUEST_PROCESSING_TIME = 2000000L;
+	
 }
