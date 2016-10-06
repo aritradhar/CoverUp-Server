@@ -598,7 +598,6 @@ public class ResponseUtilBin {
 
 	public static byte[] dropletPleaseBinNew(HttpServletRequest request, byte[] privateKey, byte[] garbage) throws IOException
 	{
-		Arrays.fill(garbage, (byte) 0xaa);
 		String url = request.getParameter("url");
 
 		String[] dropletStr = new String[2];
@@ -679,7 +678,8 @@ public class ResponseUtilBin {
 
 		catch (NoSuchAlgorithmException e) 
 		{
-			return Arrays.copyOfRange(garbage, 0, ENV.FIXED_PACKET_SIZE_BIN);
+			e.printStackTrace();
+			return garbage;
 		}
 
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataToSign.length - signatureBytes.length];

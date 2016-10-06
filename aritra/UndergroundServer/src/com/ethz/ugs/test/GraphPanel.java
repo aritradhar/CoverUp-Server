@@ -284,7 +284,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			scores1.add(642397L);
+			//scores1.add(642397L);
 
 			while((st = br.readLine()) != null)
 			{
@@ -448,8 +448,8 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\bigTrace\\noInt.log.0", "Broadcast droplets",
-							"Traces\\bigTrace\\int.log.0", "Interactive droplets"
+							"Traces\\bigTrace\\noInt.log.8", "Broadcast droplets",
+							"Traces\\bigTrace\\int.log.8", "Interactive droplets"
 							//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 
