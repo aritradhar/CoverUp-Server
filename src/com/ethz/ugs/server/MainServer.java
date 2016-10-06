@@ -42,6 +42,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +54,7 @@ import org.whispersystems.curve25519.Curve25519KeyPair;
 
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.test.InitialGen;
+import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
 
 /**
@@ -511,6 +513,14 @@ public class MainServer extends HttpServlet {
 				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
+					
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					rand.nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
 				}
 			else if(postBody[0] == 0x01)
 				try {
@@ -519,6 +529,82 @@ public class MainServer extends HttpServlet {
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
+					
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					rand.nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
+			//System.out.println(1);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+		}
+		
+		//constant time response
+		else if(flag.equals("dropletPleaseBinConst"))
+		{
+			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+		
+			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			if(sslId == null)
+			{
+				response.getWriter().append("Non TLS/SSL connection terminated");
+				response.flushBuffer();
+				return;
+			}
+			
+			if(postBody == null || postBody.length == 0)
+			{
+				try
+				{
+					ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+				}
+				catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
+				{
+					response.getWriter().append(ex.getMessage());
+					response.flushBuffer();
+				}
+			}
+			else if(postBody[0] == 0x00)
+				try {
+					ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+					
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
+			else if(postBody[0] == 0x01)
+				try {
+					ResponseUtilBinConstantTime.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
+					
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+					
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
 				}
 			else
 			{
