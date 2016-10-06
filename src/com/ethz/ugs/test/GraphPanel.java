@@ -284,7 +284,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			//scores1.add(642397L);
+			scores1.add(44000000L);
 
 			while((st = br.readLine()) != null)
 			{
@@ -296,15 +296,22 @@ public class GraphPanel extends JPanel {
 					continue;
 				if(st.length() == 0)
 					continue;	
-				if(st.contains("garbage"))
-					continue;
+				//if(st.contains("garbage"))
+				//	continue;
 				st = st.split(":")[2].trim().split(" ")[0].trim();
 				//k++;
 				long l = Long.parseLong(st);
+				
+				if(l > 50000000L)
+					continue;
+				
 				scores1.add(l);
 			}
 			br.close();
 
+			
+			scores1 = scores1.subList(0, 4000);
+			
 			System.out.println("Sample size : " + scores1.size());
 			min = scores1.get(0);
 			max = 0;
@@ -448,8 +455,8 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\bigTrace\\noInt.log.8", "Broadcast droplets",
-							"Traces\\bigTrace\\int.log.8", "Interactive droplets"
+							"Traces\\bigTrace\\noInt.log.10", "Broadcast droplets",
+							"Traces\\bigTrace\\int.log.10", "Interactive droplets"
 							//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 
