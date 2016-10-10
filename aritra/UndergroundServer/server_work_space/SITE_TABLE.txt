@@ -1,0 +1,10 @@
+{"table": [
+  {
+    "value": "{\n  \"chunk_size\": 10000,\n  \"dropletLoc\": \"3470486030196152413\",\n  \"seed\": \"VgW8XJTBfOyhVzOHqYShbD7HzywJOJ28iJ2WNnv3Z7c=\",\n  \"len\": 72351,\n  \"num_chunks\": 8,\n  \"dropletCount\": 0,\n  \"url\": \"C:\\\\Source\\\\2.txt\"\n}",
+    "key": "C:\\Source\\2.txt"
+  },
+  {
+    "value": "{\n  \"chunk_size\": 10000,\n  \"dropletLoc\": \"5041331635485241524\",\n  \"seed\": \"MZoMa9xKdd50AFjP_WkTKDJt2ryLEDbrHYhMomaS8oc=\",\n  \"len\": 71918,\n  \"num_chunks\": 8,\n  \"dropletCount\": 0,\n  \"url\": \"C:\\\\Source\\\\1.txt\"\n}",
+    "key": "C:\\Source\\1.txt"
+  }
+]}
