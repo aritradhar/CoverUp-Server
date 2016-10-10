@@ -69,7 +69,7 @@ public class ResponseUtilBinConstantTime {
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
 	{
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 
 		OutputStream out = response.getOutputStream();
 		//garbage
@@ -99,9 +99,9 @@ public class ResponseUtilBinConstantTime {
 			}
 			
 			
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start);
+			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 			try {
-				TimeUnit.MILLISECONDS.sleep(offset);
+				TimeUnit.NANOSECONDS.sleep(offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -117,23 +117,21 @@ public class ResponseUtilBinConstantTime {
 		{
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
 
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start);
+			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+				
 			try {
-				TimeUnit.MILLISECONDS.sleep(offset);
-				System.out.println("Here : " + offset);
+				TimeUnit.NANOSECONDS.sleep(offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
-			long end = System.currentTimeMillis();
+			long end = System.nanoTime();
 			out.write(packetToSend);
 			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
 		}
-
-
 	}
 
 
@@ -158,7 +156,7 @@ public class ResponseUtilBinConstantTime {
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
 	{
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 
 		OutputStream out = response.getOutputStream();
 
@@ -178,14 +176,14 @@ public class ResponseUtilBinConstantTime {
 			out.write(toSend);
 
 
-		long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start);
+		long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 		try {
-			TimeUnit.MILLISECONDS.sleep(offset);
+			TimeUnit.NANOSECONDS.sleep(offset);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
-		long end = System.currentTimeMillis();
+		long end = System.nanoTime();
 		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();

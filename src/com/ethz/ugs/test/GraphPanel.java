@@ -66,7 +66,7 @@ public class GraphPanel extends JPanel {
 	////
 	public static long max = 0, min =0; 
 	//bucket length in ns
-	public static long bucketLen = 500;
+	public static long bucketLen = 50;
 	///
 
 	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize, String lineType) {
@@ -139,8 +139,8 @@ public class GraphPanel extends JPanel {
 
 				String yLabel = "";
 				if(xAxis == null)
-					yLabel = ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "";
-				//yLabel =  String.format("%.5f", ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0);
+					//yLabel = ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0 + "a";
+					yLabel =  String.format("%.3f", ((double) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )) / 100.0);
 				else
 					yLabel = String.format("%.5f",(((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) )));
 
@@ -172,7 +172,7 @@ public class GraphPanel extends JPanel {
 					String xLabel = ""; 
 
 					if(xAxis == null)
-						xLabel = String.format("%.3f", (float)(min + bucketLen * i)/ 1000000);
+						xLabel = String.format("%.3f", (float)(min + bucketLen * i) / 1000000);
 					else
 						xLabel = xAxis[i] + "";
 
@@ -284,7 +284,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			scores1.add(44000000L);
+			//scores1.add(44000000L);
 
 			while((st = br.readLine()) != null)
 			{
@@ -309,8 +309,6 @@ public class GraphPanel extends JPanel {
 			}
 			br.close();
 
-			
-			scores1 = scores1.subList(0, 4000);
 			
 			System.out.println("Sample size : " + scores1.size());
 			min = scores1.get(0);
@@ -455,8 +453,8 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\bigTrace\\noInt.log.10", "Broadcast droplets",
-							"Traces\\bigTrace\\int.log.10", "Interactive droplets"
+							"Traces\\bigTrace\\noInt.log.12", "Broadcast droplets",
+							"Traces\\bigTrace\\int.log.12", "Interactive droplets"
 							//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 

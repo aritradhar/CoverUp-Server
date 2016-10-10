@@ -195,6 +195,7 @@ public class SiteMap {
 		String dropletLocation = row.dropletLoc;
 		
 		File dropletDir = new File(dropletLocation);
+
 		if(!dropletDir.isDirectory())
 			throw new RuntimeException("Error in droplet dir!");
 		
