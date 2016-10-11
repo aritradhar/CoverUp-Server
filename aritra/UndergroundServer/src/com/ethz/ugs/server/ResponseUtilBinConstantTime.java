@@ -36,6 +36,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.tukaani.xz.simple.PowerPC;
+
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
@@ -73,8 +75,8 @@ public class ResponseUtilBinConstantTime {
 	{
 		long start = System.nanoTime(), end = 0;
 
-		long additionalDelay = Math.abs(Math.round(rand.nextGaussian() * 3 + 12));
-		
+		long additionalDelay = (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6));
+				
 		OutputStream out = response.getOutputStream();
 		//garbage
 		if( Math.random() <= ENV.PROB_THRESHOLD )
@@ -92,7 +94,7 @@ public class ResponseUtilBinConstantTime {
 					rand.nextBytes(garbageReturn);
 					
 					//additional delay start
-					long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 					try {
 						TimeUnit.NANOSECONDS.sleep(offset);
 					} catch (InterruptedException e) {
@@ -106,7 +108,7 @@ public class ResponseUtilBinConstantTime {
 				else	
 				{
 					//additional delay start
-					long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 					try {
 						TimeUnit.NANOSECONDS.sleep(offset);
 					} catch (InterruptedException e) {
@@ -125,7 +127,7 @@ public class ResponseUtilBinConstantTime {
 				rand.nextBytes(garbageReturn);	
 				
 				//additional delay start
-				long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+				long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 				try {
 					TimeUnit.NANOSECONDS.sleep(offset);
 				} catch (InterruptedException e) {
@@ -149,7 +151,7 @@ public class ResponseUtilBinConstantTime {
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
 
 			//additional delay start
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 			try {
 				TimeUnit.NANOSECONDS.sleep(offset);
 			} catch (InterruptedException e) {
@@ -188,7 +190,7 @@ public class ResponseUtilBinConstantTime {
 			IllegalBlockSizeException, BadPaddingException
 	{
 		long start = System.nanoTime(), end = 0;
-		long additionalDelay = Math.abs(Math.round(rand.nextGaussian() * 3 + 12));
+		long additionalDelay = (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6));
 
 		OutputStream out = response.getOutputStream();
 
@@ -202,7 +204,7 @@ public class ResponseUtilBinConstantTime {
 			rand.nextBytes(garbageReturn);
 			
 			//additional delay start
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 			try {
 				TimeUnit.NANOSECONDS.sleep(offset);
 			} catch (InterruptedException e) {
@@ -218,7 +220,7 @@ public class ResponseUtilBinConstantTime {
 		else	
 		{
 			//additional delay start
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 			try {
 				TimeUnit.NANOSECONDS.sleep(offset);
 			} catch (InterruptedException e) {
