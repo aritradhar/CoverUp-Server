@@ -12,10 +12,8 @@
 //*************************************************************************************
 package com.ethz.ugs.test;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
-import org.json.JSONObject;
+import java.io.FileWriter;
+import java.util.Random;
 
 /**
  * @author Aritra
@@ -23,14 +21,15 @@ import org.json.JSONObject;
  */
 public class T {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		
-		byte[] b = Base64.getDecoder().decode("MC0CFQCSKaf1VxzqzqwqLScQKj4be/foLAIURkjIjFsu2Jmo8szJiCOULOAQtL4=");
+		Random rand = new Random();
+		FileWriter fw = new FileWriter("gau.csv");
 		
-		System.out.println(new String(b, StandardCharsets.UTF_8));
-		System.out.println(new String(b, StandardCharsets.UTF_16));
-		System.out.println(new String(b, StandardCharsets.US_ASCII));
-		System.out.println(new String(b, StandardCharsets.ISO_8859_1));
+		for(int i = 0; i < 100000; i++)
+			fw.append((rand.nextGaussian() + 5) + "\n");
+		
+		fw.close();
 	}
 
 }

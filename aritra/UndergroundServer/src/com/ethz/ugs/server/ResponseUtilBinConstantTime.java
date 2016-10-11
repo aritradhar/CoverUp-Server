@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.BadPaddingException;
@@ -47,11 +48,12 @@ import com.sun.xml.internal.ws.model.RuntimeModelerException;
 public class ResponseUtilBinConstantTime {
 
 	public static SecureRandom rand = new SecureRandom();
-
+	public static Random guRand = new Random();
 
 	/**
 	 * Broadcast
 	 * Fixed time execution
+	 * Always calculate the execution time before writing the bytes on the line
 	 * @param request
 	 * @param response
 	 * @param privateKey
@@ -69,7 +71,7 @@ public class ResponseUtilBinConstantTime {
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
 	{
-		long start = System.nanoTime();
+		long start = System.nanoTime(), end = 0;
 
 		OutputStream out = response.getOutputStream();
 		//garbage
@@ -86,15 +88,20 @@ public class ResponseUtilBinConstantTime {
 				{
 					byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					rand.nextBytes(garbageReturn);
+					end = System.nanoTime();
 					out.write(garbageReturn);
 				}
 				else
+				{
+					end = System.nanoTime();
 					out.write(toSend);
+				}
 			}
 			else
 			{
 				byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 				rand.nextBytes(garbageReturn);
+				end = System.nanoTime();
 				out.write(garbageReturn);
 			}
 			
@@ -105,7 +112,7 @@ public class ResponseUtilBinConstantTime {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			long end = System.nanoTime();
+			
 			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
@@ -125,7 +132,7 @@ public class ResponseUtilBinConstantTime {
 				e.printStackTrace();
 			}
 			
-			long end = System.nanoTime();
+			end = System.nanoTime();
 			out.write(packetToSend);
 			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
@@ -156,7 +163,7 @@ public class ResponseUtilBinConstantTime {
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
 	{
-		long start = System.nanoTime();
+		long start = System.nanoTime(), end = 0;
 
 		OutputStream out = response.getOutputStream();
 
@@ -168,13 +175,16 @@ public class ResponseUtilBinConstantTime {
 		{
 			byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 			rand.nextBytes(garbageReturn);
+			end = System.nanoTime();
 			out.write(garbageReturn);
 		}	
 
 		//enc slice
 		else	
+		{
+			end = System.nanoTime();
 			out.write(toSend);
-
+		}
 
 		long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 		try {
@@ -183,7 +193,6 @@ public class ResponseUtilBinConstantTime {
 			e.printStackTrace();
 		}
 		
-		long end = System.nanoTime();
 		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();
