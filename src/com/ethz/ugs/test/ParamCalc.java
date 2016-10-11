@@ -112,7 +112,7 @@ public class ParamCalc
 
 	}
 
-	public static int load(long bucketLen, String...Files) throws NumberFormatException, IOException
+	public static int load(boolean csv, long bucketLen, String...Files) throws NumberFormatException, IOException
 	{
 		long min, max = 0;
 		List<Integer> buckC = new ArrayList<>();
@@ -124,19 +124,36 @@ public class ParamCalc
 
 			String st = null;
 			//TODO dummy to set the minimum
-			scores1.add(950000L);
+			scores1.add(45850000L);
 
-			while((st = br.readLine()) != null)
+			if(!csv)
 			{
-				if(!st.startsWith("INFO"))
-					continue;
-				if(st.length() == 0)
-					continue;	
-				if(st.contains("garbage"))
-					continue;
-				st = st.split(":")[2].trim().split(" ")[0].trim();
-				long l = Long.parseLong(st);
-				scores1.add(l);
+				while((st = br.readLine()) != null)
+				{
+					if(!st.startsWith("INFO"))
+						continue;
+					if(st.length() == 0)
+						continue;	
+					if(st.contains("garbage"))
+						continue;
+					st = st.split(":")[2].trim().split(" ")[0].trim();
+					long l = Long.parseLong(st);
+					scores1.add(l);
+				}
+			}
+			else
+			{
+				int k = 0;
+				while((st = br.readLine()) != null)
+				{
+					//if(k >= 135000)
+					//	break;
+					if(st.length() == 0)
+						continue;
+					double d = Double.parseDouble(st);
+					scores1.add((long) (d * Math.pow(10, 6)));
+					k++;
+				}
 			}
 			br.close();
 
@@ -279,8 +296,12 @@ public class ParamCalc
 		int limit = 0;
 		int bucketLimit = 0;
 		int i1 = 0;
-		Long[] arr = new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
-				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L}; 
+		/*Long[] arr = new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
+				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L}; */
+		
+		Long[] arr = new Long[]{5000L, 10000L, 
+				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};
+		
 		List<Long> bucketLenArr = Arrays.asList(arr);
 
 		List<Double> chiSq = new ArrayList<>();
@@ -291,21 +312,22 @@ public class ParamCalc
 			scoresList.clear();
 			relativeScoresList.clear();
 
-			load(bucketLen, new String[]{
+			load(true, bucketLen, new String[]{
 					//"Traces\\MainServer.log.18",
 					//"Traces\\MainServer.log.17"
 					//"Traces\\MainServer.log.5",
 					//"Traces\\MainServer.log.4"
-					"Traces\\bigTrace\\noInt.log.8",
-					"Traces\\bigTrace\\int.log.8",
+					//"Traces\\bigTrace\\noInt.log.8",
+					//"Traces\\bigTrace\\int.log.8",
+					
+					"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv",
+					
+					"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv"
 			});
 
 			//System.out.println("----------------");
 
-			double[] epsilons = {10000, 5000, 1000, 500, 100, 50, 10, 5, 3, 2.8,  2.7,  2.6, 2.5, 2.4, 2.3, 2.2, 2.1, 2, 1.997, 1.995,
-					1.99, 1.989, 1.986, 1.982, 1.98,1.987, 1.986, 1.982, 1.97, 1.96, 1.95, 1.92, 1.9, 1.89, 1.88, 1.85, 1.8, 1.75, 1.7, 1.65, 
-					1.6, 1.55, 1.5, 1.45, 1.4, 1.35, 1.3, 1.25, 1.2, 1.15, 1.1, 1.05, 
-					1 , .9, .8, .7, .6, .5, .4, .3, .2, .1, .09, .08, .07, .06, .05, .04, .03,.02,.01, 0};
+			double[] epsilons = {1 , .9, .8, .7, .6, .5, .4, .3, .2, .1, .09, .08, .07, .06, .05, .04, .03,.02,.01, 0};
 
 			List<Double> deltas = new ArrayList<>();
 			for(double epsilon : epsilons)
