@@ -34,7 +34,7 @@ import org.whispersystems.curve25519.Curve25519;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.dataStructures.SliceManager;
-import com.ethz.ugs.test.InitialGen;
+import com.ethz.ugs.experiments.InitialGen;
 
 /**
  * Response processing class. Provide resposne in byte stream.

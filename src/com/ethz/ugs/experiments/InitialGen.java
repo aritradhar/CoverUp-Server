@@ -11,7 +11,7 @@
 //*********************************************************************************** *
 //*************************************************************************************
 
-package com.ethz.ugs.test;
+package com.ethz.ugs.experiments;
 
 import java.io.File;
 import java.io.IOException;

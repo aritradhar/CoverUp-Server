@@ -1,4 +1,4 @@
-package com.ethz.ugs.test;
+package com.ethz.ugs.experiments;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -66,7 +66,7 @@ public class GraphPanel extends JPanel {
 	////
 	public static long max = 0, min =0; 
 	//bucket length in ns
-	public static long bucketLen = 50;
+	public static long bucketLen = 2000;
 	///
 
 	public GraphPanel(List<Double> scores1, String fileName, String desc, int sampleSize, String lineType) {
@@ -266,8 +266,8 @@ public class GraphPanel extends JPanel {
 	}
 
 
-	private static void createAndShowGui(String...Files) throws NumberFormatException, IOException, DocumentException {
-
+	private static void createAndShowGui(boolean csv, String...Files) throws NumberFormatException, IOException, DocumentException 
+	{	
 		int counter = 0;
 		for(String file : Files)
 		{
@@ -286,26 +286,43 @@ public class GraphPanel extends JPanel {
 			//TODO dummy to set the min
 			//scores1.add(44000000L);
 
-			while((st = br.readLine()) != null)
+			if(!csv)
 			{
-				//only consider sample size upto 50k
-				//if(k == 50000)
-				//	break;
+				while((st = br.readLine()) != null)
+				{
+					//only consider sample size upto 50k
+					//if(k == 50000)
+					//	break;
 
-				if(!st.startsWith("INFO"))
-					continue;
-				if(st.length() == 0)
-					continue;	
-				//if(st.contains("garbage"))
-				//	continue;
-				st = st.split(":")[2].trim().split(" ")[0].trim();
-				//k++;
-				long l = Long.parseLong(st);
-				
-				if(l > 50000000L)
-					continue;
-				
-				scores1.add(l);
+					if(!st.startsWith("INFO"))
+						continue;
+					if(st.length() == 0)
+						continue;	
+					//if(st.contains("garbage"))
+					//	continue;
+					st = st.split(":")[2].trim().split(" ")[0].trim();
+					//k++;
+					long l = Long.parseLong(st);
+
+					if(l > 50000000L)
+						continue;
+
+					scores1.add(l);
+				}
+			}
+			else
+			{
+				int k = 0;
+				while((st = br.readLine()) != null)
+				{
+					//if(k >= 75000)
+					//	break;
+					if(st.length() == 0)
+						continue;
+					double d = Double.parseDouble(st);
+					scores1.add((long) (d * Math.pow(10, 6)));
+					k++;
+				}
 			}
 			br.close();
 
@@ -344,21 +361,21 @@ public class GraphPanel extends JPanel {
 					score_max = i;
 				scores_n.add((double) i);		
 			}
-			List<Double> scores_prob = new ArrayList<>();
+			/*List<Double> scores_prob = new ArrayList<>();
 			double tot = 0d;
 			for(int i : bucket)
 				tot += i;
 
 			for(int i : bucket)
 				scores_prob.add((double)i/tot);
-
-			List<Double> scores_cumulative = new ArrayList<>();
+			 */
+			/*List<Double> scores_cumulative = new ArrayList<>();
 			double cumul = 0.0;
 			for(double sc_pr : scores_prob)
 			{
 				cumul += sc_pr;
 				scores_cumulative.add(cumul);
-			}
+			}*/
 
 			//percentage
 			List<Double> scores_relative = new ArrayList<>();
@@ -372,8 +389,8 @@ public class GraphPanel extends JPanel {
 			scores_n = scores_relative;
 
 			//Collections.shuffle(scores1, new SecureRandom());
-			//take a random sample
-			int sampleSize = 30000;
+			//zoom in/out
+			int sampleSize = 10000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -395,7 +412,7 @@ public class GraphPanel extends JPanel {
 			{
 				subScore = scores_n;
 			}
-
+			
 			GraphPanel mainPanel = new GraphPanel(subScore, new File(file).getName(), Files[counter + 1], scores1.size(), "bar");
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("DrawGraph : " + new File(file).getName());
@@ -441,7 +458,7 @@ public class GraphPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					createAndShowGui(new String[]{
+					createAndShowGui(true, new String[]{
 							/*
 							"Traces\\MainServer.log.8",
 							"Traces\\MainServer.log.9",
@@ -453,8 +470,12 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\bigTrace\\noInt.log.12", "Broadcast droplets",
-							"Traces\\bigTrace\\int.log.12", "Interactive droplets"
+							//"Traces\\bigTrace\\noInt.log.12", "Broadcast droplets",
+							//"Traces\\bigTrace\\int.log.12", "Interactive droplets"
+							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
+							+ "Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv", "All intercept read",
+							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
+									+ "Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv", "No ext"
 							//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 
