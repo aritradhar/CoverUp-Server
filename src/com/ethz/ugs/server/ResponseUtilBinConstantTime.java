@@ -73,6 +73,8 @@ public class ResponseUtilBinConstantTime {
 	{
 		long start = System.nanoTime(), end = 0;
 
+		long additionalDelay = Math.abs(Math.round(rand.nextGaussian() * 3 + 12));
+		
 		OutputStream out = response.getOutputStream();
 		//garbage
 		if( Math.random() <= ENV.PROB_THRESHOLD )
@@ -88,29 +90,51 @@ public class ResponseUtilBinConstantTime {
 				{
 					byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					rand.nextBytes(garbageReturn);
+					
+					//additional delay start
+					long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+					try {
+						TimeUnit.NANOSECONDS.sleep(offset);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					end = System.nanoTime();
+					//additional delay end
+					
 					out.write(garbageReturn);
 				}
-				else
+				else	
 				{
+					//additional delay start
+					long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+					try {
+						TimeUnit.NANOSECONDS.sleep(offset);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					end = System.nanoTime();
+					//additional delay end
+					
 					out.write(toSend);
 				}
+				
 			}
 			else
 			{
 				byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-				rand.nextBytes(garbageReturn);
+				rand.nextBytes(garbageReturn);	
+				
+				//additional delay start
+				long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+				try {
+					TimeUnit.NANOSECONDS.sleep(offset);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				end = System.nanoTime();
+				//additional delay end
+				
 				out.write(garbageReturn);
-			}
-			
-			
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
-			try {
-				TimeUnit.NANOSECONDS.sleep(offset);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 			
 			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
@@ -124,15 +148,15 @@ public class ResponseUtilBinConstantTime {
 		{
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
 
-			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
-				
+			//additional delay start
+			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
 			try {
 				TimeUnit.NANOSECONDS.sleep(offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 			end = System.nanoTime();
+			//additional delay end
 			out.write(packetToSend);
 			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
@@ -164,6 +188,7 @@ public class ResponseUtilBinConstantTime {
 			IllegalBlockSizeException, BadPaddingException
 	{
 		long start = System.nanoTime(), end = 0;
+		long additionalDelay = Math.abs(Math.round(rand.nextGaussian() * 3 + 12));
 
 		OutputStream out = response.getOutputStream();
 
@@ -175,24 +200,36 @@ public class ResponseUtilBinConstantTime {
 		{
 			byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 			rand.nextBytes(garbageReturn);
+			
+			//additional delay start
+			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+			try {
+				TimeUnit.NANOSECONDS.sleep(offset);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			end = System.nanoTime();
+			//additional delay end
+			
 			out.write(garbageReturn);
 		}	
 
 		//enc slice
 		else	
 		{
+			//additional delay start
+			long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start + additionalDelay);
+			try {
+				TimeUnit.NANOSECONDS.sleep(offset);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			end = System.nanoTime();
+			//additional delay end
+			
 			out.write(toSend);
 		}
 
-		long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
-		try {
-			TimeUnit.NANOSECONDS.sleep(offset);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();
