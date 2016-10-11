@@ -26,8 +26,8 @@ public class T {
 		Random rand = new Random();
 		FileWriter fw = new FileWriter("gau.csv");
 		
-		for(int i = 0; i < 100000; i++)
-			fw.append((rand.nextGaussian() + 5) + "\n");
+		for(int i = 0; i < 500000; i++)
+			fw.append(Math.abs(Math.round(rand.nextGaussian() * 3 + 12)) + "\n");
 		
 		fw.close();
 	}
