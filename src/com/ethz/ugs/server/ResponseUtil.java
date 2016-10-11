@@ -34,7 +34,7 @@ import com.ethz.ugs.compressUtil.CompressUtil;
 import com.ethz.ugs.dataStructures.FountainTableRow;
 import com.ethz.ugs.dataStructures.SiteMap;
 import com.ethz.ugs.dataStructures.SliceManager;
-import com.ethz.ugs.experiments.InitialGen;
+import com.ethz.ugs.test.InitialGen;
 
 /**
  * Response processing class

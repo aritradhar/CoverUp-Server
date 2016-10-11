@@ -1,4 +1,4 @@
-package com.ethz.ugs.experiments;
+package com.ethz.ugs.test;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -284,7 +284,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			//scores1.add(44000000L);
+			scores1.add(45850000L);
 
 			if(!csv)
 			{
