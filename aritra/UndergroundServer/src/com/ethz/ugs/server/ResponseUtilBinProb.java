@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.dataStructures.SliceManager;
-import com.ethz.ugs.experiments.InitialGen;
+import com.ethz.ugs.test.InitialGen;
 import com.sun.xml.internal.ws.model.RuntimeModelerException;
 
 /**

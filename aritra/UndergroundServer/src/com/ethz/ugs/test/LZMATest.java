@@ -11,7 +11,7 @@
 //*********************************************************************************** *
 //*************************************************************************************
 
-package com.ethz.ugs.experiments;
+package com.ethz.ugs.test;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
