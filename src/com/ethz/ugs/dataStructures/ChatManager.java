@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ethz.ugs.server.ENV;
+
 /**
  * @author Aritra
  *
@@ -25,13 +27,29 @@ public class ChatManager {
 
 
 	private Map<String, List<byte[]>> AddressChatDataMap;
+	private Map<String, String> sslIfPublicAddressMap;
 
 
 	public ChatManager() {
 		this.AddressChatDataMap = new HashMap<>();
+		this.sslIfPublicAddressMap = new HashMap<>();
+	}
+	
+	public boolean containSSLId(String sslId)
+	{
+		return this.sslIfPublicAddressMap.containsKey(sslId);
+	}
+	
+	public byte[] getChat(String sslId)
+	{
+		if(!this.sslIfPublicAddressMap.containsKey(sslId))
+			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
+		
+		String publicAddress = this.sslIfPublicAddressMap.get(sslId);
+		return getChatbyAddress(publicAddress);
 	}
 
-	public byte[] getChat(String publicAddress)
+	public byte[] getChatbyAddress(String publicAddress)
 	{
 		if(!AddressChatDataMap.containsKey(publicAddress))
 			return null;
@@ -45,8 +63,20 @@ public class ChatManager {
 
 		return dataToRet;
 	}
+	
+	public void addChat(String sslId, String publicAddress, byte[] data)
+	{
+		sslIfPublicAddressMap.put(sslId, publicAddress);
+		this.addChatByAddress(publicAddress, data);
+	}
+	
+	public void addChat(String sslId, byte[] data)
+	{
+		String publicAddress = this.sslIfPublicAddressMap.get(sslId);
+		this.addChatByAddress(publicAddress, data);
+	}
 
-	public void addChat(String publicAddress, byte[] data)
+	public void addChatByAddress(String publicAddress, byte[] data)
 	{
 		if(!AddressChatDataMap.containsKey(publicAddress))
 		{

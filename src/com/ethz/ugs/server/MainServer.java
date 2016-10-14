@@ -79,7 +79,7 @@ public class MainServer extends HttpServlet {
 	private Map<String, byte[]> sharedSecretMap;
 	public String broadCastMessage;
 	public static ChatManager chatManager;
-	
+
 	public static Logger logger = Logger.getLogger(MainServer.class.getName());
 
 	public static volatile int C = 0;
@@ -94,7 +94,7 @@ public class MainServer extends HttpServlet {
 		MainServer.clientState = new ClientState();
 		//Initiate the chat manager for client chat management 
 		MainServer.chatManager = new ChatManager();
-		
+
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
 		MainServer.logger.addHandler(fileH);
@@ -553,7 +553,9 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 		}
 
+		//TODO interactive
 		//constant time response
+		//this only supports interactive
 		else if(flag.equals("dropletPleaseBinConst"))
 		{
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
@@ -616,10 +618,68 @@ public class MainServer extends HttpServlet {
 					response.flushBuffer();
 				}
 			}
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
+			//System.out.println(1);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+		}
+
+		//TODO chat
+		//constant time response
+		//this only supports chat
+		else if(flag.equals("dropletPleaseBinConstChat"))
+		{
+			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+
+			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			if(sslId == null)
+			{
+				response.getWriter().append("Non TLS/SSL connection terminated");
+				response.flushBuffer();
+				return;
+			}
+			//broadcast
+			if(postBody == null || postBody.length == 0)
+			{
+				try
+				{
+					ResponseUtilBinConstantTimeChat.dropletPleaseBin(request, response, this.privateKey);
+				}
+				catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
+				{
+					response.getWriter().append(ex.getMessage());
+					response.flushBuffer();
+				}
+			}
+			//broadcast
+			else if(postBody[0] == 0x00)
+			{
+				try {
+					ResponseUtilBinConstantTimeChat.dropletPleaseBin(request, response, this.privateKey);
+				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
+			}
+			
 			//chat
 			else if(postBody[0] == 0x02)
 			{
-				
+				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
 			}
 			else
 			{
