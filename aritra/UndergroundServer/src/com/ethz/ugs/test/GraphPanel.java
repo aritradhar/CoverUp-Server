@@ -284,7 +284,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			scores1.add(45850000L);
+			scores1.add(359674999L);
 
 			if(!csv)
 			{
@@ -390,7 +390,7 @@ public class GraphPanel extends JPanel {
 
 			//Collections.shuffle(scores1, new SecureRandom());
 			//zoom in/out
-			int sampleSize = 10000;
+			int sampleSize = 35000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -404,14 +404,19 @@ public class GraphPanel extends JPanel {
 			// GraphPanel mainPanel = new GraphPanel(_scores1);
 
 			List<Double> subScore = null;
-			try
+			if(sampleSize != 0)
 			{
-				subScore = scores_n.subList(0, sampleSize);
+				try
+				{
+					subScore = scores_n.subList(0, sampleSize);
+				}
+				catch(IndexOutOfBoundsException ex)
+				{
+					subScore = scores_n;
+				}
 			}
-			catch(IndexOutOfBoundsException ex)
-			{
+			else
 				subScore = scores_n;
-			}
 			
 			GraphPanel mainPanel = new GraphPanel(subScore, new File(file).getName(), Files[counter + 1], scores1.size(), "bar");
 			mainPanel.setPreferredSize(new Dimension(w, h));
@@ -472,11 +477,18 @@ public class GraphPanel extends JPanel {
 							//"Traces\\MainServer.log.17", "Interactive droplets"
 							//"Traces\\bigTrace\\noInt.log.12", "Broadcast droplets",
 							//"Traces\\bigTrace\\int.log.12", "Interactive droplets"
-							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
+							
+							/*"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
 							+ "Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv", "All intercept read",
 							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
-									+ "Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv", "No ext"
-							//"Traces\\MainServer.log.4", "Interactive droplets",
+									+ "Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv", "No ext"*/
+							
+							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
+									+ "Measurements\\Data\\JS_new\\nw noise\\all_read\\data_10000_200_noInt_1476205905277.csv", "All intercept read",
+							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
+									+ "Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv", "No ext"
+							
+									//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
 
 					List<InputStream> pdfs = new ArrayList<InputStream>();

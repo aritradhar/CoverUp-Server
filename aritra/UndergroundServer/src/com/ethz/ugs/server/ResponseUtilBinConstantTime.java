@@ -388,4 +388,35 @@ public class ResponseUtilBinConstantTime {
 		flag = false;
 		return encryptedSlicePacket;
 	}	
+	
+	
+	/**
+	 * Serves chat data
+	 * @param request
+	 * @param response
+	 * @param postBody
+	 */
+	public static void dropletPleaseChatBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody) 
+	{
+		//0x00/0x01 (1) | reserved (3) | p1 | p2 | ...
+		//<p_i = sr//R_adder(8) | S_addr(8) | iv(16) | len(4) | enc_Data(n) | sig(64) (on 0|1|2|3|4)
+		
+		int pointer = 4;
+		
+		while(true)
+		{
+			int newPointer = pointer + 16; //traverse source and dest address
+			byte[] datalenBytes = new byte[4]; //data len
+			System.arraycopy(postBody, newPointer, datalenBytes, 0, 4);
+			int datalen = ByteBuffer.wrap(datalenBytes).getInt();
+			newPointer += 4; //add offset for datalen
+			
+			newPointer += datalen; //add offset for data length
+			newPointer += 64; //add offset for ed25519 signature length
+			
+			byte[] dataChunk = new byte[newPointer - pointer + 1];
+			System.arraycopy(postBody, pointer, dataChunk, 0, dataChunk.length);
+			
+		}
+	}
 }

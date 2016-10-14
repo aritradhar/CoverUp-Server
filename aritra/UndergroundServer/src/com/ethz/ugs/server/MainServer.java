@@ -82,14 +82,14 @@ public class MainServer extends HttpServlet {
 
 	public static volatile int C = 0;
 	public static final char[] charC = {'|', '/', '-', '\\'};
-	
+
 	public static ClientState clientState;
-	
+
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 
 		MainServer.clientState = new ClientState();
-		
+
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
 		MainServer.logger.addHandler(fileH);
@@ -99,7 +99,7 @@ public class MainServer extends HttpServlet {
 		String os = System.getProperty("os.name");
 		System.out.println(os);
 
-		
+
 		BufferedReader br = null;
 		try
 		{
@@ -125,7 +125,7 @@ public class MainServer extends HttpServlet {
 			keyGeneration();
 		}
 		this.broadCastMessage = this.readBroadcastFile();
-		 
+
 
 		//dummy initialization
 		try
@@ -137,7 +137,7 @@ public class MainServer extends HttpServlet {
 			ex.printStackTrace();
 			System.err.println("Fatal error..");
 		}
-		
+
 		System.out.println("Started...");
 
 		System.out.println("Default Charset=" + Charset.defaultCharset());    	
@@ -231,12 +231,12 @@ public class MainServer extends HttpServlet {
 		if(flag1 != null)
 		{
 			ENV.PROB_THRESHOLD = Double.parseDouble(flag1);
-			
+
 			response.getWriter().append("Prob reset");
 			response.flushBuffer();
 			return;
 		}
-		
+
 		if(flag == null)
 		{
 			response.getWriter().append("No valid parameter");
@@ -277,11 +277,11 @@ public class MainServer extends HttpServlet {
 			{
 				if(file.getName().contains(".lck"))
 					continue;
-				
+
 				if(!file.getName().contains("MainServer.log"))
 					continue;
-				
-				
+
+
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				List<Integer> el = new ArrayList<>();
 
@@ -448,11 +448,11 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-		
+
 		else if(flag.equals("slicePleaseBin"))
 		{
 			ResponseUtilBinHP.slicePleaseBin(request, response, privateKey, null);
-			
+
 			System.out.println(flag + " " + request.getRemoteAddr());
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
@@ -475,11 +475,11 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 			//System.out.println(3);
 		}	
-		
+
 		else if(flag.equals("dropletPleaseBinProb"))
 		{
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
-		
+
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 			if(sslId == null)
 			{
@@ -492,7 +492,7 @@ public class MainServer extends HttpServlet {
 			byte[] randAESiv = new byte[16];
 			SecureRandom rand = new SecureRandom();
 			rand.nextBytes(randAESkey);
-			
+
 			if(postBody == null || postBody.length == 0)
 			{
 				try
@@ -512,7 +512,7 @@ public class MainServer extends HttpServlet {
 				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
-					
+
 					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					rand.nextBytes(ret);
 					ServletOutputStream out = response.getOutputStream();
@@ -524,11 +524,11 @@ public class MainServer extends HttpServlet {
 			else if(postBody[0] == 0x01)
 				try {
 					ResponseUtilBinProb.dropletPleaseIntrBin(request, response, this.privateKey, randAESkey, randAESiv, postBody);
-					
+
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
-					
+
 					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					rand.nextBytes(ret);
 					ServletOutputStream out = response.getOutputStream();
@@ -547,12 +547,12 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-		
+
 		//constant time response
 		else if(flag.equals("dropletPleaseBinConst"))
 		{
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
-		
+
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 			if(sslId == null)
 			{
@@ -560,7 +560,7 @@ public class MainServer extends HttpServlet {
 				response.flushBuffer();
 				return;
 			}
-			
+			//broadcast
 			if(postBody == null || postBody.length == 0)
 			{
 				try
@@ -574,13 +574,15 @@ public class MainServer extends HttpServlet {
 					response.flushBuffer();
 				}
 			}
+			//broadcast
 			else if(postBody[0] == 0x00)
+			{
 				try {
 					ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
 				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
-					
+
 					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					new SecureRandom().nextBytes(ret);
 					ServletOutputStream out = response.getOutputStream();
@@ -589,14 +591,17 @@ public class MainServer extends HttpServlet {
 					out.close();
 					response.flushBuffer();
 				}
+			}
+			//interactive
 			else if(postBody[0] == 0x01)
+			{
 				try {
 					ResponseUtilBinConstantTime.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
-					
+
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
-					
+
 					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					new SecureRandom().nextBytes(ret);
 					ServletOutputStream out = response.getOutputStream();
@@ -605,6 +610,12 @@ public class MainServer extends HttpServlet {
 					out.close();
 					response.flushBuffer();
 				}
+			}
+			//chat
+			else if(postBody[0] == 0x02)
+			{
+				
+			}
 			else
 			{
 				response.getWriter().append("Header against specification");
@@ -615,8 +626,8 @@ public class MainServer extends HttpServlet {
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
 		}
-		
-		
+
+
 		else if(flag.equals("end"))
 		{
 			Stats.LIVE_CONNECTIONS--;
@@ -624,7 +635,7 @@ public class MainServer extends HttpServlet {
 			response.getWriter().append("Connection terminated");
 			response.flushBuffer();
 		}
-		
+
 		else
 		{
 			response.getWriter().append("Wrong url");

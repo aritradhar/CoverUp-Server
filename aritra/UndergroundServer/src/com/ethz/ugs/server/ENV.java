@@ -58,6 +58,8 @@ public class ENV {
 	public static String EXCEPTION_MESSAGE_SLICE_ID_MISSING = "EXCEPTION_MESSAGE_SLICE_ID_MISSING";
 	public static String EXCEPTION_MESSAGE_EMPTY_STATE_TABLE = "EXCEPTION_MESSAGE_EMPTY_STATE_TABLE";
 
+	public static final int PUBLIC_ADDRESS_LEN = 8;
+
 
 	//enc
 	public static final int AES_KEY_SIZE = 16;
