@@ -83,6 +83,7 @@ public class ResponseUtilBinConstantTime {
 		{
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 
+			//if ssl id exists, that indicates the client registered for interactive request -> underground client
 			if(MainServer.clientState.containSSLId(sslId))
 			{
 				byte[] postBody = null;
@@ -105,8 +106,12 @@ public class ResponseUtilBinConstantTime {
 					
 					out.write(garbageReturn);
 				}
+				//somehow interactive data failed. Send random garbage.
 				else	
 				{
+					//send random garbage
+					toSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					rand.nextBytes(toSend);
 					//additional delay start
 					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 					try {
@@ -121,6 +126,7 @@ public class ResponseUtilBinConstantTime {
 				}
 				
 			}
+			//No ssl id found. Looks like a normal client.
 			else
 			{
 				byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
@@ -145,7 +151,7 @@ public class ResponseUtilBinConstantTime {
 			response.flushBuffer();
 		}
 
-		//droplet
+		//This is same for both normal and underground client. Send the droplet
 		else
 		{
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
@@ -170,7 +176,7 @@ public class ResponseUtilBinConstantTime {
 
 	/**
 	 * Probabilistic interactive droplet request. May server droplets, slices or pure garbage.
-	 * Fixed time execution
+	 * Fixed time execution. No droplet served.
 	 * @param request
 	 * @param response
 	 * @param privateKey
@@ -197,7 +203,7 @@ public class ResponseUtilBinConstantTime {
 		//interactive, process first
 		byte[] toSend = getEncSlice(request, postBody, privateKey);
 
-		//garbage
+		//garbage as some how the interactive data failed
 		if(toSend == null)
 		{
 			byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
