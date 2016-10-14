@@ -37,9 +37,14 @@ public class ENV {
 	public static final long PEER_TIMEOUT = 5500;
 	public static final int PEER_CHECK_SCHEDULE = 1000;
 	
-	public static final byte INTR_MARKER = (byte)0x06;
-	public static final int INTR_MARKER_LEN = 8;
+	//magic bytes
+	public static final byte INTR_MAGIC_BYTES = (byte)0x06;
+	public static final int INTR_MAGIC_BYTES_LEN = 8;
 	
+	public static final byte CHAT_MAGIC_BYTES = (byte)0x0A;
+	public static final int CHAT_MAGIC_BYTES_LEN = 8;
+	
+	//magic bytes ends
 	public static  String SOURCE_DOCUMENT_LOCATION = null;
 	
 	public static final int FOUNTAIN_CHUNK_SIZE = 10000;

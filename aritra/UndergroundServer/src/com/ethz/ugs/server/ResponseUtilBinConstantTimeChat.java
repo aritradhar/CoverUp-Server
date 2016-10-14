@@ -233,4 +233,48 @@ public class ResponseUtilBinConstantTimeChat {
 		//additional delay end
 		
 	}
+	
+	
+	/**
+	 * Make the chat data packet
+	 * packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
+	 * @param chatData
+	 * @return
+	 */
+	public static byte[] makeChatPacket(byte[] chatData)
+	{
+		if(chatData == null)
+			return null;
+		
+		//packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
+		byte[] packetlenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(ENV.FIXED_PACKET_SIZE_BIN).array();
+		byte[] seedLenBytes = ByteBuffer.allocate(Integer.BYTES).putInt(0x00).array();
+		
+		byte[] toSendWOpadding = new byte[8 + ENV.CHAT_MAGIC_BYTES_LEN + chatData.length];
+		
+		byte[] magicBytes = new byte[ENV.CHAT_MAGIC_BYTES_LEN];
+		Arrays.fill(magicBytes, ENV.CHAT_MAGIC_BYTES);
+		int tillNow = 0;
+		System.arraycopy(packetlenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(seedLenBytes, 0, toSendWOpadding, tillNow, 4);
+		tillNow += 4;
+		System.arraycopy(magicBytes, 0, toSendWOpadding, tillNow, magicBytes.length);
+		tillNow += magicBytes.length;
+		System.arraycopy(chatData, 0, toSendWOpadding, tillNow, chatData.length);
+		tillNow += chatData.length;
+		
+		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - toSendWOpadding.length];
+		
+		if(ENV.RANDOM_PADDING)
+			rand.nextBytes(padding);
+		else
+			Arrays.fill(padding, ENV.PADDING_DETERMINISTIC_BYTE);
+		
+		byte[] toSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+		System.arraycopy(toSendWOpadding, 0, toSend, 0, toSendWOpadding.length);
+		System.arraycopy(padding, 0, toSend, toSendWOpadding.length, padding.length);
+		
+		return toSend;
+	}
 }
