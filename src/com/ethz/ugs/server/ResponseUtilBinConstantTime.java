@@ -398,6 +398,10 @@ public class ResponseUtilBinConstantTime {
 	 */
 	public static void dropletPleaseChatBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody) 
 	{
+		long start = System.nanoTime(), end = 0;
+		long additionalDelay = (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6));
+
+		
 		//0x00/0x01 (1) | reserved (3) | p1 | p2 | ...
 		//<p_i = sr//R_adder(8) | S_addr(8) | iv(16) | len(4) | enc_Data(n) | sig(64) (on 0|1|2|3|4)
 		
@@ -405,6 +409,16 @@ public class ResponseUtilBinConstantTime {
 		
 		while(true)
 		{
+			//reached to the end
+			if(pointer >= postBody.length)
+				break;
+			
+			try
+			{
+			//get the target address for storing in the chat manager class
+			byte[] targetAddressBytes = new byte[8];
+			System.arraycopy(postBody, 4, targetAddressBytes, 0, 8);
+			
 			int newPointer = pointer + 16; //traverse source and dest address
 			byte[] datalenBytes = new byte[4]; //data len
 			System.arraycopy(postBody, newPointer, datalenBytes, 0, 4);
@@ -417,6 +431,27 @@ public class ResponseUtilBinConstantTime {
 			byte[] dataChunk = new byte[newPointer - pointer + 1];
 			System.arraycopy(postBody, pointer, dataChunk, 0, dataChunk.length);
 			
+			MainServer.chatManager.addChat(Base64.getUrlEncoder().encodeToString(targetAddressBytes), dataChunk);		
+			
+			pointer = newPointer;
+			}
+			catch(Exception ex)
+			{
+				//mostly a wrongly formatted post body. Simply exit
+				ex.printStackTrace(System.out);
+			}
 		}
+		
+		
+		//additional delay start
+		long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+		try {
+			TimeUnit.NANOSECONDS.sleep(offset);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		end = System.nanoTime();
+		//additional delay end
+		
 	}
 }

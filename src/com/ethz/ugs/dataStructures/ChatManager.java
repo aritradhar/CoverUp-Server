@@ -24,7 +24,7 @@ import java.util.Map;
 public class ChatManager {
 
 
-	public Map<String, List<byte[]>> AddressChatDataMap;
+	private Map<String, List<byte[]>> AddressChatDataMap;
 
 
 	public ChatManager() {
@@ -46,7 +46,7 @@ public class ChatManager {
 		return dataToRet;
 	}
 
-	public void putChat(String publicAddress, byte[] data)
+	public void addChat(String publicAddress, byte[] data)
 	{
 		if(!AddressChatDataMap.containsKey(publicAddress))
 		{

@@ -52,6 +52,7 @@ import org.apache.commons.io.IOUtils;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
+import com.ethz.ugs.dataStructures.ChatManager;
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.test.InitialGen;
 import com.lowagie.text.pdf.codec.Base64.OutputStream;
@@ -77,7 +78,8 @@ public class MainServer extends HttpServlet {
 
 	private Map<String, byte[]> sharedSecretMap;
 	public String broadCastMessage;
-
+	public static ChatManager chatManager;
+	
 	public static Logger logger = Logger.getLogger(MainServer.class.getName());
 
 	public static volatile int C = 0;
@@ -88,8 +90,11 @@ public class MainServer extends HttpServlet {
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 
+		//initiate the client state for interactive data management
 		MainServer.clientState = new ClientState();
-
+		//Initiate the chat manager for client chat management 
+		MainServer.chatManager = new ChatManager();
+		
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
 		MainServer.logger.addHandler(fileH);
