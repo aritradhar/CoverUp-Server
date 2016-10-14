@@ -85,11 +85,11 @@ public class ResponseUtilBinConstantTimeChat {
 
 			if(MainServer.chatManager.containSSLId(sslId))
 			{
-				byte[] postBody = null;
-				byte[] toSend = getEncSlice(request, postBody, privateKey);
+				byte[] toSend = MainServer.chatManager.getChat(sslId);
 
 				if(toSend == null)	
 				{
+					//send garbage in this case
 					byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 					rand.nextBytes(garbageReturn);
 					
@@ -105,8 +105,9 @@ public class ResponseUtilBinConstantTimeChat {
 					
 					out.write(garbageReturn);
 				}
+				//chat data :D
 				else	
-				{
+				{			
 					//additional delay start
 					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 					try {
@@ -115,8 +116,7 @@ public class ResponseUtilBinConstantTimeChat {
 						e.printStackTrace();
 					}
 					end = System.nanoTime();
-					//additional delay end
-					
+					//additional delay end					
 					out.write(toSend);
 				}
 				
@@ -166,9 +166,6 @@ public class ResponseUtilBinConstantTimeChat {
 			response.flushBuffer();
 		}
 	}
-
-
-
 		
 	/**
 	 * Serves chat data
@@ -231,6 +228,8 @@ public class ResponseUtilBinConstantTimeChat {
 			e.printStackTrace();
 		}
 		end = System.nanoTime();
+		
+		MainServer.logger.info("Chat packet : " + (end - start)  + " ns");
 		//additional delay end
 		
 	}

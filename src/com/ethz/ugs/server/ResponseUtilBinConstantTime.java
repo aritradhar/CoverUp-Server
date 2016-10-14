@@ -106,12 +106,9 @@ public class ResponseUtilBinConstantTime {
 					
 					out.write(garbageReturn);
 				}
-				//somehow interactive data failed. Send random garbage.
+				//Interactive data :D
 				else	
 				{
-					//send random garbage
-					toSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
-					rand.nextBytes(toSend);
 					//additional delay start
 					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 					try {
