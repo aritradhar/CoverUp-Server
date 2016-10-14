@@ -340,10 +340,10 @@ public class ResponseUtilBinConstantTime {
 
 
 		//TODO old structure. Needs to incorporate signature and IV
-		byte[] toSendWOpadding = new byte[24 + ENV.INTR_MARKER_LEN + sliceDataBytes.length];
+		byte[] toSendWOpadding = new byte[24 + ENV.INTR_MAGIC_BYTES_LEN + sliceDataBytes.length];
 
-		byte[] magicBytes = new byte[ENV.INTR_MARKER_LEN];
-		Arrays.fill(magicBytes, ENV.INTR_MARKER);
+		byte[] magicBytes = new byte[ENV.INTR_MAGIC_BYTES_LEN];
+		Arrays.fill(magicBytes, ENV.INTR_MAGIC_BYTES);
 		int tillNow = 0;
 		System.arraycopy(packetlenBytes, 0, toSendWOpadding, tillNow, 4);
 		tillNow += 4;
