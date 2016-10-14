@@ -299,8 +299,10 @@ public class ParamCalc
 		/*Long[] arr = new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
 				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L}; */
 		
-		Long[] arr = new Long[]{5000L, 10000L, 
-				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};
+		/*Long[] arr = new Long[]{5000L, 10000L, 
+				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};*/
+		
+		Long[] arr = new Long[]{1000L, 5000L, 10000L, 50000L,100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};
 		
 		List<Long> bucketLenArr = Arrays.asList(arr);
 
@@ -320,9 +322,17 @@ public class ParamCalc
 					//"Traces\\bigTrace\\noInt.log.8",
 					//"Traces\\bigTrace\\int.log.8",
 					
-					"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv",
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv",
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv"
 					
-					"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv"
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\all_read\\data_10000_200_noInt_1476205905277.csv",
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv"
+					
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_120000_200_noInt_1476326329329.csv",
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\all_read\\data_10000_200_noInt_1476205905277.csv"
+					
+					"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_120000_200_noInt_1476326329329.csv",
+					"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv"
 			});
 
 			//System.out.println("----------------");
