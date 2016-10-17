@@ -390,7 +390,7 @@ public class GraphPanel extends JPanel {
 
 			//Collections.shuffle(scores1, new SecureRandom());
 			//zoom in/out
-			int sampleSize = 35000;
+			int sampleSize = 16000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -483,10 +483,16 @@ public class GraphPanel extends JPanel {
 							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
 									+ "Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv", "No ext"*/
 							
-							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
+							/*"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
 									+ "Measurements\\Data\\JS_new\\nw noise\\all_read\\data_10000_200_noInt_1476205905277.csv", "All intercept read",
 							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
-									+ "Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv", "No ext"
+									+ "Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv", "No ext"*/
+							
+							"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\"
+							+ "Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\m1.csv", "All intercept read",
+							
+							"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\"
+							+ "Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\m1.csv", "No ext"
 							
 									//"Traces\\MainServer.log.4", "Interactive droplets",
 					});
