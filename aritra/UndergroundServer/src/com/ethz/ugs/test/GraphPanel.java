@@ -304,8 +304,8 @@ public class GraphPanel extends JPanel {
 					//k++;
 					long l = Long.parseLong(st);
 
-					if(l > 50000000L)
-						continue;
+					//if(l > 50000000L)
+					//	continue;
 
 					scores1.add(l);
 				}
@@ -390,7 +390,7 @@ public class GraphPanel extends JPanel {
 
 			//Collections.shuffle(scores1, new SecureRandom());
 			//zoom in/out
-			int sampleSize = 16000;
+			int sampleSize = 20000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -494,7 +494,8 @@ public class GraphPanel extends JPanel {
 							"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\"
 							+ "Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\m1.csv", "No ext"
 							
-									//"Traces\\MainServer.log.4", "Interactive droplets",
+							//"server_work_space\\MainServer.log", "bla"
+
 					});
 
 					List<InputStream> pdfs = new ArrayList<InputStream>();
