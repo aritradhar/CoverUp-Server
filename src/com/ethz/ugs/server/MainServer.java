@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -232,6 +233,7 @@ public class MainServer extends HttpServlet {
 
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
+		//response.setHeader("X-Frame-Options", "SAMEORIGIN");
 
 		if(flag1 != null)
 		{
@@ -323,6 +325,13 @@ public class MainServer extends HttpServlet {
 				responseStr.append("----------------------------------\n");
 			}
 			response.getWriter().append(responseStr.toString());
+			response.flushBuffer();
+		}
+		
+		else if(flag.equals("testframe"))
+		{
+			byte[] bytes = Files.readAllBytes(new File("test.html").toPath());
+			response.getOutputStream().write(bytes);
 			response.flushBuffer();
 		}
 
