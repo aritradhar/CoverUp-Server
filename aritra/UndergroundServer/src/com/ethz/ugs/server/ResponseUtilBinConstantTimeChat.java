@@ -75,7 +75,7 @@ public class ResponseUtilBinConstantTimeChat {
 	{
 		long start = System.nanoTime(), end = 0;
 
-		long additionalDelay = (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6));
+		long additionalDelay = ENV.SIMULATE_NW_NOISE ? (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6)) : 0;
 
 		OutputStream out = response.getOutputStream();
 		//garbage
@@ -177,7 +177,7 @@ public class ResponseUtilBinConstantTimeChat {
 	public static void dropletPleaseChatBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody) throws IOException 
 	{
 		long start = System.nanoTime(), end = 0;
-		long additionalDelay = (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6));
+		long additionalDelay = ENV.SIMULATE_NW_NOISE ? (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6)) : 0;
 		String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 
 		OutputStream out = response.getOutputStream();

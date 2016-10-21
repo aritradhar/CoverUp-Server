@@ -89,4 +89,6 @@ public class ENV {
 	public static final long FIXED_REQUEST_PROCESSING_TIME_NANO = 45000000L;
 	public static final long FIXED_REQUEST_PROCESSING_TIME_MILI = 45L;
 	
+	
+	public static final boolean SIMULATE_NW_NOISE = false;
 }
