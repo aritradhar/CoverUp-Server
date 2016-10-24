@@ -226,6 +226,8 @@ public class MainServer extends HttpServlet {
 			C += 1;
 			C %= 4;
 		}
+		
+		//response.setBufferSize(120000);
 
 
 		String flag = request.getParameter("flag");
@@ -331,6 +333,13 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("testframe"))
 		{
 			byte[] bytes = Files.readAllBytes(new File("test.html").toPath());
+			response.getOutputStream().write(bytes);
+			response.flushBuffer();
+		}
+		
+		else if(flag.equals("testframe_1"))
+		{
+			byte[] bytes = Files.readAllBytes(new File("test_1.html").toPath());
 			response.getOutputStream().write(bytes);
 			response.flushBuffer();
 		}
@@ -627,6 +636,12 @@ public class MainServer extends HttpServlet {
 					response.flushBuffer();
 				}
 			}
+			
+			else if(postBody[0] == 0x02)
+			{
+				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+			}
+			
 			else
 			{
 				response.getWriter().append("Header against specification");

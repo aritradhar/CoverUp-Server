@@ -257,7 +257,6 @@ public class ResponseUtilBinConstantTimeChat {
 			out.write(toSend);
 		}
 
-
 		//additional delay start
 		long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 		try {

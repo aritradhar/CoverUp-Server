@@ -1,0 +1,575 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+        <script>
+
+            var SOURCES
+            var SOURCES_TLS = [["tildem", "https://tildem.inf.ethz.ch:8443/UndergroundServer/MainServer?flag=tablePlease", "https://tildem.inf.ethz.ch:8443/UndergroundServer/MainServer?flag=dropletPleaseBinConst"],
+                                ["tildem", "https://tildem.inf.ethz.ch:8443/UndergroundServer/MainServer?flag=tablePlease", "https://tildem.inf.ethz.ch:8443/UndergroundServer/MainServer?flag=dropletPleaseBinProb"]];
+            var SOURCES_HTTP = [["tildem", "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=tablePlease", "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBinConst"],
+                                ["tildem", "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=tablePlease", "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBinProb"]];
+
+            var TABLE_SUFFIX = "-table";
+            var MAGIC = "BQVZ"
+
+            var requestTable = function (name, tableURL) {
+                var ajax = new XMLHttpRequest();
+                ajax.open("POST", tableURL, true);
+                ajax.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            console.log("TABLE :::: Status: 200: Recieved table and wrote to storage: " + this.responseText);
+                            localStorage[MAGIC + "-" + name + TABLE_SUFFIX] = this.responseText;
+
+                        } else {
+                            console.log("Table Receive error: Status: " + this.status);
+                        }
+                    }
+                };
+                ajax.send(null);
+            }
+
+            function get_droplet(name, dropletURL) {
+                var data = "0,0," + Array(300 + 1).join("A");
+
+                var ajax = new XMLHttpRequest();
+
+                ajax.open("POST", dropletURL, true);
+
+                ajax.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            console.log("DROPLET :::: Status: 200: Wrote to storage: " + this.responseText);
+                            localStorage[MAGIC + "-" + name] = this.responseText;
+                            //alert(this.responseText);
+                        } else {
+                            console.log("Error in droplet request. Status: " + this.status);
+                            //alert(this.statusText);
+                        }
+                    }
+                };
+                ajax.send(data);
+            }
+
+            function get_droplet_binary(name, dropletURL) {
+                var boringArray = [0];
+                var interactiveArray = [1, 0, 0, 0, 157, 205, 97, 154, 142, 232, 93, 210, 91, 191, 228, 18, 177, 247, 22, 160, 0, 0, 0, 72, 13, 66, 45, 183, 153, 174, 154, 235, 50, 197, 6, 187, 70, 36, 130, 41, 27, 198, 65, 197, 46, 247, 163, 123, 26, 9, 238, 178, 119, 139, 55, 199, 9, 13, 247, 87, 100, 75, 154, 241, 3, 170, 111, 11, 93, 149, 123, 68, 61, 214, 215, 143, 13, 18, 150, 140, 55, 14, 254, 1, 74, 236, 47, 216, 18, 139, 29, 14, 175, 88, 27, 168];
+                var sendingBuffer = new ArrayBuffer(300);
+                var data = new Uint8Array(sendingBuffer);
+                data.set(boringArray);
+
+                //var data =  "0,0," + Array(300+1).join("A");
+
+                var ajax = new XMLHttpRequest();
+
+                ajax.responseType = "arraybuffer";
+                ajax.open("POST", dropletURL, true);
+                ajax.onload = function (event) {
+                    var arrayBuffer = ajax.response; // Note: not ajax.responseText
+                    if (arrayBuffer) {
+                        var base64 = btoa(String.fromCharCode.apply(null, new Uint8Array(arrayBuffer)))
+                        localStorage[MAGIC + "-" + name] = base64;
+                        /*for (var i = 0; i < byteArray.byteLength; i++) {
+                          // do something with each byte in the array
+                        }*/
+                    }
+                };
+                /*    
+                ajax.onreadystatechange = function() {
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                            } else {
+                               console.log("Error in droplet request. Status: " + this.status);
+                                       //alert(this.statusText);
+                               }
+                        }
+                };*/
+                ajax.send(data);
+            }
+
+            var getPiece = function () {
+                for (var source_idx in SOURCES) {
+                    var source = SOURCES[source_idx];
+                    console.log(source);
+                    var name = source[0];
+                    var tableURL = source[1];
+                    var dropletBaseURL = source[2];
+
+                    console.log("Processing TableURL: " + tableURL);
+                    var tableString = localStorage[MAGIC + "-" + name + TABLE_SUFFIX];
+                    if (tableString == undefined || tableString == "" || tableString == "null") { //check actuality as well
+                        requestTable(name, tableURL);
+                        return;
+                    }
+                    //table = JSON.parse(JSON.parse(tableString).table).table;
+                    //idx = Math.floor(Math.random() * table.length);
+                    //entry = JSON.parse(table[idx].value);
+
+                    get_droplet_binary(name, dropletBaseURL); //+ entry.url)
+                }
+            }
+
+
+            var populateDropletRequest = function () {
+                var str = "";
+
+                for (var source_idx in SOURCES) {
+                    var source = SOURCES[source_idx];
+                    //console.log(source);
+                    var name = source[0];
+                    var tableURL = source[1];
+                    var dropletBaseURL = source[2];
+
+                    //console.log("Processing TableURL: " + tableURL);
+                    var tableString = localStorage[MAGIC + "-" + name + TABLE_SUFFIX];
+                    if (tableString == undefined || tableString == "") { //check actuality as well
+                        requestTable(name, tableURL);
+                        return;
+                    }
+                    var table = JSON.parse(JSON.parse(tableString).table).table;
+                    /*
+                    for(i in table){
+                            entry = JSON.parse(table[i].value);
+                            str = str + '<button onclick="get_droplet(\'' + name + '\', \'' + dropletBaseURL + entry.url +  '\');">' + name + ' ' + i +'</button>';
+                    }*/
+
+                    var long_name = name + " " + dropletBaseURL.split("=")[1];
+                    str = str + '<p><button onclick="get_droplet_binary(\'' + name + '\', \'' + dropletBaseURL + '\');">' + long_name + '</button>';
+                    //str = str + '  <button onclick="get_droplet_binary(\'' + name + '\', \'' + dropletBaseURL +  '\');">' + name + ' binary</button></p>';
+                    //str = str + '<button onclick="get_droplet_binary(\'' + name + '\', \'' + dropletBaseURL +  '\');">' + name + ' binary</button>';
+                }
+                document.getElementById("table").innerHTML = str;
+            }
+
+            function supports_html5_storage() {
+                try {
+                    return 'localStorage' in window && window['localStorage'] !== null;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            function createIFrame() {
+                var iframe = document.createElement('iframe');
+                //iframe.style.display = "none";
+                iframe.sandbox = "allow-scripts allow-same-origin";
+                //distinguish: window.location.protocol
+                iframe.src = "http://192.33.93.15:8080/iframe_scr.html";
+                //iframe.src = "http://127.0.0.1:8080/iframe_scr.html";
+
+                iframe.onload = "update();";
+                document.body.appendChild(iframe);
+            }
+
+            function standardDeviation(values) {
+                var avg = average(values);
+
+                var squareDiffs = values.map(function (value) {
+                    var diff = value - avg;
+                    var sqrDiff = diff * diff;
+                    return sqrDiff;
+                });
+
+                var avgSquareDiff = average(squareDiffs);
+
+                var stdDev = Math.sqrt(avgSquareDiff);
+                return stdDev;
+            }
+
+            function average(data) {
+                var sum = data.reduce(function (sum, value) {
+                    return sum + value;
+                }, 0);
+
+                var avg = sum / data.length;
+                return avg;
+            }
+
+            function runSingleTest() {
+                var tests_total = Number(document.forms["test_form"]["tests_total"].value);
+                var timeout = Number(document.forms["test_form"]["timeout"].value);
+                var dropletURL1 = document.forms["test_form"]["url1"].value;
+                //var dropletURL2 = document.forms["test_form"]["url2"].value;
+                var itr = Number(document.forms["test_form"]["tests_itr"].value);
+
+                doTest(tests_total, timeout, dropletURL1, -1);
+
+            }
+
+            //var testChain = [[10,0],[20,0],[1000,0],[100,0],[1,0],[200,100], [200, 500], [1,1000]];
+            var testChain = [[10000, 0], [200, 500]];
+            var testURLs = ["http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBin", "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBin_1", "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBinFake"];
+            var testVector = [];
+            function genDesc(arr) {
+                var res = [];
+                for (var idx_U_1 in testURLs) {
+                    for (var idx_U_2 in testURLs) {
+                        var orig = [testURLs[idx_U_1], testURLs[idx_U_2]];
+                        for (var idx_D in testChain) {
+                            res.push(orig.concat(testChain[idx_D]));
+                        }
+                    }
+                }
+                testVector = res;
+            }
+            function runSerialTests() {
+                //url1 = "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBin_1";
+                //url2 = "http://tildem.inf.ethz.ch:8085/UndergroundServer/MainServer?flag=dropletPleaseBinFake";
+
+                //var url1 = document.forms["test_form"]["url1"].value;
+                //var url2 = document.forms["test_form"]["url2"].value;
+
+                //var output = "";
+                //for(var idx in desc){
+                genDesc();
+                doTest(testVector[0][2], testVector[0][3], testVector[0][0], testVector[0][1], 0);
+                //}
+            }
+
+            var drURL;
+
+            var dropletRatio;
+
+            function doTest(tests_total, timeout, dropletURL, testChainIdx) {
+
+                // do not touch
+                var resDiv = document.getElementById("testResults");
+                var detailDiv = document.getElementById("testDetails");
+                //var test_num = 0;
+                var animation = ["|", "/", "-", "\\"];
+                var tResURL = new Array();
+                drURL = new Array();
+                var ts;
+
+                //var summary = String(tests_total) + "," + String(timeout);
+
+                // asynchronous workaround
+                var count = 0;
+
+                // decide for mode
+                var array = [0];
+                var intArray = [1, 0, 0, 0, 157, 205, 97, 154, 142, 232, 93, 210, 91, 191, 228, 18, 177, 247, 22, 160, 0, 0, 0, 72, 13, 66, 45, 183, 153, 174, 154, 235, 50, 197, 6, 187, 70, 36, 130, 41, 27, 198, 65, 197, 46, 247, 163, 123, 26, 9, 238, 178, 119, 139, 55, 199, 9, 13, 247, 87, 100, 75, 154, 241, 3, 170, 111, 11, 93, 149, 123, 68, 61, 214, 215, 143, 13, 18, 150, 140, 55, 14, 254, 1, 74, 236, 47, 216, 18, 139, 29, 14, 175, 88, 27, 168];
+
+                var mode = document.forms["test_form"]["isInt"].value;
+
+                dropletRatio = document.forms["test_form"]["dropletRatio"].value;
+                if (mode == "int") {
+                    array = intArray;
+                }
+
+                var sendingBuffer = new ArrayBuffer(300);
+                var data = new Uint8Array(sendingBuffer);
+                data.set(array);
+
+                //for(var i = 0; i< tests_total;++i){
+                function isIdenticalArray(arr1, arr2) {
+                    if (arr1.length != arr2.length)
+                        return false;
+                    var len = arr1.length;
+                    for (var i = 0; i < len; i++) {
+                        if (arr1[i] != arr2[i])
+                            return false;
+                    }
+                    return true;
+                }
+
+                function req() {
+
+                    var ajax_1 = new XMLHttpRequest();
+                    var mode = document.forms["test_form"]["isInt"].value;
+
+                    var noIntarray = [0];
+                    var intArray = [1, 0, 0, 0, 157, 205, 97, 154, 142, 232, 93, 210, 91, 191, 228, 18, 177, 247, 22, 160, 0, 0, 0, 72, 13, 66, 45, 183, 153, 174, 154, 235, 50, 197, 6, 187, 70, 36, 130, 41, 27, 198, 65, 197, 46, 247, 163, 123, 26, 9, 238, 178, 119, 139, 55, 199, 9, 13, 247, 87, 100, 75, 154, 241, 3, 170, 111, 11, 93, 149, 123, 68, 61, 214, 215, 143, 13, 18, 150, 140, 55, 14, 254, 1, 74, 236, 47, 216, 18, 139, 29, 14, 175, 88, 27, 168];
+
+
+                    ajax_1.responseType = "arraybuffer";
+                    ajax_1.open("POST", dropletURL, true);
+                    ajax_1.onload = function (event) {
+                        tResURL.push(performance.now() - ts);
+                        var arrayBuffer = ajax_1.response; // Note: not ajax.responseText
+                        if (arrayBuffer) {
+                            drURL.push(arrayBuffer);
+                            count += 1;
+                            if (count >= tests_total) {
+                                analysis();
+                            }
+                            else {
+                                detailDiv.innerHTML = animation[count % 4] + " " + count;
+                                if (timeout != 0)
+                                    setTimeout(req, timeout);
+                                else
+                                    req();
+                            }
+                        }
+                        else {
+                            console.log("Test Error");
+                        }
+                    };
+
+
+                    if (mode == "mixed") {
+                        if (count % 2 == 0) {
+                            data.set(intArray);
+                            ts = performance.now();
+                            ajax_1.send(data);
+                        }
+                        else {
+                            data.set(noIntarray);
+                            ts = performance.now();
+                            ajax_1.send(data);
+                        }
+                    }
+
+                    else if (mode == "mixedR") {
+                        if (count % dropletRatio == 0) {
+                            data.set(intArray);
+                            ts = performance.now();
+                            ajax_1.send(data);
+                        }
+                        else {
+                            data.set(noIntarray);
+                            ts = performance.now();
+                            ajax_1.send(data);
+                        }
+                    }
+
+                    else {
+                        ts = performance.now();
+                        ajax_1.send(data);
+                    }
+                }
+
+                function analysis() {
+                    var count = 0;
+                    for (e in drURL) {
+                        var array = new Uint32Array(drURL[e]);
+                        if (array[0] == 921925045) {
+                            count += 1;
+                        }
+                    }
+                    console.log("Count: " + count + " ~ " + (count / tests_total));
+
+                    //report
+                    var report = "data:text/csv,";
+                    for (e in tResURL) {
+                        report += "%0A" + tResURL[e];
+                    }
+
+                    var name = "data_" + tests_total + "_" + timeout + "_" + mode + NAME_SUFFIX + "_" + Date.now() + ".csv";
+                    resDiv.innerHTML += "<a download='" + name + "' href='" + report + "'>" + name + "</a><br>";
+
+                    //window.open(report);
+                }
+                req();
+
+
+                /* function analysis(){
+                         if(count_1 != tests_total || count_2 != tests_total){
+                                 //if(timeout != 0)
+                                         setTimeout(req2, timeout);
+                                         return;
+                                 //return; // wait for other to complete
+                         }
+                         // analysis
+                         detailDiv.innerHTML = "Processing data";
+         
+                         // Timing
+                         var str = "";
+                         if(tResURL_1.length != tests_total && tResURL_2.length != tests_total){
+                                 str += "Error Occured";
+                                 summary += "Error Occured";
+                                 return;
+                         }
+                         else{
+                                 function add(a, b) {
+                                         return a + b;
+                                 }
+                                 var sum1 = tResURL_1.reduce(add, 0);
+                                 var sum2 = tResURL_2.reduce(add, 0);
+         
+                                 summary += "," + sum1/tests_total + "," + sum2/tests_total + "," + standardDeviation(tResURL_1) + "," + standardDeviation(tResURL_2);
+                                 str += "<p>avg(t1): " + sum1/tests_total + " (" + standardDeviation(tResURL_1) + ") ms | avg(t2): " + sum2/tests_total + " (" + standardDeviation(tResURL_2) + ") ms</p>";
+                         }
+                         // Format
+                         var dro_1 = {};
+                         var dro_2 = {};
+                         var details = "";
+                         // populate arrays of droplets with seed of droplets as key
+                         for(var i = 0; i<tResURL_1.length; ++i){
+                                 var buf_1 = drURL_1[i];
+                                 dro_1[new Uint8Array(buf_1,8).slice(0,32).join("")] = buf_1;
+         
+                                 var buf_2 = drURL_2[i];
+                                 dro_2[new Uint8Array(buf_2,8).slice(0,32).join("")] = buf_2;
+                         }
+                         var correctOnes = 0;
+                         var nokey = 0;
+                         for(var key in dro_1){
+                                 if (dro_2.hasOwnProperty(key)){
+                                         if(isIdenticalArray(dro_1[key], dro_2[key])){
+                                                 correctOnes += 1;
+                                         }
+                                         else{
+                                                 details += "<p style='color:red;'>droplet with key " + key + " not identical</p>";
+                                         }
+                                 }
+                                 else{
+                                         nokey += 1;
+                                         details += '<p >src1 key ' + key + ' not found in src2</p>';
+                                 }
+                         }
+                         str += "<p>Received " + Object.keys(dro_1).length + " (src1) and " + Object.keys(dro_2).length + " (src2) unique droplets</p>";
+                         str += "<p>Found " + correctOnes + " / " + tResURL_1.length + " identical ones | no key in src2 for " +  nokey + " | incorrect: " + (Object.keys(dro_1).length - correctOnes - nokey) + "</p>";
+                         summary += "," + Object.keys(dro_1).length + "," + Object.keys(dro_2).length + "," + correctOnes + "," + nokey + "," + (Object.keys(dro_1).length - correctOnes - nokey);
+         
+                         str += details;
+                         detailDiv.innerHTML = str;
+         
+         
+                         resDiv.innerHTML += summary + "<br>";
+         
+                         // cleanup
+                         var resDiv = null;
+                         var detailDiv = null;
+                         var animation = null;
+                         var tResURL_1 = null;
+                         var tResURL_2 = null;
+                         var drURL_1 = null;
+                         var drURL_2 = null;
+                         var ts_1 = null;
+                         var ts_2 = null;
+                         var summary = null;
+                         var count_1 = null;
+                         var count_2 = null;
+                     var data = null;
+                         var dro_1 = null;
+                         var dro_2 = null;
+                         var details = null;
+                         var correctOnes = null;
+                         var nokey = null;
+         
+                         if(testChainIdx != -1){
+                                 if(testVector.length > testChainIdx + 1){
+                                         setTimeout(function(){
+                                                 doTest(testVector[testChainIdx+1][2], testVector[testChainIdx+1][3],testVector[testChainIdx+1][0], testVector[testChainIdx+1][1], testChainIdx+1);
+                                         }, 1000);
+                                 }
+                         }
+                 }*/
+
+                //req();
+                //if(timeout == 0)
+                //      req2();
+                // second request
+
+
+                //while(ajax_1.readyState != 4 || ajax_2.readyState != 4){
+                //  continue;
+                //}
+                //resDiv.innerHTML = animation[i % 4];
+                //}
+            }
+
+            /*
+            var broadcastURL = "https://tildem.inf.ethz.ch:8443/UndergroundServer/MainServer?flag=broadCastjson";
+            
+            function get_data() {
+                    var ajax = new XMLHttpRequest();
+            
+                    // ajax.open("GET","http://n.ethz.ch/~sommerda/download/stuff/someText.txt",true); 
+                    ajax.open("GET", broadcastURL, true);
+                    ajax.onreadystatechange = function() {
+                            if (this.readyState == 4) {
+                                    if (this.status == 200) {
+                                            console.log("Status: 200: Wrote to sotrage: " + this.responseText);
+                                            localStorage["index-BBB"] = this.responseText;
+                                            //alert(this.responseText);
+                                    } else {
+                                            console.log("Status?");
+                                            alert(this.statusText);
+                                    }
+                            }
+                    };
+                    console.log("done");
+                    ajax.send(null);
+            }*/
+            /*if (window.location.protocol == "https:"){ 
+                    SOURCES = SOURCES_TLS;
+            }
+            else{
+                    SOURCES = SOURCES_HTTP;
+            }*/
+
+            function parseGETvalues(val) {
+                var result = undefined,
+                    tmp = [];
+                location.search
+                //.replace ( "?", "" ) 
+                // this is better, there might be a question mark inside
+                .substr(1)
+                    .split("&")
+                    .forEach(function (item) {
+                        tmp = item.split("=");
+                        if (tmp[0] === val) result = decodeURIComponent(tmp.slice(1, tmp.length).join("="));
+                    });
+                return result;
+            }
+
+            // expects get arument like: ?auto=true&int=int&num=100&timeout=200&url=https://tildem.inf.ethz.ch:8443/UndergroundServer/MainServer?flag=dropletPleaseBinProb&mode=file://some-mode-url
+            function checkForAutomation() {
+                var auto = parseGETvalues("auto");
+                if (auto != undefined) {
+                    var int = parseGETvalues("int");
+                    var num = parseGETvalues("num");
+                    var timeout = parseGETvalues("timeout");
+                    var url = parseGETvalues("url");
+                    var mode = parseGETvalues("mode");
+                    var name = parseGETvalues("name");
+                    console.log("Initiate Automated Test with");
+                    console.log("  int:     " + int);
+                    console.log("  num:     " + num);
+                    console.log("  timeout: " + timeout);
+                    console.log("  url:     " + url);
+                    console.log("  mode:    " + mode);
+
+                    document.forms["test_form"]["tests_total"].value = num;
+                    document.forms["test_form"]["timeout"].value = timeout;
+                    document.forms["test_form"]["url1"].value = url;
+                    document.forms["test_form"]["isInt"].value = int;
+
+                    NAME_SUFFIX = name;
+
+                    if (mode != "")
+                        window.open(mode, '_blank');
+
+                    // send first interactive droplet with data to setup server state:
+                    var interactiveArray = [1, 0, 0, 0, 157, 205, 97, 154, 142, 232, 93, 210, 91, 191, 228, 18, 177, 247, 22, 160, 0, 0, 0, 72, 13, 66, 45, 183, 153, 174, 154, 235, 50, 197, 6, 187, 70, 36, 130, 41, 27, 198, 65, 197, 46, 247, 163, 123, 26, 9, 238, 178, 119, 139, 55, 199, 9, 13, 247, 87, 100, 75, 154, 241, 3, 170, 111, 11, 93, 149, 123, 68, 61, 214, 215, 143, 13, 18, 150, 140, 55, 14, 254, 1, 74, 236, 47, 216, 18, 139, 29, 14, 175, 88, 27, 168];
+                    var sendingBuffer = new ArrayBuffer(300);
+                    var data = new Uint8Array(sendingBuffer);
+                    data.set(interactiveArray);
+                    var ajax = new XMLHttpRequest();
+                    ajax.responseType = "arraybuffer";
+                    ajax.open("POST", url, true);
+                    ajax.onload = function (event) {
+                        var arrayBuffer = ajax.response; // Note: not ajax.responseText
+                        // We don't care about the answer
+                        console.log("First Droplet: " + arrayBuffer);
+                    };
+                    ajax.send(data);
+
+                    // start test in 3 seconds
+                    setTimeout(runSingleTest, 3000);
+                }
+            }
+
+            // use always TLS
+            var NAME_SUFFIX = "";
+            SOURCES = SOURCES_TLS;
+
+
+            console.log(supports_html5_storage());
+
+
+
+        </script>
+</html>
