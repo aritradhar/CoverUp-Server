@@ -576,6 +576,7 @@ public class MainServer extends HttpServlet {
 		//this only supports interactive
 		else if(flag.equals("dropletPleaseBinConst"))
 		{
+			response.setContentType("text/plain");
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
 
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
