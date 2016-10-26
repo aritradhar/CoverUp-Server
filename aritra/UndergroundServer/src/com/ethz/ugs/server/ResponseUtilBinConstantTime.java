@@ -257,8 +257,7 @@ public class ResponseUtilBinConstantTime {
 	IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException
 	{
 		boolean flag = false;
-		//0/1,slice_index, slice_id, key:padding
-
+	
 		int sliceIndex = -1;
 		byte[] aesKeyByte = null;
 
@@ -271,7 +270,7 @@ public class ResponseUtilBinConstantTime {
 		}
 		else if(postBody != null)
 		{
-			//0x00/0x01 (1) | reserved (3) | key (16) | len (4) | slice id (8 * n)| 
+			//0x00/0x01 (1) | reserved (3) | key (16) | num_slices (4) | slice id (8 * n)| 
 			aesKeyByte = new byte[ENV.AES_KEY_SIZE];
 			System.arraycopy(postBody, 4, aesKeyByte, 0, ENV.AES_KEY_SIZE);
 			byte[] lenBytes = new byte[4];
