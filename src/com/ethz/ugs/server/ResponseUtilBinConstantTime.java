@@ -142,7 +142,7 @@ public class ResponseUtilBinConstantTime {
 				out.write(garbageReturn);
 			}
 			
-			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -163,7 +163,7 @@ public class ResponseUtilBinConstantTime {
 			end = System.nanoTime();
 			//additional delay end
 			out.write(packetToSend);
-			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -235,7 +235,7 @@ public class ResponseUtilBinConstantTime {
 			out.write(toSend);
 		}
 
-		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
+		//MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();
 		response.flushBuffer();
@@ -275,8 +275,8 @@ public class ResponseUtilBinConstantTime {
 			System.arraycopy(postBody, 4, aesKeyByte, 0, ENV.AES_KEY_SIZE);
 			byte[] lenBytes = new byte[4];
 			System.arraycopy(postBody, ENV.AES_KEY_SIZE + 4, lenBytes, 0, 4);
-			int len = ByteBuffer.wrap(lenBytes).getInt();
-			int numSliceId = len / 8;
+			int numSliceId = ByteBuffer.wrap(lenBytes).getInt();
+			//int numSliceId = len ;
 
 			List<Long> sliceIds = new ArrayList<>();
 			for(int i = 0; i < numSliceId; i++)
@@ -285,6 +285,7 @@ public class ResponseUtilBinConstantTime {
 				System.arraycopy(postBody, ENV.AES_KEY_SIZE + 8 + i * 8, sliceIdBytes, 0, 8);
 				long sliceId = ByteBuffer.wrap(sliceIdBytes).getLong();
 				sliceIds.add(sliceId);
+				System.out.println(sliceId);
 			}
 			MainServer.clientState.addState(sslId, sliceIds, aesKeyByte);
 		}

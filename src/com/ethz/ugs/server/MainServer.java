@@ -58,6 +58,8 @@ import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.test.InitialGen;
 import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
+import sun.awt.Symbol;
+
 
 /**
  * Main server class for underground server implementation
@@ -81,7 +83,7 @@ public class MainServer extends HttpServlet {
 	public String broadCastMessage;
 	public static ChatManager chatManager;
 
-	public static Logger logger = Logger.getLogger(MainServer.class.getName());
+	//public static Logger logger = Logger.getLogger(MainServer.class.getName());
 
 	public static volatile int C = 0;
 	public static final char[] charC = {'|', '/', '-', '\\'};
@@ -96,9 +98,9 @@ public class MainServer extends HttpServlet {
 		//Initiate the chat manager for client chat management 
 		MainServer.chatManager = new ChatManager();
 
-		FileHandler fileH = new FileHandler("MainServer.log", true);
-		fileH.setFormatter(new SimpleFormatter());
-		MainServer.logger.addHandler(fileH);
+		//FileHandler fileH = new FileHandler("MainServer.log", true);
+		//fileH.setFormatter(new SimpleFormatter());
+		//MainServer.logger.addHandler(fileH);
 
 		this.sharedSecretMap = new HashMap<>();
 
@@ -226,7 +228,7 @@ public class MainServer extends HttpServlet {
 			C += 1;
 			C %= 4;
 		}
-		
+
 		//response.setBufferSize(120000);
 
 
@@ -329,14 +331,14 @@ public class MainServer extends HttpServlet {
 			response.getWriter().append(responseStr.toString());
 			response.flushBuffer();
 		}
-		
+
 		else if(flag.equals("testframe"))
 		{
 			byte[] bytes = Files.readAllBytes(new File("test.html").toPath());
 			response.getOutputStream().write(bytes);
 			response.flushBuffer();
 		}
-		
+
 		else if(flag.equals("testframe_1"))
 		{
 			byte[] bytes = Files.readAllBytes(new File("test_1.html").toPath());
@@ -566,9 +568,9 @@ public class MainServer extends HttpServlet {
 				response.flushBuffer();
 			}
 			//System.out.println(1);
-			System.out.println(flag + " " + request.getRemoteAddr());
-			System.out.println(charC[C]);
-			System.out.println("-------------------------------------");
+			//System.out.println(flag + " " + request.getRemoteAddr());
+			//System.out.println(charC[C]);
+			//System.out.println("-------------------------------------");
 		}
 
 		//TODO interactive
@@ -578,6 +580,8 @@ public class MainServer extends HttpServlet {
 		{
 			response.setContentType("text/plain");
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+			//System.out.println(new String(postBody));
+			postBody = Base64.getDecoder().decode(new String(postBody));
 
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 			if(sslId == null)
@@ -637,21 +641,21 @@ public class MainServer extends HttpServlet {
 					response.flushBuffer();
 				}
 			}
-			
+
 			else if(postBody[0] == 0x02)
 			{
 				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
 			}
-			
+
 			else
 			{
 				response.getWriter().append("Header against specification");
 				response.flushBuffer();
 			}
 			//System.out.println(1);
-			System.out.println(flag + " " + request.getRemoteAddr());
+			/*System.out.println(flag + " " + request.getRemoteAddr());
 			System.out.println(charC[C]);
-			System.out.println("-------------------------------------");
+			System.out.println("-------------------------------------");*/
 		}
 
 		//TODO chat
@@ -700,7 +704,7 @@ public class MainServer extends HttpServlet {
 					response.flushBuffer();
 				}
 			}
-			
+
 			//chat
 			else if(postBody[0] == 0x02)
 			{
@@ -717,6 +721,131 @@ public class MainServer extends HttpServlet {
 			System.out.println("-------------------------------------");
 		}
 
+
+
+
+
+
+		////////////////////////////////////////
+		//Mixed Mode -> intr/char
+		/////////////////////////////////////////
+
+		else if(flag.equals("dropletPleaseMix"))
+		{
+			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+
+			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			if(sslId == null)
+			{
+				response.getWriter().append("Non TLS/SSL connection terminated");
+				response.flushBuffer();
+				return;
+			}
+			//broadcast
+
+			if(Math.random() <= 0.5)
+			{
+				if(postBody == null || postBody.length == 0)
+				{
+					try
+					{
+						ResponseUtilBinConstantTimeChat.dropletPleaseBin(request, response, this.privateKey);
+					}
+					catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+							InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
+					{
+						response.getWriter().append(ex.getMessage());
+						response.flushBuffer();
+					}
+				}
+				//broadcast
+				else if(postBody[0] == 0x00)
+				{
+					try {
+						ResponseUtilBinConstantTimeChat.dropletPleaseBin(request, response, this.privateKey);
+					} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+							InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+						e.printStackTrace();
+
+						byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+						new SecureRandom().nextBytes(ret);
+						ServletOutputStream out = response.getOutputStream();
+						out.write(ret);
+						out.flush();
+						out.close();
+						response.flushBuffer();
+					}
+				}
+			}
+			else
+			{
+				if(postBody == null || postBody.length == 0)
+				{
+					try
+					{
+						ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+					}
+					catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+							InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
+					{
+						response.getWriter().append(ex.getMessage());
+						response.flushBuffer();
+					}
+				}
+				//broadcast
+				else if(postBody[0] == 0x00)
+				{
+					try {
+						ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+					} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
+							InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+						e.printStackTrace();
+
+						byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+						new SecureRandom().nextBytes(ret);
+						ServletOutputStream out = response.getOutputStream();
+						out.write(ret);
+						out.flush();
+						out.close();
+						response.flushBuffer();
+					}
+				}
+			}
+
+			//intr
+			if(postBody[0] == 0x01)
+			{
+				try {
+					ResponseUtilBinConstantTime.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
+
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					e.printStackTrace();
+
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
+			}
+			//chat
+			else if(postBody[0] == 0x02)
+			{
+				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+			}
+			else
+			{
+				response.getWriter().append("Header against specification");
+				response.flushBuffer();
+			}
+			//System.out.println(1);
+			System.out.println(flag + " " + request.getRemoteAddr());
+			System.out.println(charC[C]);
+			System.out.println("-------------------------------------");
+		}
 
 		else if(flag.equals("end"))
 		{
