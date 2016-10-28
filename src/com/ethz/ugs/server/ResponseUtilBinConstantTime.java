@@ -162,7 +162,7 @@ public class ResponseUtilBinConstantTime {
 			}
 			end = System.nanoTime();
 			//additional delay end
-			out.write(packetToSend);
+			System.out.println(Base64.getEncoder().encodeToString(packetToSend));
 			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
