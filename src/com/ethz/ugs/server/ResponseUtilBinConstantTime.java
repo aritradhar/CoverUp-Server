@@ -142,7 +142,7 @@ public class ResponseUtilBinConstantTime {
 				out.write(garbageReturn);
 			}
 			
-			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -152,7 +152,7 @@ public class ResponseUtilBinConstantTime {
 		else
 		{
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
-
+		
 			//additional delay start
 			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 			try {
@@ -163,7 +163,7 @@ public class ResponseUtilBinConstantTime {
 			end = System.nanoTime();
 			//additional delay end
 			out.write(packetToSend);
-			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
+			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -235,7 +235,7 @@ public class ResponseUtilBinConstantTime {
 			out.write(toSend);
 		}
 
-		//MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
+		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();
 		response.flushBuffer();
@@ -243,6 +243,7 @@ public class ResponseUtilBinConstantTime {
 
 	/**
 	 * Get encrypted slice data with signature :D
+	 * make stuff with padding all all bells and whistles or whatever
 	 * @param request
 	 * @param postBody
 	 * @return
@@ -285,7 +286,7 @@ public class ResponseUtilBinConstantTime {
 				System.arraycopy(postBody, ENV.AES_KEY_SIZE + 8 + i * 8, sliceIdBytes, 0, 8);
 				long sliceId = ByteBuffer.wrap(sliceIdBytes).getLong();
 				sliceIds.add(sliceId);
-				System.out.println(sliceId);
+				//System.out.println(sliceId);
 			}
 			MainServer.clientState.addState(sslId, sliceIds, aesKeyByte);
 		}

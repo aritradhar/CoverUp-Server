@@ -27,26 +27,34 @@ public class ChatManager {
 
 
 	private Map<String, List<byte[]>> AddressChatDataMap;
-	private Map<String, String> sslIfPublicAddressMap;
+	private Map<String, String> AddressSSLMap;
 
 
 	public ChatManager() {
 		this.AddressChatDataMap = new HashMap<>();
-		this.sslIfPublicAddressMap = new HashMap<>();
+		this.AddressSSLMap = new HashMap<>();
 	}
 	
 	public boolean containSSLId(String sslId)
 	{
-		return this.sslIfPublicAddressMap.containsKey(sslId);
+		return this.AddressSSLMap.containsValue(sslId);
 	}
 	
 	public byte[] getChat(String sslId)
 	{
-		if(!this.sslIfPublicAddressMap.containsKey(sslId))
+		if(!this.AddressSSLMap.containsValue(sslId))
 			throw new RuntimeException(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING);
 		
-		String publicAddress = this.sslIfPublicAddressMap.get(sslId);
-		return getChatbyAddress(publicAddress);
+		for(String address : AddressSSLMap.keySet())
+		{
+			String fetchedSSLId = AddressSSLMap.get(address);
+			if(sslId.equals(fetchedSSLId))
+			{
+				return getChatbyAddress(address);
+			}
+		}
+		
+		return null;
 	}
 
 	public byte[] getChatbyAddress(String publicAddress)
@@ -64,33 +72,25 @@ public class ChatManager {
 		return dataToRet;
 	}
 	
-	public void addChat(String sslId, String publicAddress, byte[] data)
+	public void addChat(String sourceSSLId, String sourceAddress, String targetAddress, byte[] data)
 	{
-		sslIfPublicAddressMap.put(sslId, publicAddress);
-		this.addChatByAddress(publicAddress, data);
-	}
-	
-	public void addChat(String sslId, byte[] data)
-	{
-		String publicAddress = this.sslIfPublicAddressMap.get(sslId);
-		this.addChatByAddress(publicAddress, data);
-	}
-
-	public void addChatByAddress(String publicAddress, byte[] data)
-	{
-		if(!AddressChatDataMap.containsKey(publicAddress))
+		//renew the ssl id corresponding to the 
+		if(AddressChatDataMap.containsKey(sourceAddress))
+			AddressSSLMap.put(sourceAddress, sourceSSLId);
+		
+		if(!AddressChatDataMap.containsKey(targetAddress))
 		{
-			List<byte[]> chataData = new ArrayList<>();
-			chataData.add(data);
-			this.AddressChatDataMap.put(publicAddress, chataData);
-
+			List<byte[]> chatData = AddressChatDataMap.get(targetAddress);
+			if(chatData == null)
+				chatData = new ArrayList<>();		
+			chatData.add(data);
+			AddressChatDataMap.put(targetAddress, chatData);
+			AddressSSLMap.put(sourceAddress, sourceSSLId);
 		}
-		else
-		{
-			List<byte[]> chataData = AddressChatDataMap.get(publicAddress);
-			chataData.add(data);
-			this.AddressChatDataMap.put(publicAddress, chataData);
-		}
-
+		
+		//if the target address is new to system
+		if(!AddressSSLMap.containsKey(targetAddress))
+			AddressSSLMap.put(targetAddress, null);
+		
 	}
 }
