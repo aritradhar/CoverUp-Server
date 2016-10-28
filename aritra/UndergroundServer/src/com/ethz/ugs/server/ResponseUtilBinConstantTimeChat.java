@@ -181,49 +181,52 @@ public class ResponseUtilBinConstantTimeChat {
 		String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 
 		OutputStream out = response.getOutputStream();
-		//0x00/0x01 (1) | reserved (3) | p1 | p2 | ...
+		//0x00/0x01 (1) | reserved (3) | len  | data | signature
 		//<p_i = sr//R_adder(8) | S_addr(8) | iv(16) | len(4) | enc_Data(n) | sig(64) (on 0|1|2|3|4)
 
 		int pointer = 4;
 
-		while(true)
+		//while(true)
+		//{
+		//reached to the end
+		//if(pointer >= postBody.length)
+		//	break;
+		try
 		{
-			//reached to the end
-			if(pointer >= postBody.length)
-				break;
+			
+			byte[] datalenBytes = new byte[4]; //data len
+			System.arraycopy(postBody, pointer, datalenBytes, 0, 4);
+			int dataLen = ByteBuffer.wrap(datalenBytes).getInt();
+			pointer += 4; //add offset for datalen
+			
+			//get the target address for storing in the chat manager class
+			byte[] targetAddressBytes = new byte[8];
+			System.arraycopy(postBody, pointer, targetAddressBytes, 0, 8);
+			
+			byte[] originAddress = new byte[8];
+			System.arraycopy(postBody, pointer + 8, originAddress, 0, 8);
+			
+			System.out.println(Base64.getEncoder().encodeToString(targetAddressBytes));
 
-			try
-			{
-				//get the target address for storing in the chat manager class
-				byte[] targetAddressBytes = new byte[8];
-				System.arraycopy(postBody, 4, targetAddressBytes, 0, 8);
+			//do not increment the pointer as we need the whole data
+			byte[] dataChunk = new byte[dataLen]; //datalen  this also include 64 bytes for signature
+			System.arraycopy(postBody, pointer, dataChunk, 0, dataChunk.length);
 
-				int newPointer = pointer + 16; //traverse source and dest address
-				byte[] datalenBytes = new byte[4]; //data len
-				System.arraycopy(postBody, newPointer, datalenBytes, 0, 4);
-				int datalen = ByteBuffer.wrap(datalenBytes).getInt();
-				newPointer += 4; //add offset for datalen
-
-				newPointer += datalen; //add offset for data length
-				newPointer += 64; //add offset for ed25519 signature length
-
-				byte[] dataChunk = new byte[newPointer - pointer + 1];
-				System.arraycopy(postBody, pointer, dataChunk, 0, dataChunk.length);
-
-				MainServer.chatManager.addChat(sslId, Base64.getUrlEncoder().encodeToString(targetAddressBytes), dataChunk);		
-
-				pointer = newPointer;
-			}
-			catch(Exception ex)
-			{
-				//mostly a wrongly formatted post body. Simply exit
-				ex.printStackTrace(System.out);
-			}
+			MainServer.chatManager.addChat(sslId, Base64.getUrlEncoder().encodeToString(originAddress), 
+					Base64.getUrlEncoder().encodeToString(targetAddressBytes), dataChunk);		
 		}
+		catch(Exception ex)
+		{
+			//mostly a wrongly formatted post body. Simply exit
+			ex.printStackTrace(System.out);
+		}
+		//}
+
 		//send chat data here
 
-		byte[] toSend = MainServer.chatManager.getChat(sslId);
-
+		byte[] toSendWOPadding = MainServer.chatManager.getChat(sslId);
+		byte[] toSend = makeChatPacket(toSendWOPadding);
+		
 		if(toSend == null)	
 		{
 			//send garbage in this case
@@ -241,6 +244,8 @@ public class ResponseUtilBinConstantTimeChat {
 			//additional delay end
 
 			out.write(garbageReturn);
+			out.flush();
+			return;
 		}
 		//chat data :D
 		else	
@@ -255,8 +260,10 @@ public class ResponseUtilBinConstantTimeChat {
 			end = System.nanoTime();
 			//additional delay end					
 			out.write(toSend);
+			out.flush();
+			return;
 		}
-
+		/*
 		//additional delay start
 		long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 		try {
@@ -264,7 +271,7 @@ public class ResponseUtilBinConstantTimeChat {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		end = System.nanoTime();
+		end = System.nanoTime();*/
 
 		//MainServer.logger.info("Chat packet : " + (end - start)  + " ns");
 		//additional delay end
