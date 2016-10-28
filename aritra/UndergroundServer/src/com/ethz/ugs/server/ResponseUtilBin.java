@@ -151,7 +151,7 @@ public class ResponseUtilBin {
 		//System.out.println(response.getHeader("x-flag"));
 
 		long end = System.nanoTime();
-		MainServer.logger.info("Table : " + (end - start) + " ns");
+		//MainServer.logger.info("Table : " + (end - start) + " ns");
 
 		response.flushBuffer();
 	}
@@ -331,7 +331,7 @@ public class ResponseUtilBin {
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);
 		//System.out.println("x-flag value : " + response.getHeader("x-flag"));
 		long end = System.nanoTime();
-		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
+		//MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
 		response.flushBuffer();
 	}
 
@@ -556,7 +556,7 @@ public class ResponseUtilBin {
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 
 			long end = System.nanoTime();
-			MainServer.logger.info("Droplet bin intr : " + (end - start) + " ns");
+			//MainServer.logger.info("Droplet bin intr : " + (end - start) + " ns");
 
 			response.flushBuffer();
 
@@ -576,7 +576,7 @@ public class ResponseUtilBin {
 		fw.close();
 		 */
 		long end = System.nanoTime();
-		MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
+		//MainServer.logger.info("Droplet Bin : " + (end - start)  + " ns");
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}

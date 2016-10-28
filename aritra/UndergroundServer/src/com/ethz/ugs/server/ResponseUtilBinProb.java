@@ -102,7 +102,7 @@ public class ResponseUtilBinProb {
 				out.write(cipherText);
 			}
 			long end = System.nanoTime();
-			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -146,7 +146,7 @@ public class ResponseUtilBinProb {
 
 			long end = System.nanoTime();
 			out.write(packetToSend);
-			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -205,7 +205,7 @@ public class ResponseUtilBinProb {
 
 
 		long end = System.nanoTime();
-		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
+		//MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();
 		response.flushBuffer();

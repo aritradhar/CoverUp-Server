@@ -248,7 +248,7 @@ public class ResponseUtilBinHP {
 
 			//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 			long end = System.nanoTime();
-			MainServer.logger.info("Droplet Bin HP : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet Bin HP : " + (end - start)  + " ns");
 
 			response.flushBuffer();
 
@@ -267,7 +267,7 @@ public class ResponseUtilBinHP {
 		fw.flush();
 		fw.close();
 		 */
-		MainServer.logger.info("Droplet Bin : " + (System.nanoTime() - start)  + " ns");
+		//MainServer.logger.info("Droplet Bin : " + (System.nanoTime() - start)  + " ns");
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		response.flushBuffer();		
 	}
@@ -410,7 +410,7 @@ public class ResponseUtilBinHP {
 
 		//System.out.println("len (bytes on line) :: " + packetToSend.length);	
 		long end = System.nanoTime();
-		MainServer.logger.info("Droplet Bin HP : " + (end - start)  + " ns");
+		//MainServer.logger.info("Droplet Bin HP : " + (end - start)  + " ns");
 
 		response.flushBuffer();
 

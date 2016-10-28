@@ -139,7 +139,7 @@ public class ResponseUtilBinConstantTimeChat {
 				out.write(garbageReturn);
 			}
 
-			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -160,7 +160,7 @@ public class ResponseUtilBinConstantTimeChat {
 			end = System.nanoTime();
 			//additional delay end
 			out.write(packetToSend);
-			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -266,7 +266,7 @@ public class ResponseUtilBinConstantTimeChat {
 		}
 		end = System.nanoTime();
 
-		MainServer.logger.info("Chat packet : " + (end - start)  + " ns");
+		//MainServer.logger.info("Chat packet : " + (end - start)  + " ns");
 		//additional delay end
 
 	}
