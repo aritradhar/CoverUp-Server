@@ -216,7 +216,7 @@ public class ResponseUtilBinConstantTimeChat {
 			byte[] originAddress = new byte[8];
 			System.arraycopy(postBody, pointer + 8, originAddress, 0, 8);
 			
-			System.out.println(Base64.getEncoder().encodeToString(targetAddressBytes));
+			//System.out.println(Base64.getEncoder().encodeToString(targetAddressBytes));
 
 			//do not increment the pointer as we need the whole data
 			byte[] dataChunk = new byte[dataLen]; //datalen  this also include 64 bytes for signature
@@ -348,7 +348,7 @@ public class ResponseUtilBinConstantTimeChat {
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] encryptedChatPacket = cipher.doFinal(toSend);      
 
-		System.out.println(encryptedChatPacket);
-		return toSend;
+		//System.out.println(encryptedChatPacket);
+		return encryptedChatPacket;
 	}
 }
