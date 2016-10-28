@@ -80,9 +80,14 @@ public class ChatManager {
 		
 		if(!AddressChatDataMap.containsKey(targetAddress))
 		{
+			List<byte[]> chatData = new ArrayList<>();		
+			chatData.add(data);
+			AddressChatDataMap.put(targetAddress, chatData);
+			AddressSSLMap.put(sourceAddress, sourceSSLId);
+		}
+		else
+		{
 			List<byte[]> chatData = AddressChatDataMap.get(targetAddress);
-			if(chatData == null)
-				chatData = new ArrayList<>();		
 			chatData.add(data);
 			AddressChatDataMap.put(targetAddress, chatData);
 			AddressSSLMap.put(sourceAddress, sourceSSLId);

@@ -644,7 +644,18 @@ public class MainServer extends HttpServlet {
 
 			else if(postBody[0] == 0x02)
 			{
-				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+				try {
+					ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
 			}
 
 			else
@@ -664,10 +675,10 @@ public class MainServer extends HttpServlet {
 		else if(flag.equals("dropletPleaseBinConstChat"))
 		{
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
-			
+
 			//System.out.println(new String(postBody));
 			postBody = Base64.getDecoder().decode(new String(postBody));
-			
+
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 			if(sslId == null)
 			{
@@ -711,7 +722,18 @@ public class MainServer extends HttpServlet {
 			//chat
 			else if(postBody[0] == 0x02)
 			{
-				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+				try {
+					ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
 			}
 			else
 			{
@@ -834,7 +856,18 @@ public class MainServer extends HttpServlet {
 			//chat
 			else if(postBody[0] == 0x02)
 			{
-				ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+				try {
+					ResponseUtilBinConstantTimeChat.dropletPleaseChatBin(request, response, postBody);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+					byte[] ret = new byte[ENV.FIXED_PACKET_SIZE_BIN];
+					new SecureRandom().nextBytes(ret);
+					ServletOutputStream out = response.getOutputStream();
+					out.write(ret);
+					out.flush();
+					out.close();
+					response.flushBuffer();
+				}
 			}
 			else
 			{

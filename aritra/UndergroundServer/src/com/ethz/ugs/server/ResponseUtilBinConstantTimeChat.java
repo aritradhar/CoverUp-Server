@@ -173,19 +173,26 @@ public class ResponseUtilBinConstantTimeChat {
 	 * @param response
 	 * @param postBody
 	 * @throws IOException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
-	public static void dropletPleaseChatBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody) throws IOException 
+	public static void dropletPleaseChatBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody) throws IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException 
 	{
 		long start = System.nanoTime(), end = 0;
 		long additionalDelay = ENV.SIMULATE_NW_NOISE ? (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6)) : 0;
 		String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 
 		OutputStream out = response.getOutputStream();
-		//0x00/0x01 (1) | reserved (3) | len  | data | signature
+		//0x00/0x01 (1) | reserved (3) | packetEncKey(16) | len  | data | signature
 		//<p_i = sr//R_adder(8) | S_addr(8) | iv(16) | len(4) | enc_Data(n) | sig(64) (on 0|1|2|3|4)
 
 		int pointer = 4;
 
+		byte[] packetEnckey = new byte[16];
 		//while(true)
 		//{
 		//reached to the end
@@ -193,7 +200,10 @@ public class ResponseUtilBinConstantTimeChat {
 		//	break;
 		try
 		{
+			System.arraycopy(postBody, pointer, packetEnckey, 0, packetEnckey.length);
 			
+			pointer += packetEnckey.length; // add the offset for packet enc key
+					
 			byte[] datalenBytes = new byte[4]; //data len
 			System.arraycopy(postBody, pointer, datalenBytes, 0, 4);
 			int dataLen = ByteBuffer.wrap(datalenBytes).getInt();
@@ -225,7 +235,7 @@ public class ResponseUtilBinConstantTimeChat {
 		//send chat data here
 
 		byte[] toSendWOPadding = MainServer.chatManager.getChat(sslId);
-		byte[] toSend = makeChatPacket(toSendWOPadding);
+		byte[] toSend = makeChatPacket(toSendWOPadding, packetEnckey);
 		
 		if(toSend == null)	
 		{
@@ -284,10 +294,16 @@ public class ResponseUtilBinConstantTimeChat {
 	 * packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
 	 * @param chatData
 	 * @return
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws InvalidKeyException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
 	 */
-	public static byte[] makeChatPacket(byte[] chatData)
+	public static byte[] makeChatPacket(byte[] chatData, byte[] packetEnckey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException
 	{
-		if(chatData == null)
+		if(chatData == null || packetEnckey == null)
 			return null;
 
 		//packet len (4) | seedlen (4) ->0 | Magic (8) | Data | Padding
@@ -319,6 +335,20 @@ public class ResponseUtilBinConstantTimeChat {
 		System.arraycopy(toSendWOpadding, 0, toSend, 0, toSendWOpadding.length);
 		System.arraycopy(padding, 0, toSend, toSendWOpadding.length, padding.length);
 
+		//encryption entire packet
+		byte[] iv = new byte[ENV.AES_IV_SIZE];	  
+		//generate a secure IV
+		//rand.nextBytes(iv);
+		//bad idea but for now
+		Arrays.fill(iv, (byte) 0x00);
+		SecretKeySpec aesKey = new SecretKeySpec(packetEnckey, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(iv);
+		
+		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+		byte[] encryptedChatPacket = cipher.doFinal(toSend);      
+
+		System.out.println(encryptedChatPacket);
 		return toSend;
 	}
 }
