@@ -201,21 +201,21 @@ public class ResponseUtilBinConstantTimeChat {
 		try
 		{
 			System.arraycopy(postBody, pointer, packetEnckey, 0, packetEnckey.length);
-			
+
 			pointer += packetEnckey.length; // add the offset for packet enc key
-					
+
 			byte[] datalenBytes = new byte[4]; //data len
 			System.arraycopy(postBody, pointer, datalenBytes, 0, 4);
 			int dataLen = ByteBuffer.wrap(datalenBytes).getInt();
 			pointer += 4; //add offset for datalen
-			
+
 			//get the target address for storing in the chat manager class
 			byte[] targetAddressBytes = new byte[8];
 			System.arraycopy(postBody, pointer, targetAddressBytes, 0, 8);
-			
+
 			byte[] originAddress = new byte[8];
 			System.arraycopy(postBody, pointer + 8, originAddress, 0, 8);
-			
+
 			//System.out.println(Base64.getEncoder().encodeToString(targetAddressBytes));
 
 			//do not increment the pointer as we need the whole data
@@ -236,7 +236,7 @@ public class ResponseUtilBinConstantTimeChat {
 
 		byte[] toSendWOPadding = MainServer.chatManager.getChat(sslId);
 		byte[] toSend = makeChatPacket(toSendWOPadding, packetEnckey);
-		
+
 		if(toSend == null)	
 		{
 			//send garbage in this case
@@ -343,7 +343,7 @@ public class ResponseUtilBinConstantTimeChat {
 		Arrays.fill(iv, (byte) 0x00);
 		SecretKeySpec aesKey = new SecretKeySpec(packetEnckey, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
-		
+
 		Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
 		byte[] encryptedChatPacket = cipher.doFinal(toSend);      
