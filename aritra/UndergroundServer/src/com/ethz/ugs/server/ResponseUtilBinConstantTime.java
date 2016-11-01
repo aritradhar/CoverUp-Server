@@ -152,7 +152,7 @@ public class ResponseUtilBinConstantTime {
 		else
 		{
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
-		
+				
 			//additional delay start
 			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
 			try {
@@ -160,7 +160,8 @@ public class ResponseUtilBinConstantTime {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			end = System.nanoTime();
+			out.write(packetToSend);
+			//end = System.nanoTime();
 			//additional delay end
 			//System.out.println(Base64.getEncoder().encodeToString(packetToSend));
 			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
@@ -213,7 +214,8 @@ public class ResponseUtilBinConstantTime {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			end = System.nanoTime();
+			//end = System.nanoTime();
+			
 			//additional delay end
 			
 			out.write(garbageReturn);
@@ -229,7 +231,7 @@ public class ResponseUtilBinConstantTime {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			end = System.nanoTime();
+			//end = System.nanoTime();
 			//additional delay end
 			
 			out.write(toSend);
