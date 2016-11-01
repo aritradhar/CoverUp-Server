@@ -142,7 +142,7 @@ public class ResponseUtilBinConstantTime {
 				out.write(garbageReturn);
 			}
 			
-			MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -162,8 +162,8 @@ public class ResponseUtilBinConstantTime {
 			}
 			end = System.nanoTime();
 			//additional delay end
-			System.out.println(Base64.getEncoder().encodeToString(packetToSend));
-			MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
+			//System.out.println(Base64.getEncoder().encodeToString(packetToSend));
+			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
 			out.close();
 			response.flushBuffer();
@@ -235,7 +235,7 @@ public class ResponseUtilBinConstantTime {
 			out.write(toSend);
 		}
 
-		MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
+		//MainServer.logger.info("Droplet Int packet : " + (end - start)  + " ns");
 		out.flush();
 		out.close();
 		response.flushBuffer();

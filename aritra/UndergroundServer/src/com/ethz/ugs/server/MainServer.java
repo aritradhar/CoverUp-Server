@@ -83,7 +83,7 @@ public class MainServer extends HttpServlet {
 	public String broadCastMessage;
 	public static ChatManager chatManager;
 
-	public static Logger logger = Logger.getLogger(MainServer.class.getName());
+	//public static Logger logger = Logger.getLogger(MainServer.class.getName());
 
 	public static volatile int C = 0;
 	public static final char[] charC = {'|', '/', '-', '\\'};
@@ -98,9 +98,9 @@ public class MainServer extends HttpServlet {
 		//Initiate the chat manager for client chat management 
 		MainServer.chatManager = new ChatManager();
 
-		FileHandler fileH = new FileHandler("MainServer.log", true);
-		fileH.setFormatter(new SimpleFormatter());
-		MainServer.logger.addHandler(fileH);
+		//FileHandler fileH = new FileHandler("MainServer.log", true);
+		//fileH.setFormatter(new SimpleFormatter());
+		//MainServer.logger.addHandler(fileH);
 
 		this.sharedSecretMap = new HashMap<>();
 
