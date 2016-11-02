@@ -86,8 +86,8 @@ public class ENV {
 		BROADCAST_LOCATION = OS_B ? "C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt" : "/home/dhara/broadcast.txt";
 	}
 	
-	public static final long FIXED_REQUEST_PROCESSING_TIME_NANO = 45000000L;
-	public static final long FIXED_REQUEST_PROCESSING_TIME_MILI = 45L;
+	public static final long FIXED_REQUEST_PROCESSING_TIME_NANO = 50000000L;
+	public static final long FIXED_REQUEST_PROCESSING_TIME_MILI = 50L;
 	
 	
 	public static final boolean SIMULATE_NW_NOISE = false;

@@ -255,6 +255,7 @@ public class ResponseUtilBinConstantTimeChat {
 
 			out.write(garbageReturn);
 			out.flush();
+			response.flushBuffer();
 			return;
 		}
 		//chat data :D
@@ -271,6 +272,7 @@ public class ResponseUtilBinConstantTimeChat {
 			//additional delay end					
 			out.write(toSend);
 			out.flush();
+			response.flushBuffer();
 			return;
 		}
 		/*
