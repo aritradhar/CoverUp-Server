@@ -1,0 +1,200 @@
+
+<script>
+
+var TABLE_SUFFIX = "-table";
+var MAGIC = "BQVZ"
+
+var dataChunkSize = 512;
+var dataChunk = new Uint8Array(dataChunkSize);
+
+/*
+// right padding s with c to a total of n chars
+function padR(s, c, n)
+{
+   if(! s || ! c || s.length >= n)
+      return s;
+ 
+   var max = (n - s.length)/c.length;
+  
+   for(var i = 0; i < max; i++)
+      s += c;
+  
+   return s;
+}*/
+
+function exportToCsv(filename, rows)
+{
+   var csvFile = '';
+   for (var i = 0; i < rows.length; i++) {
+      csvFile += String(rows[i]) + "\n";
+   }
+
+   var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+   if (navigator.msSaveBlob) { // IE 10+
+      navigator.msSaveBlob(blob, filename);
+   } else {
+      var link = document.createElement("a");
+      if (link.download !== undefined) { // feature detection
+          // Browsers that support HTML5 download attribute
+          var url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", filename);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      }
+   }
+}
+
+// Return an Array filled with random garbage
+function randomArray(len)
+{
+   var ret = new Uint8Array(len);
+   window.crypto.getRandomValues(ret);
+   return ret;
+   
+   //return Array.apply(null, Array(len)).map(function(_, i) {
+   //   return Math.round(Math.random() * 0xFF);
+   //});
+}
+
+function getRandomInt(min, max)
+{
+   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function requestTable(name, tableURL)
+{
+   var ajax = new XMLHttpRequest();
+   ajax.open("POST", tableURL, true);
+
+   ajax.onreadystatechange = function()
+   {
+      if(this.readyState == 4 && this.status == 200)
+         localStorage[MAGIC + "-" + name + TABLE_SUFFIX] = this.responseText;
+      //else
+      //   console.log("Table Receive error: Status: " + this.status);
+   };
+
+   ajax.send(null);
+}
+
+function getDroplet(dropletData, name, dropletURL)
+{
+   //var data = new Uint8Array(new ArrayBuffer(1024));
+   //data.set(dropletData);
+   var data = dropletData;
+
+   console.log(data);
+
+   var ajax = new XMLHttpRequest();
+   ajax.responseType = "arraybuffer";
+   ajax.open("POST", dropletURL, true);
+   var before = 0;
+   ajax.onload = function(event)
+   {
+      if(ajax.response)
+      {
+	  //get the timing before putting it to local storage
+		 exportToCsv("inframe_" + Date.now(), [Date.now()]);
+         var base64 = btoa(String.fromCharCode.apply(null, new Uint8Array(ajax.response)))
+         localStorage[MAGIC + "-" + name] = base64;
+         //console.log(base64);
+         //console.log("BKLAB " + (Date.now() - before));
+      }
+   };
+
+   before = Date.now();
+   //console.log("BEFORE " + Date.now());
+
+   //console.log(data);
+   ajax.send(data);
+}
+
+function getPiece(dropletData)
+{
+   var tableString = localStorage[MAGIC + "-tildem" + TABLE_SUFFIX];
+   
+   if(tableString == undefined || tableString == "" || tableString == "null")
+      requestTable("tildem", "https://localhost:8443/UndergroundServer/MainServer?flag=tablePlease");
+
+   getDroplet(dropletData, "tildem", "https://localhost:8443/UndergroundServer/MainServer?flag=dropletPleaseBinConstChat");
+}
+
+function getRandomChunk()
+{
+   dataChunk = randomArray(dataChunkSize);
+
+   dataChunk[0] = 0;
+   dataChunk[1] = 0;
+   dataChunk[2] = 0;
+   dataChunk[3] = 0;
+
+   return dataChunk;
+}
+
+function periodicTransmit()
+{
+   //console.log("Sending droplet");
+
+   getPiece(dataChunk);
+
+   // Create the random chunk for the next iteration
+   dataChunk = getRandomChunk();
+
+//   setTimeout(periodicTransmit, 2000);
+//   setTimeout(periodicTransmit, getRandomInt(100, 2000));
+}
+
+function str2ab(str) {
+  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (var i=0, strLen=str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+// returns an array of size dataChunkSize
+function object2ab(obj){
+	//var buf = new Uint8Array(dataChunkSize);
+	for(key in Object.keys(obj)){
+		// throws an error if parseInt(key) > dataChunkSize -1  
+		dataChunk[key] = obj[key];
+	}
+	//return buf.slice(0,parseInt(key)+1);
+	//return dataChunk;
+}
+
+function parseMessage(msg)
+{
+   var type = msg.type;
+   var data = msg.data;
+
+   if(type == "submitData")
+   {
+      //console.log("[JS] submitData: " + data);
+      //dataChunk = new TextEncoder("utf-8").encode(padR(data, "*", 1024));
+      //FIREFOXS: dataChunk = new Uint8Array(Object.values(JSON.parse(data)));
+      object2ab(data);
+
+      //getPiece(dataChunk);
+   }
+}
+
+// Javascript <- contentscript
+window.addEventListener("message", function(event)
+{
+   if(event.source == window && event.data.direction == "contentscript->javascript" && event.data.payload)
+      parseMessage(event.data.payload);      
+});
+
+// The initial chunk
+dataChunk = getRandomChunk();
+setTimeout(periodicTransmit, 2000);
+//setTimeout(periodicTransmit, getRandomInt(1000, 2000));
+
+</script>
+<div id='key' value='shahsheiphoon8voobahdeeWaLohgh'></div>
+

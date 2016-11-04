@@ -80,7 +80,7 @@ public class MainServer extends HttpServlet {
 	private byte[] privateKey;
 
 	private Map<String, byte[]> sharedSecretMap;
-	public String broadCastMessage;
+	//public String broadCastMessage;
 	public static ChatManager chatManager;
 
 	public static Logger logger = Logger.getLogger(MainServer.class.getName());
@@ -132,7 +132,7 @@ public class MainServer extends HttpServlet {
 			//System.out.println("No keys. Generating...");
 			keyGeneration();
 		}
-		this.broadCastMessage = this.readBroadcastFile();
+		//this.broadCastMessage = this.readBroadcastFile();
 
 
 		//dummy initialization
@@ -151,7 +151,7 @@ public class MainServer extends HttpServlet {
 		System.out.println("Default Charset=" + Charset.defaultCharset());    	
 	}
 
-	private String readBroadcastFile() throws IOException
+	/*private String readBroadcastFile() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(ENV.BROADCAST_LOCATION));
 
@@ -164,7 +164,7 @@ public class MainServer extends HttpServlet {
 
 		br.close();
 		return sb.toString();
-	}
+	}*/
 
 	/**
 	 * Generate Curve25519 private and public key pairs
@@ -358,6 +358,22 @@ public class MainServer extends HttpServlet {
 			response.getOutputStream().write(bytes);
 			response.flushBuffer();
 		}
+		
+		else if(flag.equals("testframe_local"))
+		{
+			byte[] bytes = Files.readAllBytes(new File("testframe_local.html").toPath());
+			response.getOutputStream().write(bytes);
+			response.flushBuffer();
+		}
+		
+		else if(flag.equals("tg"))
+		{
+			String fileName = request.getParameter("fileName");
+			byte[] bytes = Files.readAllBytes(new File(fileName).toPath());
+			response.getOutputStream().write(bytes);
+			response.flushBuffer();
+		}
+
 
 		else if(flag.equals("rand"))
 		{
@@ -371,13 +387,13 @@ public class MainServer extends HttpServlet {
 
 		else if(flag.equals("broadCast"))
 		{
-			ResponseUtil.broadCast(request, response, this.broadCastMessage);
+			//ResponseUtil.broadCast(request, response, this.broadCastMessage);
 		}
 
 		//request for sending broadcast json
 		else if(flag.equals("broadCastjson"))
 		{
-			ResponseUtil.broadCastjson(request, response, this.broadCastMessage, this.publicKey, this.privateKey);
+			//ResponseUtil.broadCastjson(request, response, this.broadCastMessage, this.publicKey, this.privateKey);
 		}
 
 

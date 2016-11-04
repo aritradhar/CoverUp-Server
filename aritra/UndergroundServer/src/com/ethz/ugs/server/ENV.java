@@ -50,7 +50,7 @@ public class ENV {
 	public static final int FOUNTAIN_CHUNK_SIZE = 10000;
 	
 	public static String DELIM = "";
-	public static String BROADCAST_LOCATION = null;
+	//public static String BROADCAST_LOCATION = null;
 	
 	public static final boolean PADDING_ENABLE = true;
 	public static final boolean RANDOM_PADDING = false;
@@ -63,6 +63,7 @@ public class ENV {
 	public static String EXCEPTION_MESSAGE_SLICE_ID_MISSING = "EXCEPTION_MESSAGE_SLICE_ID_MISSING";
 	public static String EXCEPTION_MESSAGE_EMPTY_STATE_TABLE = "EXCEPTION_MESSAGE_EMPTY_STATE_TABLE";
 
+	public static final String BROADCAST_SRC = "BROADCAST_SRC";
 	public static final int PUBLIC_ADDRESS_LEN = 8;
 
 
@@ -81,9 +82,9 @@ public class ENV {
 		String OS = System.getProperty("os.name");
 		boolean OS_B = (OS.contains("Windows"));
 		
-		SOURCE_DOCUMENT_LOCATION = OS_B ? "C:\\Source" : "/home/dhara/contents/4k wallpapers/Space";
+		SOURCE_DOCUMENT_LOCATION = OS_B ? "C:\\Source" : BROADCAST_SRC;//"/home/dhara/contents/4k wallpapers/Space";
 		DELIM = OS_B ? "\\" : "/";
-		BROADCAST_LOCATION = OS_B ? "C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt" : "/home/dhara/broadcast.txt";
+		//BROADCAST_LOCATION = OS_B ? "C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt" : "/home/dhara/broadcast.txt";
 	}
 	
 	public static final long FIXED_REQUEST_PROCESSING_TIME_NANO = 50000000L;
