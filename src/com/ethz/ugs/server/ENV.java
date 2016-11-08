@@ -82,7 +82,8 @@ public class ENV {
 		String OS = System.getProperty("os.name");
 		boolean OS_B = (OS.contains("Windows"));
 		
-		SOURCE_DOCUMENT_LOCATION = OS_B ? "C:\\Source" : BROADCAST_SRC;//"/home/dhara/contents/4k wallpapers/Space";
+		//SOURCE_DOCUMENT_LOCATION = OS_B ? "C:\\Source" : BROADCAST_SRC;//"/home/dhara/contents/4k wallpapers/Space";
+		SOURCE_DOCUMENT_LOCATION = BROADCAST_SRC;
 		DELIM = OS_B ? "\\" : "/";
 		//BROADCAST_LOCATION = OS_B ? "C:\\Users\\Aritra\\workspace_Mars\\UndergroundServer\\broadcast.txt" : "/home/dhara/broadcast.txt";
 	}

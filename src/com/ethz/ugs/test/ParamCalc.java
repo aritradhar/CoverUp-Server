@@ -341,9 +341,11 @@ public class ParamCalc
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\data_200000_100_noInt_1476639081079.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\data_200000_100_noInt_1476672640219.csv",
 					
-					"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\data_200000_100_noInt_1476598911240.csv",
-					"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\data_200000_100_noInt_1476637604326.csv",
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\data_200000_100_noInt_1476598911240.csv",
+					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\data_200000_100_noInt_1476637604326.csv",
 					
+					"Traces\\ChromeTrace\\withExt.csv",
+					"Traces\\ChromeTrace\\woExt.csv"
 			});
 
 			//System.out.println("----------------");

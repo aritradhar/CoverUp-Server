@@ -271,11 +271,14 @@ public class GraphPanel extends JPanel {
 		int counter = 0;
 		for(String file : Files)
 		{
+			
 			if(counter % 2 == 1)
 			{
 				counter++;
 				continue;
 			}
+			
+			System.out.println("File : " + file);
 			List<Long> scores1 = new ArrayList<>();
 
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -320,7 +323,7 @@ public class GraphPanel extends JPanel {
 					if(st.length() == 0)
 						continue;
 					double d = Double.parseDouble(st);
-					scores1.add((long) (d * Math.pow(10, 6)));
+					scores1.add((long)d);
 					k++;
 				}
 			}
@@ -390,7 +393,7 @@ public class GraphPanel extends JPanel {
 
 			//Collections.shuffle(scores1, new SecureRandom());
 			//zoom in/out
-			int sampleSize = 20000;
+			int sampleSize = 2000;
 			/*List<Long> _scores1 = null;
 
 		try
@@ -463,7 +466,7 @@ public class GraphPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					createAndShowGui(true, new String[]{
+					createAndShowGui(false, new String[]{
 							/*
 							"Traces\\MainServer.log.8",
 							"Traces\\MainServer.log.9",
@@ -475,8 +478,8 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							//"Traces\\bigTrace\\noInt.log.12", "Broadcast droplets",
-							//"Traces\\bigTrace\\int.log.12", "Interactive droplets"
+							"Traces\\bigTrace\\noInt.log.10", "Broadcast droplets",
+							"Traces\\bigTrace\\int.log.10", "Interactive droplets"
 							
 							/*"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
 							+ "Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv", "All intercept read",
@@ -488,11 +491,14 @@ public class GraphPanel extends JPanel {
 							"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
 									+ "Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv", "No ext"*/
 							
-							"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\"
+							/*"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\"
 							+ "Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\m1.csv", "All intercept read",
 							
 							"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\"
 							+ "Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\m1.csv", "No ext"
+							*/
+							//"Traces\\ChromeTrace\\withExt.csv", "with extension",
+							//"Traces\\ChromeTrace\\woExt.csv", "without extension"
 							
 							//"server_work_space\\MainServer.log", "bla"
 
