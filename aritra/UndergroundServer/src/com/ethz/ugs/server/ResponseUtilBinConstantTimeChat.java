@@ -73,7 +73,8 @@ public class ResponseUtilBinConstantTimeChat {
 			throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, 
 			IllegalBlockSizeException, BadPaddingException
 	{
-		long start = System.nanoTime(), end = 0;
+		//long start = System.nanoTime(), end = 0;
+		long start_ms = System.currentTimeMillis(), end_ms = 0;
 
 		long additionalDelay = ENV.SIMULATE_NW_NOISE ? (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6)) : 0;
 
@@ -81,7 +82,7 @@ public class ResponseUtilBinConstantTimeChat {
 		//garbage
 		if( Math.random() <= ENV.PROB_THRESHOLD )
 		{
-			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+			String sslId = (ENV.IFRAME_IF_ENABLED) ? request.getParameter("iframe_id") : (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 
 			if(MainServer.chatManager.containSSLId(sslId))
 			{
@@ -94,29 +95,34 @@ public class ResponseUtilBinConstantTimeChat {
 					rand.nextBytes(garbageReturn);
 
 					//additional delay start
-					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 					try {
-						TimeUnit.NANOSECONDS.sleep(offset);
+						TimeUnit.MILLISECONDS.sleep(offset);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					end = System.nanoTime();
+					//end = System.nanoTime();
+					end_ms = System.currentTimeMillis();
 					//additional delay end
-
+					MainServer.logger.info("garbage : " + (end_ms - start_ms)  + " ms");
+					//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 					out.write(garbageReturn);
 				}
 				//chat data :D
 				else	
 				{			
 					//additional delay start
-					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+					long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 					try {
-						TimeUnit.NANOSECONDS.sleep(offset);
+						TimeUnit.MILLISECONDS.sleep(offset);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					end = System.nanoTime();
-					//additional delay end					
+					//end = System.nanoTime();
+					end_ms = System.currentTimeMillis();
+					//additional delay end
+					MainServer.logger.info("chat : " + (end_ms - start_ms)  + " ms");
+					//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 					out.write(toSend);
 				}
 
@@ -127,14 +133,17 @@ public class ResponseUtilBinConstantTimeChat {
 				rand.nextBytes(garbageReturn);	
 
 				//additional delay start
-				long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+				long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 				try {
-					TimeUnit.NANOSECONDS.sleep(offset);
+					TimeUnit.MILLISECONDS.sleep(offset);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				end = System.nanoTime();
+				//end = System.nanoTime();
+				end_ms = System.currentTimeMillis();
 				//additional delay end
+				MainServer.logger.info(" garbage : " + (end_ms - start_ms)  + " ms");
+				//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 
 				out.write(garbageReturn);
 			}
@@ -151,14 +160,18 @@ public class ResponseUtilBinConstantTimeChat {
 			byte[] packetToSend = ResponseUtilBin.dropletPleaseBinNew(request, privateKey, null);
 
 			//additional delay start
-			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 			try {
-				TimeUnit.NANOSECONDS.sleep(offset);
+				TimeUnit.MILLISECONDS.sleep(offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			end = System.nanoTime();
+			//end = System.nanoTime();
+			end_ms = System.currentTimeMillis();
 			//additional delay end
+			MainServer.logger.info("droplet : " + (end_ms - start_ms)  + " ms");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			
 			out.write(packetToSend);
 			//MainServer.logger.info("Droplet noInt packet : " + (end - start)  + " ns");
 			out.flush();
@@ -182,9 +195,10 @@ public class ResponseUtilBinConstantTimeChat {
 	 */
 	public static void dropletPleaseChatBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody) throws IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException 
 	{
-		long start = System.nanoTime(), end = 0;
+		//long start = System.nanoTime(), end = 0;
+		long start_ms = System.currentTimeMillis(), end_ms = 0;
 		long additionalDelay = ENV.SIMULATE_NW_NOISE ? (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6)) : 0;
-		String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+		String sslId = (ENV.IFRAME_IF_ENABLED) ? request.getParameter("iframe_id") : (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 
 		OutputStream out = response.getOutputStream();
 		//0x00/0x01 (1) | reserved (3) | packetEncKey(16) | len  | data | signature
@@ -244,14 +258,17 @@ public class ResponseUtilBinConstantTimeChat {
 			rand.nextBytes(garbageReturn);
 
 			//additional delay start
-			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 			try {
-				TimeUnit.NANOSECONDS.sleep(offset);
+				TimeUnit.MILLISECONDS.sleep(offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			end = System.nanoTime();
+			//end = System.nanoTime();
+			end_ms = System.currentTimeMillis();
 			//additional delay end
+			MainServer.logger.info("garbage : " + (end_ms - start_ms)  + " ms");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 
 			out.write(garbageReturn);
 			out.flush();
@@ -262,14 +279,19 @@ public class ResponseUtilBinConstantTimeChat {
 		else	
 		{			
 			//additional delay start
-			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_NANO - (System.nanoTime() - start);
+			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 			try {
-				TimeUnit.NANOSECONDS.sleep(offset);
+				TimeUnit.MILLISECONDS.sleep(offset);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			end = System.nanoTime();
-			//additional delay end					
+			//end = System.nanoTime();
+			end_ms = System.currentTimeMillis();
+			//additional delay end
+			MainServer.logger.info("chat : " + (end_ms - start_ms)  + " ms");
+			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
+			
+			
 			out.write(toSend);
 			out.flush();
 			response.flushBuffer();

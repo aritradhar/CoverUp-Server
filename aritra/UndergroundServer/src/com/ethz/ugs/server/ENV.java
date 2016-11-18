@@ -90,7 +90,10 @@ public class ENV {
 	
 	public static final long FIXED_REQUEST_PROCESSING_TIME_NANO = 50000000L;
 	public static final long FIXED_REQUEST_PROCESSING_TIME_MILI = 50L;
+	public static final long FIXED_REQUEST_PROCESSING_TIME_MICRO = 50000L;
 	
 	
 	public static final boolean SIMULATE_NW_NOISE = false;
+	
+	public static boolean IFRAME_IF_ENABLED = true;
 }
