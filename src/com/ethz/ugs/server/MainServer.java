@@ -214,6 +214,7 @@ public class MainServer extends HttpServlet {
 
 	/**
 	 * Right now we are supporting both GET and POST message. Later we have to stop supporting any GET call to this server
+	 * Redirect to post
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
@@ -232,14 +233,11 @@ public class MainServer extends HttpServlet {
 		{
 			C += 1;
 			C %= 4;
-		}
-		
+		}		
 		//System.out.println(request.getAttribute("javax.servlet.request.ssl_session_id"));
 		//response.setBufferSize(120000);		
-
 		String flag = request.getParameter("flag");
 		String flag1 = request.getParameter("prob");
-
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		//response.setHeader("X-Frame-Options", "SAMEORIGIN");
