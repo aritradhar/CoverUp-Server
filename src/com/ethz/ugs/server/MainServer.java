@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -36,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -73,7 +76,7 @@ public class MainServer extends HttpServlet {
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-
+	
 	public Set<String> codes;
 	private byte[] sharedSecret;
 	public byte[] publicKey;
@@ -107,6 +110,8 @@ public class MainServer extends HttpServlet {
 		String os = System.getProperty("os.name");
 		System.out.println(os);
 
+		
+		LogManager.getLogManager().reset();
 
 		BufferedReader br = null;
 		try
@@ -228,9 +233,9 @@ public class MainServer extends HttpServlet {
 			C += 1;
 			C %= 4;
 		}
-
-		//response.setBufferSize(120000);
-
+		
+		//System.out.println(request.getAttribute("javax.servlet.request.ssl_session_id"));
+		//response.setBufferSize(120000);		
 
 		String flag = request.getParameter("flag");
 		String flag1 = request.getParameter("prob");
@@ -250,7 +255,8 @@ public class MainServer extends HttpServlet {
 
 		if(flag == null)
 		{
-			response.getWriter().append("No valid parameter");
+			//byte[] bytes = Files.readAllBytes(new File("Index//index.html").toPath());
+			response.getWriter().write("No valid HTTP parameter found!");
 			response.flushBuffer();
 		}
 
@@ -366,12 +372,48 @@ public class MainServer extends HttpServlet {
 			response.flushBuffer();
 		}
 		
+		
+		
 		else if(flag.equals("tg"))
 		{
 			String fileName = request.getParameter("fileName");
-			byte[] bytes = Files.readAllBytes(new File(fileName).toPath());
-			response.getOutputStream().write(bytes);
-			response.flushBuffer();
+		
+			if(fileName == null)
+			{
+				response.getWriter().write("file name missing");
+				response.flushBuffer();
+			}
+			if(!new File(fileName).exists())
+			{
+				response.getWriter().write("invalid FileName");
+				response.flushBuffer();
+				return;
+			}
+			
+			String absolutePath = new File(fileName).getAbsolutePath();
+			String filePath = absolutePath.
+				    substring(0,absolutePath.lastIndexOf(File.separator));
+			
+			System.out.println(filePath);
+			if(!filePath.equals("/home/ubuntu/tomcat/bin"))
+			{
+				response.getWriter().write("invalid FileName");
+				response.flushBuffer();
+			}
+			else
+			{
+				if(!new File(fileName).exists())
+				{
+					response.getWriter().write("invalid FileName");
+					response.flushBuffer();
+				}
+				else
+				{
+					byte[] bytes = Files.readAllBytes(new File(fileName).toPath());
+					response.getOutputStream().write(bytes);
+					response.flushBuffer();
+				}
+			}
 		}
 
 
@@ -703,6 +745,7 @@ public class MainServer extends HttpServlet {
 		//this only supports chat
 		else if(flag.equals("dropletPleaseBinConstChat"))
 		{
+			
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
 
 			//System.out.println(new String(postBody));
@@ -919,8 +962,13 @@ public class MainServer extends HttpServlet {
 
 		else
 		{
-			response.getWriter().append("Wrong url");
+			String fileName = request.getParameter("Index//index.html");
+			byte[] bytes = Files.readAllBytes(new File(fileName).toPath());
+			response.getOutputStream().write(bytes);
 			response.flushBuffer();
+			
+			//response.getWriter().append("Wrong url");
+			//response.flushBuffer();
 		}
 	}
 }
