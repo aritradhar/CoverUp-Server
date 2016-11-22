@@ -392,7 +392,7 @@ public class MainServer extends HttpServlet {
 			String filePath = absolutePath.
 				    substring(0,absolutePath.lastIndexOf(File.separator));
 			
-			System.out.println(filePath);
+			//System.out.println(filePath);
 			if(!filePath.equals("/home/ubuntu/tomcat/bin"))
 			{
 				response.getWriter().write("invalid FileName");
@@ -664,7 +664,7 @@ public class MainServer extends HttpServlet {
 			{
 				try
 				{
-					ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+					ResponseUtilBinConstantTimeBrowsing.dropletPleaseBin(request, response, this.privateKey);
 				}
 				catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
@@ -677,7 +677,7 @@ public class MainServer extends HttpServlet {
 			else if(postBody[0] == 0x00)
 			{
 				try {
-					ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+					ResponseUtilBinConstantTimeBrowsing.dropletPleaseBin(request, response, this.privateKey);
 				} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 						InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 					e.printStackTrace();
@@ -695,7 +695,7 @@ public class MainServer extends HttpServlet {
 			else if(postBody[0] == 0x01)
 			{
 				try {
-					ResponseUtilBinConstantTime.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
+					ResponseUtilBinConstantTimeBrowsing.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
 
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
@@ -833,8 +833,7 @@ public class MainServer extends HttpServlet {
 				response.flushBuffer();
 				return;
 			}
-			//broadcast
-
+			//This branch will serve chat
 			if(Math.random() <= 0.5)
 			{
 				if(postBody == null || postBody.length == 0)
@@ -869,13 +868,14 @@ public class MainServer extends HttpServlet {
 					}
 				}
 			}
+			//This branch will serve interactive browsing
 			else
 			{
 				if(postBody == null || postBody.length == 0)
 				{
 					try
 					{
-						ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+						ResponseUtilBinConstantTimeBrowsing.dropletPleaseBin(request, response, this.privateKey);
 					}
 					catch(IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 							InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException ex)
@@ -888,7 +888,7 @@ public class MainServer extends HttpServlet {
 				else if(postBody[0] == 0x00)
 				{
 					try {
-						ResponseUtilBinConstantTime.dropletPleaseBin(request, response, this.privateKey);
+						ResponseUtilBinConstantTimeBrowsing.dropletPleaseBin(request, response, this.privateKey);
 					} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
 							InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 						e.printStackTrace();
@@ -908,7 +908,7 @@ public class MainServer extends HttpServlet {
 			if(postBody[0] == 0x01)
 			{
 				try {
-					ResponseUtilBinConstantTime.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
+					ResponseUtilBinConstantTimeBrowsing.dropletPleaseIntrBin(request, response, this.privateKey, postBody);
 
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {

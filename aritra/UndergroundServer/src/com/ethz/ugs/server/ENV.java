@@ -95,5 +95,5 @@ public class ENV {
 	
 	public static final boolean SIMULATE_NW_NOISE = false;
 	
-	public static boolean IFRAME_IF_ENABLED = true;
+	public static boolean IFRAME_IF_ENABLED = false;
 }
