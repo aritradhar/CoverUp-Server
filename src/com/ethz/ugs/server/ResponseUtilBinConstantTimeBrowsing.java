@@ -47,7 +47,7 @@ import com.sun.xml.internal.ws.model.RuntimeModelerException;
  * @author Aritra
  *
  */
-public class ResponseUtilBinConstantTime {
+public class ResponseUtilBinConstantTimeBrowsing {
 
 	public static SecureRandom rand = new SecureRandom();
 	public static Random guRand = new Random();
