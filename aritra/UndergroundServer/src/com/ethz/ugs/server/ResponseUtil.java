@@ -133,7 +133,7 @@ public class ResponseUtil
 		else
 			response.getWriter().append(jObject.toString());
 
-		response.addHeader("x-flag", "0");
+		//response.addHeader("x-flag", "0");
 		
 		System.out.println("len (String) :: " + jObject.toString().length());
 		
@@ -271,7 +271,7 @@ public class ResponseUtil
 		else
 			response.getWriter().append(jObject.toString());
 		
-		response.addHeader("x-flag", "0");
+		//response.addHeader("x-flag", "0");
 		
 		System.out.println("len (String) :: " + jObject.toString().length());	
 		response.flushBuffer();

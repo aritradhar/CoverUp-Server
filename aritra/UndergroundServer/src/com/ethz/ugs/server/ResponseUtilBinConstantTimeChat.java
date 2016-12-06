@@ -22,6 +22,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -42,6 +43,7 @@ import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
 import com.sun.xml.internal.ws.model.RuntimeModelerException;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 /**
  * @author Aritra
@@ -81,7 +83,6 @@ public class ResponseUtilBinConstantTimeChat {
 		OutputStream out = response.getOutputStream();
 
 		String sslId = (ENV.IFRAME_IF_ENABLED) ? request.getParameter("iframe_id") : (String) request.getAttribute("javax.servlet.request.ssl_session_id");
-
 		if(MainServer.chatManager.containSSLId(sslId))
 		{
 			byte[] toSend = MainServer.chatManager.getChat(sslId);

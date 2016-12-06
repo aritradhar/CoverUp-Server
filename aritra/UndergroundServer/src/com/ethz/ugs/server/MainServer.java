@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -37,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -59,9 +56,6 @@ import org.whispersystems.curve25519.Curve25519KeyPair;
 import com.ethz.ugs.dataStructures.ChatManager;
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.test.InitialGen;
-import com.lowagie.text.pdf.codec.Base64.OutputStream;
-
-import sun.awt.Symbol;
 
 
 /**
@@ -96,10 +90,20 @@ public class MainServer extends HttpServlet {
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 
+		///////////////////////////////////////
 		//initiate the client state for interactive data management
 		MainServer.clientState = new ClientState();
+		////////////////////////////////////////
+		
+		////////////////////////////////////////
 		//Initiate the chat manager for client chat management 
 		MainServer.chatManager = new ChatManager();
+		////////////////////////////////////////
+		
+		////////////////////////////////////////
+		//initiate chat broadcast lookup
+		ResponseUtilBinBroadcast.init();
+		/////////////////////////////////////////
 
 		FileHandler fileH = new FileHandler("MainServer.log", true);
 		fileH.setFormatter(new SimpleFormatter());
@@ -374,6 +378,8 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("tg"))
 		{
+			
+			//System.out.println(new File(".").getCanonicalPath());
 			String fileName = request.getParameter("fileName");
 		
 			if(fileName == null)
@@ -393,7 +399,7 @@ public class MainServer extends HttpServlet {
 				    substring(0,absolutePath.lastIndexOf(File.separator));
 			
 			//System.out.println(filePath);
-			if(!filePath.equals("/home/ubuntu/tomcat/bin"))
+			if(!filePath.equals(new File(".").getCanonicalPath()))
 			{
 				response.getWriter().write("invalid FileName");
 				response.flushBuffer();
@@ -948,6 +954,12 @@ public class MainServer extends HttpServlet {
 			System.out.println(flag + " " + request.getRemoteAddr());
 			System.out.println(charC[C]);
 			System.out.println("-------------------------------------");
+		}
+		
+		else if(flag.equals("chatBroadcastPlease"))
+		{
+			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+			ResponseUtilBinBroadcast.BroadcastBin(request, response, postBody, privateKey);
 		}
 
 		else if(flag.equals("end"))
