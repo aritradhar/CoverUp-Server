@@ -29,7 +29,7 @@ public class ENV {
 	
 	public static final int COMPRESSION_PRESET = 7;
 	
-	public static final int FIXED_PACKET_BASE_SIZE = 15000;
+	public static final int FIXED_PACKET_BASE_SIZE = 15000 * 5;
 	//9 bytes for JSON => "pad":"",   9 bytes
 	public static final int FIXED_PACKET_SIZE = FIXED_PACKET_BASE_SIZE - 9;	
 	public static final int FIXED_PACKET_SIZE_BIN = FIXED_PACKET_BASE_SIZE;
@@ -66,7 +66,9 @@ public class ENV {
 	public static final String BROADCAST_SRC = "BROADCAST_SRC";
 	public static final int PUBLIC_ADDRESS_LEN = 8;
 
-
+	//chat len
+	public static final int FIXED_CHAT_LEN = 512;
+	
 	//enc
 	public static final int AES_KEY_SIZE = 16;
 	public static final int AES_IV_SIZE = 16;
