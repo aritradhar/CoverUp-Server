@@ -61,14 +61,18 @@ public class ResponseUtilBinBroadcast {
 			rand.nextBytes(postBody);
 		}
 		BROADCAST_LIST.put(id, postBody);
-		JSONObject dropletJson = null; 
+		byte[] packetToSend = null;
 		try {
-			dropletJson = ResponseUtilBinBroadcast.dropletPlease(privateKey);
+			if(!binSwitch)
+				packetToSend = ResponseUtilBinBroadcast.dropletPlease(privateKey).toString().getBytes(StandardCharsets.UTF_8);
+			else
+				packetToSend = ResponseUtilBinBroadcast.dropletPleaseBin(privateKey);
+			
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 
-		response.getWriter().write(dropletJson.toString(2));
+		response.getOutputStream().write(packetToSend);
 		response.flushBuffer();
 	}
 
@@ -84,8 +88,24 @@ public class ResponseUtilBinBroadcast {
 			}
 		};
 
-		executor = new ScheduledThreadPoolExecutor(10);
+		executor = new ScheduledThreadPoolExecutor(5);
 		executor.scheduleAtFixedRate(myRunnable, 0, 5000, TimeUnit.MILLISECONDS);
+	}
+	
+	/**
+	 * Cleanup the global list
+	 */
+	public static void resetGlobalMap(int hours)
+	{
+		Runnable myRunnable = new Runnable() {
+
+			public void run() {
+				BROADCAST_LIST = new ConcurrentHashMap<>();
+			}
+		};
+
+		executor = new ScheduledThreadPoolExecutor(5);
+		executor.scheduleAtFixedRate(myRunnable, 0, hours, TimeUnit.HOURS);
 	}
 
 	public static synchronized void makeBroadCast()
@@ -117,10 +137,7 @@ public class ResponseUtilBinBroadcast {
 
 	/**
 	 * Good old broadcast json
-	 * @param request
-	 * @param response
-	 * @param privateKey
-	 * @throws IOException
+	 * @param privateKey Server's curve25519 private key for signature
 	 * @throws NoSuchAlgorithmException 
 	 */
 	public static synchronized JSONObject dropletPlease(byte[] privateKey) throws IOException, NoSuchAlgorithmException
@@ -181,15 +198,12 @@ public class ResponseUtilBinBroadcast {
 	 * <br>
 	 * droplet -> seedlen (4) | seed(n) | num_chunk (4) | datalen (4) | data (n)
 	 * <br>
-	 * @param request HttpServletRequest
-	 * @param response HttpServletResponse
 	 * @param privateKey Server's Curve 25519 private key 
-	 * @param fake for testing purpose
 	 * @throws IOException
 	 * @throws NoSuchAlgorithmException 
 	 */
 
-	public static synchronized void dropletPleaseBin(byte[] privateKey) throws IOException, NoSuchAlgorithmException
+	public static synchronized byte[] dropletPleaseBin(byte[] privateKey) throws IOException, NoSuchAlgorithmException
 	{
 		String[] dropletStr = new String[2];
 
@@ -232,14 +246,18 @@ public class ResponseUtilBinBroadcast {
 		byte[] hashtableBytes = md.digest(dataToSign);
 		byte[] signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
 
-
-		int numChat = GLOBAL_BROADCAST_BIN.length / ENV.FIXED_CHAT_LEN;
-		byte[] numChatBytes = ByteBuffer.allocate(Integer.BYTES).putInt(numChat).array();
-		byte[] dataNchat = new byte[dataToSign.length + numChatBytes.length + GLOBAL_BROADCAST_BIN.length];
-		System.arraycopy(dataToSign, 0, dataNchat, 0, dataToSign.length);
-		System.arraycopy(numChatBytes, 0, dataNchat, dataToSign.length, numChatBytes.length);
-		System.arraycopy(GLOBAL_BROADCAST_BIN, 0, dataNchat, dataToSign.length + numChatBytes.length, GLOBAL_BROADCAST_BIN.length);
-
+		
+		byte[] dataNchat = null;
+		synchronized (GLOBAL_BROADCAST_BIN) 
+		{
+			int numChat = GLOBAL_BROADCAST_BIN.length / ENV.FIXED_CHAT_LEN;
+			byte[] numChatBytes = ByteBuffer.allocate(Integer.BYTES).putInt(numChat).array();
+			dataNchat = new byte[dataToSign.length + numChatBytes.length + GLOBAL_BROADCAST_BIN.length];
+			System.arraycopy(dataToSign, 0, dataNchat, 0, dataToSign.length);
+			System.arraycopy(numChatBytes, 0, dataNchat, dataToSign.length, numChatBytes.length);
+			System.arraycopy(GLOBAL_BROADCAST_BIN, 0, dataNchat, dataToSign.length + numChatBytes.length, GLOBAL_BROADCAST_BIN.length);
+		}
+		
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataNchat.length - signatureBytes.length];
 		if(ENV.RANDOM_PADDING)
 			rand.nextBytes(padding);
@@ -248,13 +266,11 @@ public class ResponseUtilBinBroadcast {
 
 		byte[] packetToSend = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 
-
 		//dataToSign | signature | padding
 		System.arraycopy(dataToSign, 0, packetToSend, 0, dataToSign.length);
 		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
+		
+		return packetToSend;
 	}
-
-
-
 }

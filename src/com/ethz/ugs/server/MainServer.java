@@ -958,7 +958,20 @@ public class MainServer extends HttpServlet {
 		
 		else if(flag.equals("chatBroadcastPlease"))
 		{
-			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+			BufferedReader payloadReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+
+			String st = new String();
+			StringBuffer stb = new StringBuffer("");
+
+			while((st = payloadReader.readLine())!= null)
+				stb.append(st);
+
+			String postBodyStr = stb.toString();
+			
+			//byte[] postBody = IOUtils.toByteArray(request.getInputStream());
+			//for test only
+			byte[] postBody = Base64.getDecoder().decode(postBodyStr);
+			
 			ResponseUtilBinBroadcast.BroadcastBin(request, response, postBody, privateKey);
 		}
 
