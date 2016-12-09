@@ -51,9 +51,10 @@ public class ResponseUtilBinBroadcast {
 	private static SecureRandom rand = new SecureRandom();
 
 	public static boolean binSwitch = true;
-	
+
 	public static void BroadcastBin(HttpServletRequest request, HttpServletResponse response, byte[] postBody, byte[] privateKey) throws IOException
 	{
+		long start = System.currentTimeMillis();
 		String id = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 		if(postBody.length == 0)
 		{
@@ -67,11 +68,18 @@ public class ResponseUtilBinBroadcast {
 				packetToSend = ResponseUtilBinBroadcast.dropletPlease(privateKey).toString().getBytes(StandardCharsets.UTF_8);
 			else
 				packetToSend = ResponseUtilBinBroadcast.dropletPleaseBin(privateKey);
-			
+
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 
+		long offset = ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start);
+		try {
+			if(offset > 0)
+				TimeUnit.MILLISECONDS.sleep(offset);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		response.getOutputStream().write(packetToSend);
 		response.flushBuffer();
 	}
@@ -91,7 +99,7 @@ public class ResponseUtilBinBroadcast {
 		executor = new ScheduledThreadPoolExecutor(5);
 		executor.scheduleAtFixedRate(myRunnable, 0, 5000, TimeUnit.MILLISECONDS);
 	}
-	
+
 	/**
 	 * Cleanup the global list
 	 */
@@ -246,7 +254,7 @@ public class ResponseUtilBinBroadcast {
 		byte[] hashtableBytes = md.digest(dataToSign);
 		byte[] signatureBytes = Curve25519.getInstance("best").calculateSignature(privateKey, hashtableBytes);
 
-		
+
 		byte[] dataNchat = null;
 		synchronized (GLOBAL_BROADCAST_BIN) 
 		{
@@ -257,7 +265,7 @@ public class ResponseUtilBinBroadcast {
 			System.arraycopy(numChatBytes, 0, dataNchat, dataToSign.length, numChatBytes.length);
 			System.arraycopy(GLOBAL_BROADCAST_BIN, 0, dataNchat, dataToSign.length + numChatBytes.length, GLOBAL_BROADCAST_BIN.length);
 		}
-		
+
 		byte[] padding = new byte[ENV.FIXED_PACKET_SIZE_BIN - dataNchat.length - signatureBytes.length];
 		if(ENV.RANDOM_PADDING)
 			rand.nextBytes(padding);
@@ -270,7 +278,7 @@ public class ResponseUtilBinBroadcast {
 		System.arraycopy(dataToSign, 0, packetToSend, 0, dataToSign.length);
 		System.arraycopy(signatureBytes, 0, packetToSend, dataToSign.length, signatureBytes.length);
 		System.arraycopy(padding, 0, packetToSend, dataToSign.length + signatureBytes.length, padding.length);
-		
+
 		return packetToSend;
 	}
 }

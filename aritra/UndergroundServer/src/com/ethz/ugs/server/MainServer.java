@@ -970,7 +970,14 @@ public class MainServer extends HttpServlet {
 			
 			//byte[] postBody = IOUtils.toByteArray(request.getInputStream());
 			//for test only
-			byte[] postBody = Base64.getDecoder().decode(postBodyStr);
+			byte[] postBody = null;
+			try{
+				postBody = Base64.getDecoder().decode(postBodyStr);
+			}
+			catch(Exception ex)
+			{
+				postBody = IOUtils.toByteArray(request.getInputStream());
+			}
 			
 			ResponseUtilBinBroadcast.BroadcastBin(request, response, postBody, privateKey);
 		}
