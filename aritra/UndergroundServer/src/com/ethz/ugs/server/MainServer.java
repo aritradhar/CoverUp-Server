@@ -968,8 +968,7 @@ public class MainServer extends HttpServlet {
 
 			String postBodyStr = stb.toString();
 			
-			//byte[] postBody = IOUtils.toByteArray(request.getInputStream());
-			//for test only
+			//Base64 decoding is for the testing only
 			byte[] postBody = null;
 			try{
 				postBody = Base64.getDecoder().decode(postBodyStr);

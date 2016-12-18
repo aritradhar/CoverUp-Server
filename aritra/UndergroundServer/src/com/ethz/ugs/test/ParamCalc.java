@@ -124,7 +124,7 @@ public class ParamCalc
 
 			String st = null;
 			//TODO dummy to set the minimum
-			scores1.add(45850000L);
+			//scores1.add(45850000L);
 
 			if(!csv)
 			{
@@ -231,36 +231,36 @@ public class ParamCalc
 		double delta = 0d;
 
 		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
-		
+
 		if(limit > p1.size() || limit > p2.size())
 			limit = p1.size() >= p2.size() ? p2.size() : p1.size();
 
-		
-		double d_1 = 0d, d_2 = 0d;
-		
-		for(int i = 0; i < limit; i++)
-		{
-			double p1_t = p1.get(i);
-			double p2_t = p2.get(i);		
-			//if(p1_t == 0 || p2_t == 0)
-			//	continue;
 
-			
-			if(p1_t > exp_epsilon *  p2_t)
-				d_1 = p1_t - exp_epsilon * p2_t;
-				
+			double d_1 = 0d, d_2 = 0d;
 
-			else if(p2_t > exp_epsilon * p1_t)
-				d_2 += p2_t - exp_epsilon * p1_t;
-			
+			for(int i = 0; i < limit; i++)
+			{
+				double p1_t = p1.get(i);
+				double p2_t = p2.get(i);		
+				//if(p1_t == 0 || p2_t == 0)
+				//	continue;
 
-		}
-		delta = (d_1 > d_2) ?  d_1 : d_2;
-		
-		//System.out.println("chi sqd : " + chiSqd);
-		//System.out.println(epsilon + " : " + String.format("%.18f", delta));
 
-		return delta;
+				if(p1_t > exp_epsilon *  p2_t)
+					d_1 = p1_t - exp_epsilon * p2_t;
+
+
+				else if(p2_t > exp_epsilon * p1_t)
+					d_2 += p2_t - exp_epsilon * p1_t;
+
+
+			}
+			delta = (d_1 > d_2) ?  d_1 : d_2;
+
+			//System.out.println("chi sqd : " + chiSqd);
+			//System.out.println(epsilon + " : " + String.format("%.18f", delta));
+
+			return delta;
 	}
 
 	public static double[] chiSqd(int limit)
@@ -271,22 +271,47 @@ public class ParamCalc
 
 		if(limit > p1.size() && limit > p2.size())
 			limit = p1.size() >= p2.size() ? p2.size() : p1.size();
-			
-		double chiSqd = 0.0d;
-		double N = 0d;
-		for(int i = 0; i < limit; i++)
-		{
-			double p1_t = p1.get(i);
-			double p2_t = p2.get(i);
 
-			if(p1_t > 0)
+			double chiSqd = 0.0d;
+			double N = 0d;
+			for(int i = 0; i < limit; i++)
 			{
-				chiSqd += ((p2_t - p1_t) * (p2_t - p1_t)) / p1_t;
-				N++;
+				double p1_t = p1.get(i);
+				double p2_t = p2.get(i);
+
+				if(p1_t > 0)
+				{
+					chiSqd += ((p2_t - p1_t) * (p2_t - p1_t)) / p1_t;
+					N++;
+				}
 			}
+
+			return new double[]{chiSqd, N};
+	}
+
+	public static double klDivergence(int limit) 
+	{
+
+		List<Double> p1 = relativeScoresList.get(0);
+		List<Double> p2 = relativeScoresList.get(1);
+		limit = (limit == 0) ? p1.size() >= p2.size() ? p2.size() : p1.size() : limit;
+		double klDiv = 0.0;
+
+		for (int i = 0; i < limit; ++i) {
+			
+			double p1_t = p2.get(i);
+			double p2_t = p1.get(i);
+			
+			if (p1_t == 0d) 
+				continue; 
+			if (p2_t == 0d)
+				continue;
+
+			klDiv += p1_t * Math.log(p1_t / p2_t);
 		}
 
-		return new double[]{chiSqd, N};
+		System.out.println("KL : " + (klDiv));
+		return (klDiv / 0.301d); // moved this division out of the loop -DM
 	}
 
 
@@ -298,16 +323,21 @@ public class ParamCalc
 		int i1 = 0;
 		/*Long[] arr = new Long[]{50L, 100L, 200L, 500L, 1000L, 5000L, 10000L, 
 				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L}; */
-		
+
 		/*Long[] arr = new Long[]{5000L, 10000L, 
 				50000L, 100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};*/
-		
-		Long[] arr = new Long[]{1000L, 5000L, 10000L, 50000L,100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};
-		
+
+		//Long[] arr = new Long[]{1000L, 5000L, 10000L, 50000L,100000L, 500000L, 1000000L, 1200000L, 1500000L, 2000000L};
+		//bucket for JS timeout test
+		Long[] arr = new Long[]{1000000L, 1200000L, 1500000L, 2000000L, 5000000L, 
+				10000000L, 12000000L, 15000000L, 20000000L, 25000000L};
+
 		List<Long> bucketLenArr = Arrays.asList(arr);
 
 		List<Double> chiSq = new ArrayList<>();
 		List<Double> corr = new ArrayList<>();
+		List<Double> KL = new ArrayList<>();
+		
 		Collections.sort(bucketLenArr);
 		for(long bucketLen : bucketLenArr)
 		{
@@ -321,31 +351,35 @@ public class ParamCalc
 					//"Traces\\MainServer.log.4"
 					//"Traces\\bigTrace\\noInt.log.8",
 					//"Traces\\bigTrace\\int.log.8",
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\no extension\\data_75000_200_noInt_1476039727271.csv"
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\all_read\\data_10000_200_noInt_1476205905277.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv"
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_120000_200_noInt_1476326329329.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\all_read\\data_10000_200_noInt_1476205905277.csv"
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_120000_200_noInt_1476326329329.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\Measurements\\Data\\JS_new\\nw noise\\no_int\\data_5000_200_noInt_1476271838263.csv"
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\m1.csv",
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\m1.csv"
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\data_200000_100_noInt_1476639081079.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\no_int\\data_200000_100_noInt_1476672640219.csv",
-					
+
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\data_200000_100_noInt_1476598911240.csv",
 					//"C:\\Users\\Aritra\\workspace_Mars_new\\DeniableCommChannel\\Measurements\\Data\\JS_new\\nw noise\\Large Data Set\\int\\data_200000_100_noInt_1476637604326.csv",
-					
-					"Traces\\ChromeTrace\\withExt.csv",
-					"Traces\\ChromeTrace\\woExt.csv"
+
+					//"Traces\\ChromeTrace\\withExt.csv",
+					//"Traces\\ChromeTrace\\woExt.csv"
+
+					"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv_noise.csv",
+					"JS_time_test\\WoEx\\timeout\\data_timeout_noise_50000_200_1482036486086.csv_diff.csv"
+
 			});
 
 			//System.out.println("----------------");
@@ -373,7 +407,8 @@ public class ParamCalc
 			double chiS = chiSArr[0];
 			//System.out.println(chiSArr[1] + " : " + chiS);
 			chiSq.add(chiS);
-
+			KL.add(klDivergence(0));
+			
 			GraphPanel mainPanel = new GraphPanel(deltas, "", "bucket len: " + bucketLen + " ns", deltas.size(), "line");
 			mainPanel.addCustomX(epsilons);
 			mainPanel.setPreferredSize(new Dimension(w, h));
@@ -416,12 +451,34 @@ public class ParamCalc
 			g2.dispose();
 			document.close();
 		}
-		
+
 		{
 			GraphPanel mainPanel = new GraphPanel(corr, "", "correlation vs bucket len", corr.size(), "line");
 			mainPanel.addCustomX(arr);
 			mainPanel.setPreferredSize(new Dimension(w, h));
 			JFrame frame = new JFrame("correlation vs bucket len");
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.getContentPane().add(mainPanel);
+			frame.pack();
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
+
+			Document document = new Document(new Rectangle(frame.getSize().width, frame.getSize().height));
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Traces\\dve\\dve_" + (i1++) + ".pdf"));   
+			document.open();
+			PdfContentByte cb = writer.getDirectContent();
+
+			Graphics2D g2 = cb.createGraphics(frame.getSize().width, frame.getSize().height);
+			frame.paint(g2);
+			g2.dispose();
+			document.close();
+		}
+		
+		{
+			GraphPanel mainPanel = new GraphPanel(KL, "", "KL divergence vs bucket len", KL.size(), "line");
+			mainPanel.addCustomX(arr);
+			mainPanel.setPreferredSize(new Dimension(w, h));
+			JFrame frame = new JFrame("KL divergence vs bucket len");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.getContentPane().add(mainPanel);
 			frame.pack();
