@@ -287,7 +287,7 @@ public class GraphPanel extends JPanel {
 			//long k = 0;
 
 			//TODO dummy to set the min
-			scores1.add(359674999L);
+			//scores1.add(359674999L);
 
 			if(!csv)
 			{
@@ -466,7 +466,7 @@ public class GraphPanel extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					createAndShowGui(false, new String[]{
+					createAndShowGui(true, new String[]{
 							/*
 							"Traces\\MainServer.log.8",
 							"Traces\\MainServer.log.9",
@@ -478,8 +478,12 @@ public class GraphPanel extends JPanel {
 							 */
 							//"Traces\\MainServer.log.18", "Broadcast droplets",
 							//"Traces\\MainServer.log.17", "Interactive droplets"
-							"Traces\\bigTrace\\noInt.log.10", "Broadcast droplets",
-							"Traces\\bigTrace\\int.log.10", "Interactive droplets"
+							
+							//"Traces\\bigTrace\\noInt.log.10", "Broadcast droplets",
+							//"Traces\\bigTrace\\int.log.10", "Interactive droplets"
+							
+							"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv_noise.csv" , "External noise",
+							"JS_time_test\\WoEx\\timeout\\data_timeout_noise_50000_200_1482036486086.csv_diff.csv" , "Internal noise"
 							
 							/*"C:\\Users\\Aritra\\workspace_Mars_new\\deniableComChannel\\"
 							+ "Measurements\\Data\\JS_new\\all intercept_read\\data_100000_200_noInt_1476149977024.csv", "All intercept read",
