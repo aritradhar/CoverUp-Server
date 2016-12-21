@@ -377,8 +377,11 @@ public class ParamCalc
 					//"Traces\\ChromeTrace\\withExt.csv",
 					//"Traces\\ChromeTrace\\woExt.csv"
 
-					"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv_noise.csv",
-					"JS_time_test\\WoEx\\timeout\\data_timeout_noise_50000_200_1482036486086.csv_diff.csv"
+					//"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv_noise.csv",
+					//"JS_time_test\\WoEx\\timeout\\data_timeout_noise_50000_200_1482036486086.csv_diff.csv"
+					"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv",
+					"JS_time_test\\WithEx\\timeout\\data_timeout_50000_200_1482063318641.csv_diff.csv"
+					
 
 			});
 
