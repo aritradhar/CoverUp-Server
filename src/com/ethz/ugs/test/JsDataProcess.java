@@ -12,6 +12,7 @@
 //*************************************************************************************
 package com.ethz.ugs.test;
 
+import java.awt.Choice;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -68,15 +69,42 @@ public class JsDataProcess {
 		fw.close();
 	}
 	
+	public static void removeNoise() throws Exception
+	{
+		System.out.println("File :");
+		Scanner s = new Scanner(System.in);
+		String fileName = s.next();
+		List<Double> nos = new ArrayList<>();
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String str = null;
+		while((str = br.readLine()) != null)
+			nos.add(Double.parseDouble(str));
+		br.close();
+		System.out.println("Give single noise: ");
+		
+		double noise = (s.nextDouble() - 200d);
+		s.close();
+		
+		System.out.println(noise);
+		
+		FileWriter fw = new FileWriter(fileName + "_De_noise.csv");
+		for(Double d : nos)
+			fw.append((d - noise) + "\n");
+		fw.close();
+		
+	}
+	
 	public static void main(String[] args) throws Exception{
 		
-		System.out.println("1. diff \n2. add noise");
+		System.out.println("1. diff \n2. add noise\n3. remove noise");
 		Scanner s = new Scanner(System.in);
 		int choise = s.nextInt();
 		if(choise == 1)
 			diff();
-		else
+		else if(choise == 2)
 			addNoise();
+		else
+			removeNoise();
 		s.close();
 	}
 
