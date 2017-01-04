@@ -64,6 +64,8 @@ public class ENV {
 	public static String EXCEPTION_MESSAGE_EMPTY_STATE_TABLE = "EXCEPTION_MESSAGE_EMPTY_STATE_TABLE";
 
 	public static final String BROADCAST_SRC = "BROADCAST_SRC";
+	public static final String BROADCAST_DROPLET_LOC = "BROADCAT_DROPLET";
+	
 	public static final int PUBLIC_ADDRESS_LEN = 8;
 
 	//chat len

@@ -992,10 +992,17 @@ public class MainServer extends HttpServlet {
 		else
 		{
 			String fileName = request.getParameter("Index//index.html");
-			byte[] bytes = Files.readAllBytes(new File(fileName).toPath());
-			response.getOutputStream().write(bytes);
-			response.flushBuffer();
-			
+			try
+			{
+				byte[] bytes = Files.readAllBytes(new File(fileName).toPath());
+				response.getOutputStream().write(bytes);
+				response.flushBuffer();
+			}
+			catch(Exception ex)
+			{
+				response.getWriter().append("Wrong url");
+				response.flushBuffer();
+			}
 			//response.getWriter().append("Wrong url");
 			//response.flushBuffer();
 		}

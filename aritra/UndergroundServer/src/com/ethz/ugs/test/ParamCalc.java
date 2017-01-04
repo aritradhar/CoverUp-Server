@@ -379,8 +379,11 @@ public class ParamCalc
 
 					//"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv_noise.csv",
 					//"JS_time_test\\WoEx\\timeout\\data_timeout_noise_50000_200_1482036486086.csv_diff.csv"
-					"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv",
-					"JS_time_test\\WithEx\\timeout\\data_timeout_50000_200_1482063318641.csv_diff.csv"
+					//"JS_time_test\\WoEx\\timeout\\data_timeout_50000_200_1481971014064_diff.csv",
+					//"JS_time_test\\WithEx\\timeout\\data_timeout_50000_200_1482063318641.csv_diff.csv"
+					
+					"JS_time_test\\WoEx\\interval\\data_interval_50000_200_1481985044087.csv_diff.csv",
+					"JS_time_test\\data_interval_noise_50000_200_1482288493962.csv_diff.csv_De_noise.csv"
 					
 
 			});

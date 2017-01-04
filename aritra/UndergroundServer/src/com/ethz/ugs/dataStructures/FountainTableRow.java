@@ -83,6 +83,8 @@ public class FountainTableRow
 		long l = new SecureRandom().nextLong();
 		if(l < 0) l *= -1;
 		this.dropletLoc = new Long(l).toString();
+		//add this part to put those droplets inside a folder
+		//this.dropletLoc = ENV.BROADCAST_DROPLET_LOC + ENV.DELIM + this.dropletLoc;
 		File f = new File(dropletLoc);
 		f.mkdir();
 		
