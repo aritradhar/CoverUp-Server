@@ -97,5 +97,9 @@ public class ChatManager {
 		if(!AddressSSLMap.containsKey(targetAddress))
 			AddressSSLMap.put(targetAddress, null);
 		
+		//for(String add : AddressSSLMap.keySet())
+		//	System.out.println(add + " => " + AddressSSLMap.get(add));
+		
+		
 	}
 }
