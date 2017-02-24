@@ -12,6 +12,7 @@
 //*************************************************************************************
 package com.ethz.ugs.server;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -83,13 +84,20 @@ public class ResponseUtilBinConstantTimeChat {
 		OutputStream out = response.getOutputStream();
 
 		String sslId = (ENV.IFRAME_IF_ENABLED) ? request.getParameter("iframe_id") : (String) request.getAttribute("javax.servlet.request.ssl_session_id");
+		System.out.println("SSL ID : " + sslId);
 		if(MainServer.chatManager.containSSLId(sslId))
 		{
-			byte[] toSend = MainServer.chatManager.getChat(sslId);
+			System.out.println("SSL entry found");
+			//byte[] toSend = MainServer.chatManager.getChat(sslId);
 
+			byte[] toSendWOPadding = MainServer.chatManager.getChat(sslId);
+			byte[] packetEnckey = new byte[16];
+			Arrays.fill(packetEnckey, (byte) 0x00);
+			byte[] toSend = makeChatPacket(toSendWOPadding, packetEnckey);
 			//chat data :D
 			if(toSend != null)	
 			{			
+				System.out.println("Chat data found");
 				//additional delay start
 				long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 				try {
@@ -148,9 +156,9 @@ public class ResponseUtilBinConstantTimeChat {
 		long start_ms = System.currentTimeMillis(), end_ms = 0;
 		long additionalDelay = ENV.SIMULATE_NW_NOISE ? (long) ((Math.abs(Math.round(rand.nextGaussian() * 3 + 12))) * Math.pow(10, 6)) : 0;
 		String sslId = (ENV.IFRAME_IF_ENABLED) ? request.getParameter("iframe_id") : (String) request.getAttribute("javax.servlet.request.ssl_session_id");
-
+		System.out.println("SSL ID : " + sslId);
 		OutputStream out = response.getOutputStream();
-		//0x00/0x01 (1) | reserved (3) | packetEncKey(16) | len  | data | signature
+		//0x00/0x01/0x02 (1) | reserved (3) | packetEncKey(16) | len  | data | signature
 		//<p_i = sr//R_adder(8) | S_addr(8) | iv(16) | len(4) | enc_Data(n) | sig(64) (on 0|1|2|3|4)
 
 		int pointer = 4;
@@ -163,8 +171,15 @@ public class ResponseUtilBinConstantTimeChat {
 		//	break;
 		try
 		{
+			/*
+			FileWriter fw = new FileWriter("dump.txt");
+			fw.append(Base64.getEncoder().encodeToString(postBody));
+			fw.flush();
+			fw.close();
+			*/
 			System.arraycopy(postBody, pointer, packetEnckey, 0, packetEnckey.length);
 
+			Arrays.fill(packetEnckey, (byte) 0x00);
 			pointer += packetEnckey.length; // add the offset for packet enc key
 
 			byte[] datalenBytes = new byte[4]; //data len
@@ -186,7 +201,9 @@ public class ResponseUtilBinConstantTimeChat {
 			System.arraycopy(postBody, pointer, dataChunk, 0, dataChunk.length);
 
 			MainServer.chatManager.addChat(sslId, Base64.getUrlEncoder().encodeToString(originAddress), 
-					Base64.getUrlEncoder().encodeToString(targetAddressBytes), dataChunk);		
+					Base64.getUrlEncoder().encodeToString(targetAddressBytes), dataChunk);	
+			
+			System.out.println("Received chat packet");
 		}
 		catch(Exception ex)
 		{
@@ -203,6 +220,7 @@ public class ResponseUtilBinConstantTimeChat {
 		if(toSend == null)	
 		{
 			//send garbage in this case
+			System.out.println("Sending a garbage packet");
 			byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 			rand.nextBytes(garbageReturn);
 
@@ -219,6 +237,7 @@ public class ResponseUtilBinConstantTimeChat {
 			MainServer.logger.info("garbage : " + (end_ms - start_ms)  + " ms");
 			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 
+			System.out.println("Garbage packet length : " + garbageReturn.length);
 			out.write(garbageReturn);
 			out.flush();
 			response.flushBuffer();
@@ -226,7 +245,8 @@ public class ResponseUtilBinConstantTimeChat {
 		}
 		//chat data :D
 		else	
-		{			
+		{	
+			System.out.println("Got a chat packet");
 			//additional delay start
 			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 			try {
@@ -239,9 +259,19 @@ public class ResponseUtilBinConstantTimeChat {
 			//additional delay end
 			MainServer.logger.info("chat : " + (end_ms - start_ms)  + " ms");
 			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
-
-
+			FileWriter fw = new FileWriter("toSendDump.txt");
+			fw.append(Base64.getEncoder().encodeToString(toSend));
+			fw.flush();
+			fw.close();
+			
 			out.write(toSend);
+			System.out.println("Chat packet size : " + toSend.length);
+			//String bla = Base64.getEncoder().encodeToString(toSend);
+			//FileWriter fw = new FileWriter("bla.txt");
+			//fw.write(bla);
+			//fw.flush();
+			//fw.close();
+			
 			out.flush();
 			response.flushBuffer();
 			return;
