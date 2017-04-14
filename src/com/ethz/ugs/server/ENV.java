@@ -13,6 +13,7 @@
 
 package com.ethz.ugs.server;
 
+import java.io.File;
 
 public class ENV {
 	
@@ -24,6 +25,35 @@ public class ENV {
 	
 	public static final String INTR_SOURCE_DOCUMENT_LOC = "INTR_DOCUMENT";
 	public static final String INTR_SLICE_OUTPUT_LOC = "INTR_DOCUMENT_OUT";
+	
+	//make necessary directories
+	static
+	{
+		File inputSliceDir = new File(INTR_SOURCE_DOCUMENT_LOC);
+		if(!inputSliceDir.exists())
+			inputSliceDir.mkdir();
+		
+
+		File outputSliceDir = new File(INTR_SLICE_OUTPUT_LOC);
+		if(!outputSliceDir.exists())
+			outputSliceDir.mkdir();
+	}
+	
+	public static final String BROADCAST_SRC = "BROADCAST_SRC";
+	public static final String BROADCAST_DROPLET_LOC = "BROADCAT_DROPLET";
+	
+	static
+	{
+		File inputBroadcastDir = new File(BROADCAST_SRC);
+		if(!inputBroadcastDir.exists())
+			inputBroadcastDir.mkdir();
+		
+
+		File outputBroadcastDir = new File(BROADCAST_DROPLET_LOC);
+		if(!outputBroadcastDir.exists())
+			outputBroadcastDir.mkdir();
+	}
+	
 	
 	public static final boolean ENABLE_COMPRESS = false;
 	
@@ -63,8 +93,6 @@ public class ENV {
 	public static String EXCEPTION_MESSAGE_SLICE_ID_MISSING = "EXCEPTION_MESSAGE_SLICE_ID_MISSING";
 	public static String EXCEPTION_MESSAGE_EMPTY_STATE_TABLE = "EXCEPTION_MESSAGE_EMPTY_STATE_TABLE";
 
-	public static final String BROADCAST_SRC = "BROADCAST_SRC";
-	public static final String BROADCAST_DROPLET_LOC = "BROADCAT_DROPLET";
 	
 	public static final int PUBLIC_ADDRESS_LEN = 8;
 

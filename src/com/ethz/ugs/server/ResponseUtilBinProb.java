@@ -31,13 +31,13 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
-import com.sun.xml.internal.ws.model.RuntimeModelerException;
 
 /**
  * @author Aritra
@@ -350,7 +350,7 @@ public class ResponseUtilBinProb {
 			{
 				MainServer.clientState.incrementState(sslId, sliceId);
 			}
-			catch(RuntimeModelerException ex)
+			catch(RuntimeErrorException ex)
 			{
 				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
@@ -509,7 +509,7 @@ public class ResponseUtilBinProb {
 			{
 				MainServer.clientState.incrementStateDummy(sslId, sliceId);
 			}
-			catch(RuntimeModelerException ex)
+			catch(RuntimeException ex)
 			{
 				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
@@ -658,7 +658,7 @@ public class ResponseUtilBinProb {
 				{
 					MainServer.clientState.incrementState(sslId, sliceId);
 				}
-				catch(RuntimeModelerException ex)
+				catch(RuntimeException ex)
 				{
 					if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 							|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
@@ -802,7 +802,7 @@ public class ResponseUtilBinProb {
 				{
 					MainServer.clientState.incrementStateDummy(sslId, sliceId);
 				}
-				catch(RuntimeModelerException ex)
+				catch(RuntimeException ex)
 				{
 					if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 							|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))

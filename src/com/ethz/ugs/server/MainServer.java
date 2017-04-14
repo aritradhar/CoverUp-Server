@@ -90,6 +90,8 @@ public class MainServer extends HttpServlet {
 	public MainServer() throws IOException, InterruptedException, NoSuchAlgorithmException, NoSuchProviderException {
 		super();
 
+		File f = new File(".");
+		System.out.println(f.getAbsolutePath());
 		///////////////////////////////////////
 		//initiate the client state for interactive data management
 		MainServer.clientState = new ClientState();
