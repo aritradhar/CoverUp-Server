@@ -61,9 +61,11 @@ public class SliceManager
 		
 		File files = new File(ENV.INTR_SOURCE_DOCUMENT_LOC);
 		
-		for(File sliceDir : new File(ENV.INTR_SLICE_OUTPUT_LOC).listFiles())
-			sliceDir.delete();
-		
+		if(new File(ENV.INTR_SLICE_OUTPUT_LOC).listFiles().length > 0)
+		{
+			for(File sliceDir : new File(ENV.INTR_SLICE_OUTPUT_LOC).listFiles())
+				sliceDir.delete();
+		}
 		
 		SecureRandom rand = new SecureRandom();
 		

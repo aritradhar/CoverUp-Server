@@ -41,7 +41,6 @@ import org.tukaani.xz.simple.PowerPC;
 import com.ethz.ugs.dataStructures.ClientState;
 import com.ethz.ugs.dataStructures.SliceManager;
 import com.ethz.ugs.test.InitialGen;
-import com.sun.xml.internal.ws.model.RuntimeModelerException;
 
 /**
  * @author Aritra
@@ -383,7 +382,7 @@ public class ResponseUtilBinConstantTimeBrowsing {
 			{
 				MainServer.clientState.incrementState(sslId, sliceId);
 			}
-			catch(RuntimeModelerException ex)
+			catch(RuntimeException ex)
 			{
 				if(ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING) 
 						|| ex.getMessage().equalsIgnoreCase(ENV.EXCEPTION_MESSAGE_SSL_ID_MISSING))
