@@ -48,6 +48,7 @@ public class ChatManager {
 		for(String address : AddressSSLMap.keySet())
 		{
 			String fetchedSSLId = AddressSSLMap.get(address);
+			//System.out.println(address + " -> " + fetchedSSLId);
 			if(sslId.equals(fetchedSSLId))
 			{
 				return getChatbyAddress(address);
