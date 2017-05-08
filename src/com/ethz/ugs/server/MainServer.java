@@ -751,7 +751,7 @@ public class MainServer extends HttpServlet {
 		//this only supports chat
 		else if(flag.equals("dropletPleaseBinConstChat"))
 		{
-			System.out.println("Req::");
+			//System.out.println("Req::");
 			byte[] postBody = IOUtils.toByteArray(request.getInputStream());
 
 			

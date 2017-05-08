@@ -201,7 +201,7 @@ public class ResponseUtilBinConstantTimeChat {
 			MainServer.chatManager.addChat(sslId, Base64.getUrlEncoder().encodeToString(originAddress), 
 					Base64.getUrlEncoder().encodeToString(targetAddressBytes), dataChunk);	
 			
-			System.out.println("Received chat packet");
+			//System.out.println("Received chat packet");
 		}
 		catch(Exception ex)
 		{
@@ -218,7 +218,7 @@ public class ResponseUtilBinConstantTimeChat {
 		if(toSend == null)	
 		{
 			//send garbage in this case
-			System.out.println("Sending a garbage packet");
+			//System.out.println("Sending a garbage packet");
 			byte[] garbageReturn = new byte[ENV.FIXED_PACKET_SIZE_BIN];
 			rand.nextBytes(garbageReturn);
 
@@ -232,10 +232,10 @@ public class ResponseUtilBinConstantTimeChat {
 			//end = System.nanoTime();
 			end_ms = System.currentTimeMillis();
 			//additional delay end
-			MainServer.logger.info("garbage : " + (end_ms - start_ms)  + " ms");
+			//MainServer.logger.info("garbage : " + (end_ms - start_ms)  + " ms");
 			//MainServer.logger.info("Droplet noInt garbage : " + (end - start)  + " ns");
 
-			System.out.println("Garbage packet length : " + garbageReturn.length);
+			//System.out.println("Garbage packet length : " + garbageReturn.length);
 			out.write(garbageReturn);
 			out.flush();
 			response.flushBuffer();
@@ -244,7 +244,7 @@ public class ResponseUtilBinConstantTimeChat {
 		//chat data :D
 		else	
 		{	
-			System.out.println("Got a chat packet");
+			//System.out.println("Got a chat packet");
 			//additional delay start
 			long offset = additionalDelay + ENV.FIXED_REQUEST_PROCESSING_TIME_MILI - (System.currentTimeMillis() - start_ms);
 			try {
