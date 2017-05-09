@@ -756,8 +756,14 @@ public class MainServer extends HttpServlet {
 
 			
 			//System.out.println(new String(postBody));
-			postBody = Base64.getDecoder().decode(new String(postBody));
-
+			try
+			{
+				postBody = Base64.getDecoder().decode(new String(postBody));
+			}
+			catch(Exception ex)
+			{
+				postBody = null;
+			}
 			String sslId = (String) request.getAttribute("javax.servlet.request.ssl_session_id");
 			if(sslId == null)
 			{
